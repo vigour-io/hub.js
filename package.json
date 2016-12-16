@@ -1,0 +1,69 @@
+{
+  "name": "hub.js",
+  "description": "Seamless realtime communcatione",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "scripts": {
+    "build": "rollup -c rollup/dist.js",
+    "pretest": "rollup -c rollup/test.js",
+    "prepublish": "npm run build",
+    "test": "standard && (node dist/test/index.js | tap-spec)",
+    "dev": "rollup -c rollup.config.test.js -w & nodemon -C -w dist/test/index.js --harmony-async-await dist/test/index.js | tap-spec",
+    "cover": "nyc npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vigour-io/brisky-struct.git"
+  },
+  "keywords": [
+    "websocket",
+    "tcp",
+    "socket",
+    "hub",
+    "data structure",
+    "vector",
+    "functional",
+    "memory efficient",
+    "subscriptions",
+    "realtime"
+  ],
+  "dependencies": {
+    "brisky-struct": "0.0.33"
+  },
+  "nyc": {
+    "include": [
+      "dist/index.js"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "browser": {
+    "./test/index.js": "./test/browser.js"
+  },
+  "devDependencies": {
+    "buble": "0.15.1",
+    "coveralls": "^2.11.9",
+    "nodemon": "^1.11.0",
+    "nyc": "^10.0.0",
+    "pre-commit": "^1.1.3",
+    "rollup": "^0.37.0",
+    "rollup-plugin-commonjs": "^6.0.0",
+    "rollup-plugin-istanbul": "^1.1.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-watch": "^2.5.0",
+    "standard": "^8.1.0",
+    "tap-spec": "4.1.1",
+    "tape": "4.6.0"
+  },
+  "author": "jim de beer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vigour-io/brisky-struct/issues"
+  },
+  "homepage": "https://github.com/vigour-io/brisky-struct#readme",
+  "contributors": [
+    "Jim de Beer <jim@vigour.io>"
+  ]
+}
