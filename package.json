@@ -46,6 +46,9 @@
     "sourceMap": true,
     "instrument": true
   },
+  "browser": {
+    "./lib/uid/index.js": "./lib/uid/browser.js"
+  },
   "devDependencies": {
     "buble": "0.15.1",
     "coveralls": "^2.11.9",
