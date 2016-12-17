@@ -46,9 +46,6 @@
     "sourceMap": true,
     "instrument": true
   },
-  "browser": {
-    "./test/index.js": "./test/browser.js"
-  },
   "devDependencies": {
     "buble": "0.15.1",
     "coveralls": "^2.11.9",
