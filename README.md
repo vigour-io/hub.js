@@ -1,16 +1,24 @@
-# brisky-struct
-An observable data structure
-
-[![Build Status](https://travis-ci.org/vigour-io/brisky-struct.svg?branch=master)](https://travis-ci.org/vigour-io/brisky-struct)
+# hub.js
+[![Build Status](https://travis-ci.org/vigour-io/z.svg?branch=master)](https://travis-ci.org/vigour-io/hub.js)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
-[![npm version](https://badge.fury.io/js/brisky-struct.svg)](https://badge.fury.io/js/brisky-struct)
-[![Coverage Status](https://coveralls.io/repos/github/vigour-io/brisky-struct/badge.svg?branch=master)](https://coveralls.io/github/vigour-io/brisky-struct?branch=master)
+[![npm version](https://badge.fury.io/js/hub.js.svg)](https://badge.fury.io/js/hub.js)
+[![Coverage Status](https://coveralls.io/repos/github/vigour-io/hub.js/badge.svg?branch=master)](https://coveralls.io/github/vigour-io/hub?branch=master)
 
-- Deep memory efficient prototypes
-- Every value is observable
-- Serializable references
-- Fast reactive state management. Inspired by virtual-dom tree-diffing algorithms and merkle-trees
-- Powerful query syntax
-- Fast emitters
-- Async helpers, work with generators, promises and iterators
-- Low footprint (6kb gzipped)
+Seamless realtime communcation
+
+```javascript
+const hub = require('hub.js')
+// creates a hub as a server and as a client (url and port)
+const node = hub({
+  url: 'ws://someurl.com',
+  port: 80 // some port
+})
+
+node.subscribe({
+  $any: {
+    title: { val: true }
+  }
+}, (target, type) => {
+  console.log('update!', target, type)
+})
+```

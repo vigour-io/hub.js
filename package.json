@@ -1,6 +1,6 @@
 {
   "name": "hub.js",
-  "description": "Seamless realtime communcatione",
+  "description": "Seamless realtime communcation",
   "version": "0.0.0",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
