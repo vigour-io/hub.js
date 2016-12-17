@@ -5,11 +5,9 @@ const client = hub({
 })
 
 setTimeout(() => {
-  const server = hub({
-    port: 6060
-  })
-}, 1e3)
+  const server = hub({ port: 6060 })
+}, 100)
 
-// client.set({
-//   hello: true
-// })
+client.set({
+  hello: true
+})
