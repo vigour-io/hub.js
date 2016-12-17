@@ -2950,9 +2950,9 @@ uuid@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
 
-uws@0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/uws/-/uws-0.8.0.tgz#310a0aff56ab3da01538a8903b9391f381f3f322"
+uws@0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/uws/-/uws-0.12.0.tgz#07163ea6e687d9731e66821107b5fdf1ee644cbd"
 
 validate-npm-package-license@^3.0.1:
   version "3.0.1"

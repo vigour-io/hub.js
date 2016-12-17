@@ -30,14 +30,14 @@
     "realtime"
   ],
   "dependencies": {
+    "brisky-stamp": "^2.0.0",
     "brisky-struct": "0.0.33",
     "bubleify": "0.5.1",
-    "quick-hash": "^1.0.1",
-    "websocket": "^1.0.0",
-    "brisky-stamp": "^2.0.0",
-    "vigour-ua": "^2.0.0",
     "monotonic-timestamp": "^0.0.9",
-    "uws": "0.8.0"
+    "quick-hash": "^1.0.1",
+    "uws": "0.12.0",
+    "vigour-ua": "^2.0.0",
+    "websocket": "^1.0.0"
   },
   "nyc": {
     "include": [
