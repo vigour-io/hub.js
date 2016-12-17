@@ -5,6 +5,7 @@ export default {
   entry: 'lib/index.js',
   plugins: [
     nodeResolve({
+      main: true,
       jsnext: true
     }),
     commonjs()

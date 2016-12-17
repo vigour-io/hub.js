@@ -1,22 +1,15 @@
-import struct from './struct'
-import { create as c, set } from './manipulate'
-import methods from './methods'
-import { get } from './get'
-import { getProp as getProperty, property } from './property'
-import { contextProperty } from './context'
+import hub from '../lib'
 
-const emitterProperty = struct.props.on.struct.props.default
+const client = hub({
+  url: 'ws://localhost:6060'
+})
 
-set(struct, { inject: methods })
+setTimeout(() => {
+  const server = hub({
+    port: 6060
+  })
+}, 1e3)
 
-const create = (val, stamp) => c(struct, val, stamp)
-
-export {
-  create,
-  struct,
-  get,
-  getProperty,
-  property,
-  contextProperty,
-  emitterProperty
-}
+// client.set({
+//   hello: true
+// })

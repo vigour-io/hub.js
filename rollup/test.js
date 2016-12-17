@@ -6,6 +6,7 @@ export default {
   entry: 'test/index.js',
   plugins: [
     nodeResolve({
+      main: true,
       jsnext: true
     }),
     // istanbul({
@@ -16,7 +17,10 @@ export default {
   external: [
     'tape',
     'brisky-stamp',
-    'monotonic-timestamp'
+    'monotonic-timestamp',
+    'websocket',
+    'quick-hash',
+    'uws'
   ],
   sourceMap: true,
   targets: [

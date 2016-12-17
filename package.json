@@ -10,7 +10,7 @@
     "pretest": "rollup -c rollup/test.js",
     "prepublish": "npm run build",
     "test": "standard && (node dist/test/index.js | tap-spec)",
-    "dev": "rollup -c rollup.config.test.js -w & nodemon -C -w dist/test/index.js --harmony-async-await dist/test/index.js | tap-spec",
+    "dev": "rollup -c rollup/test.js -w & nodemon -C -w dist/test/index.js --harmony-async-await dist/test/index.js | tap-spec",
     "cover": "nyc npm test"
   },
   "repository": {
@@ -47,7 +47,8 @@
     "instrument": true
   },
   "browser": {
-    "./lib/uid/index.js": "./lib/uid/browser.js"
+    "./lib/uid/index.js": "./lib/uid/browser.js",
+    "./lib/downstream/index.js": "./lib/downstream/browser.js"
   },
   "devDependencies": {
     "buble": "0.15.1",
