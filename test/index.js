@@ -5,6 +5,7 @@ const client = hub({
   id: 'client',
   nested: {
     field: {
+      id: 'client',
       url: 'ws://localhost:6061'
     }
   }
@@ -23,9 +24,10 @@ setTimeout(() => {
 }, 100)
 
 client.set({
-  hello: true
-})
-
-client.nested.field.set({
-  haha: true
+  hello: true, // to server 1
+  nested: {
+    field: {
+      haha: true // will be send to server2
+    }
+  }
 })
