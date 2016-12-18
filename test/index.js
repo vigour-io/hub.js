@@ -11,12 +11,12 @@ const client = hub({
 })
 
 setTimeout(() => {
-  const server2 = hub({
+  const server2 = hub({ //eslint-disable-line
     port: 6061,
     id: 'server2'
   })
 
-  const server = hub({
+  const server = hub({ //eslint-disable-line
     port: 6060,
     id: 'server'
   })
