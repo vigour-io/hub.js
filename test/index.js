@@ -14,7 +14,7 @@ const client = hub({
 client.subscribe({
   gurt: true
 }, (t) => {
-  console.log(t.path())
+  console.log('INCOMING ON CLIENT', t.path())
 })
 
 setTimeout(() => {
