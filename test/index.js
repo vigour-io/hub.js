@@ -11,6 +11,12 @@ const client = hub({
   }
 })
 
+client.subscribe({
+  gurt: true
+}, (t) => {
+  console.log(t.path())
+})
+
 setTimeout(() => {
   const server2 = hub({ //eslint-disable-line
     port: 6061,
@@ -19,7 +25,8 @@ setTimeout(() => {
 
   const server = hub({ //eslint-disable-line
     port: 6060,
-    id: 'server'
+    id: 'server',
+    gurt: 'its a gurt!'
   })
 }, 100)
 
