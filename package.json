@@ -7,6 +7,7 @@
   "jsnext:main": "dist/index.es.js",
   "scripts": {
     "build": "rollup -c rollup/dist.js & rollup -c rollup/browser.js",
+    "watch": "rollup -c rollup/dist.js -w & rollup -c rollup/browser.js -w",
     "pretest": "rollup -c rollup/test.js",
     "prepublish": "npm run build",
     "test": "standard && (node dist/test/index.js | tap-spec)",
