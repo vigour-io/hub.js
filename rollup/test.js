@@ -18,7 +18,6 @@ export default {
     'tape',
     'brisky-stamp',
     'monotonic-timestamp',
-    'websocket',
     'quick-hash',
     'uws'
   ],
