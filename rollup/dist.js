@@ -10,6 +10,13 @@ export default {
     }),
     commonjs()
   ],
+  external: [
+    'tape',
+    'brisky-stamp',
+    'monotonic-timestamp',
+    'quick-hash',
+    'uws'
+  ],
   sourceMap: true,
   targets: [
     { dest: 'dist/index.js', format: 'cjs' },

@@ -51,6 +51,7 @@
     "./lib/client/websocket/index.js": "./lib/client/websocket/browser.js"
   },
   "devDependencies": {
+    "chalk": "1.1.3",
     "buble": "0.15.1",
     "coveralls": "^2.11.9",
     "nodemon": "^1.11.0",
