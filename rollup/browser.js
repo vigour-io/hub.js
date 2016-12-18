@@ -22,7 +22,10 @@ export default {
     {
       dest: 'wip/dist/index.browser.dev.js',
       format: 'iife',
-      moduleName: 'wip'
+      moduleName: 'wip',
+      intro: `
+        var global = window;
+      `
     }
   ]
 }

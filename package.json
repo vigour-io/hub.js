@@ -47,8 +47,8 @@
   },
   "browser": {
     "./lib/uid/index.js": "./lib/uid/browser.js",
-    "./lib/downstream/index.js": "./lib/downstream/browser.js",
-    "./lib/client/websocket": "./lib/client/websocket/browser.js"
+    "./lib/server/index.js": "./lib/server/browser.js",
+    "./lib/client/websocket/index.js": "./lib/client/websocket/browser.js"
   },
   "devDependencies": {
     "buble": "0.15.1",
