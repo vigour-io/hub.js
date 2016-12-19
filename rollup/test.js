@@ -19,7 +19,8 @@ export default {
     'brisky-stamp',
     'monotonic-timestamp',
     'quick-hash',
-    'uws'
+    'uws',
+    'brisky-struct'
   ],
   sourceMap: true,
   targets: [
