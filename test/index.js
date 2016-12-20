@@ -16,7 +16,7 @@ test('client - connect', t => {
   // contextClient.set(null)
 
   const topInstance = top.create()
-  // topInstance.set(null)
+  topInstance.set(null)
   // client.context = null
   // client.contextLevel = null
 
@@ -42,25 +42,26 @@ test('client - connect', t => {
   //   }
   // })
 
-  // client.get('connected').once(true).then(() => {
+  client.get('connected').once(true).then(() => {
 
-  // })
+  })
 
-  // const isConnected = server => client.get('connected').once(true).then(() => {
-  //   t.pass('connected client')
-  //   return server.get('clients', {}).once(clients => {
-  //     if (clients.keys().length) {
-  //       t.same(clients.keys(), [ 'client' ], 'correct clients')
-  //       return true
-  //     }
-  //   })
-  // })
+  const isConnected = server => client.get('connected').once(true).then(() => {
+    t.pass('connected client')
+    return server.get('clients', {}).once(clients => {
+      if (clients.keys().length) {
+        t.same(clients.keys(), [ 'client' ], 'correct clients')
+        return true
+      }
+    })
+  })
 
-  // isConnected(server).then(() => {
-  //   client.set({ url: 'ws://localhost:6061' })
-  //   t.equal(client.get('connected').compute(), false)
-  //   return isConnected(server2)
-  // }).then(() => {
+  isConnected(server).then(() => {
+    client.set({ url: 'ws://localhost:6061' })
+    t.equal(client.get('connected').compute(), false)
+    return isConnected(server2)
+  })
+  // .then(() => {
   //   t.same(server.clients.keys(), [], 'removed client from server')
   //   client.set({ url: false })
   //   t.equal(client.get('connected').compute(), false, 'disconnected')
