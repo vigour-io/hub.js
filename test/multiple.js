@@ -41,5 +41,10 @@ test('client - multiple', t => {
     // client.set({ blurf: 'x' })
 
     server.set({ blarf: 'yyy' })
+
+    client.get('blarf', {}).once('yyy', () => {
+      console.log('recieved blarf!')
+      client.set(null)
+    })
   })
 })
