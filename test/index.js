@@ -11,12 +11,10 @@ test('client - connect', t => {
   })
 
   const client = top.someHub
-
   const instance = client.create()
-
   const topInstance = top.create()
-  topInstance.set(null)
 
+  topInstance.set(null)
   instance.set(null)
 
   const server = hub({
@@ -73,8 +71,9 @@ test('client - connect', t => {
     return isConnected(server)
       .then(() => new Promise(resolve => {
         setTimeout(() => {
-          t.equal(server.subscriptions.length, 1, 'did recieve subscirptions')
-          t.equal(server.hahaha, undefined, 'did not recieve hahaha')
+          t.equal(server.subscriptions.length, 1, 'did recieve subscirptions (receiveOnly)')
+          t.equal(server.hahaha, undefined, 'did not recieve hahaha (receiveOnly)')
+          resolve()
         }, 100)
       }))
   })
