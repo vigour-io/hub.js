@@ -282,7 +282,7 @@ brisky-stamp@^2.0.0, brisky-stamp@^2.1.1:
 
 "brisky-struct@git+ssh://git@github.com/vigour-io/brisky-struct#feature/rollup":
   version "0.0.33"
-  resolved "git+ssh://git@github.com/vigour-io/brisky-struct#97c41f8a63c213c38659705a87a9d4022d43d984"
+  resolved "git+ssh://git@github.com/vigour-io/brisky-struct#7fa53eae3fd24bb1b271aeb5e32f1bc3b283fc8f"
   dependencies:
     brisky-stamp "^2.1.1"
     monotonic-timestamp "0.0.9"
