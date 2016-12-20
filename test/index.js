@@ -1,7 +1,7 @@
 import hub from '../lib'
 import test from 'tape'
 
-test('switch upstreams', t => {
+test('client - connect', t => {
   const client = hub({
     url: 'ws://localhost:6060',
     id: 'client'
@@ -30,11 +30,14 @@ test('switch upstreams', t => {
   isConnected(server).then(() => {
     client.set({ url: 'ws://localhost:6061' })
     t.equal(client.connected.compute(), false)
-    isConnected(server2).then(() => {
-      console.log('CONNECTED')
-    })
+    return isConnected(server2)
+  }).then(() => {
+    t.same(server.clients.keys(), [], 'removed client from server')
+    client.set({ url: false })
   })
 })
+
+//  add receiveOnly as well
 
 // const client = hub({
 //   url: 'ws://localhost:6060',
