@@ -16,7 +16,7 @@ const node = hub({
 
 node.subscribe({
   $any: {
-    title: { val: true }
+    title: true
   }
 }, (target, type) => {
   console.log('update!', target, type)
