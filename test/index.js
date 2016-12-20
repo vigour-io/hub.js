@@ -1,5 +1,4 @@
 import hub from '../lib'
-import hubC from '../lib/hub'
 import test from 'tape'
 
 test('client - connect', t => {
@@ -13,15 +12,8 @@ test('client - connect', t => {
 
   const client = top.someHub
 
-  // const clientInstance = client.create()
-
   const topInstance = top.create()
   topInstance.set(null)
-  // clientInstance.set(null)
-  // client.context = null
-  // client.contextLevel = null
-
-  // console.log(hubC.clients)
 
   const server = hub({
     key: 'server',
@@ -29,7 +21,6 @@ test('client - connect', t => {
     id: 'server'
   })
 
-  // console.log(server.clients)
   const server2 = hub({
     key: 'server-2',
     port: 6061,
@@ -64,7 +55,11 @@ test('client - connect', t => {
     return isConnected(server)
   })
   .then(() => {
-    console.log('REMOVE CLIENT')
+    server.set({ port: 6062 })
+    client.set({ url: 'ws://localhost:6062' })
+    return isConnected(server)
+  })
+  .then(() => {
     client.set(null)
     return server.clients.once(clients => clients.keys().length === 0)
   }).then(() => {
