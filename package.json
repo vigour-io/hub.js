@@ -10,6 +10,7 @@
     "watch": "rollup -c rollup/dist.js -w & rollup -c rollup/browser.js -w",
     "pretest": "rollup -c rollup/test.js",
     "prepublish": "npm run build",
+    "postinstall": "[ -d dist ] || npm run build",
     "test": "standard && (node dist/test/index.js | tap-spec)",
     "wip": "rollup -c rollup/browser.js -w ",
     "dev": "rollup -c rollup/test.js -w & nodemon -C -w dist/test/index.js --harmony-async-await dist/test/index.js",
@@ -33,7 +34,7 @@
   ],
   "dependencies": {
     "brisky-stamp": "^2.0.0",
-    "brisky-struct": "0.0.0",
+    "brisky-struct": "git+ssh://git@github.com/vigour-io/brisky-struct#feature/rollup",
     "monotonic-timestamp": "^0.0.9",
     "quick-hash": "^1.0.1",
     "uws": "0.12.0",
