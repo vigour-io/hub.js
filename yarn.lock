@@ -280,8 +280,9 @@ brisky-stamp@^2.0.0, brisky-stamp@^2.1.1:
   dependencies:
     bubleify "0.5.1"
 
-"brisky-struct@file:../brisky-struct":
+"brisky-struct@git+ssh://git@github.com/vigour-io/brisky-struct#feature/rollup":
   version "0.0.33"
+  resolved "git+ssh://git@github.com/vigour-io/brisky-struct#97c41f8a63c213c38659705a87a9d4022d43d984"
   dependencies:
     brisky-stamp "^2.1.1"
     monotonic-timestamp "0.0.9"
