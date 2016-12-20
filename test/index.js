@@ -1,4 +1,5 @@
 import hub from '../lib'
+import hubC from '../lib/hub'
 import test from 'tape'
 
 test('client - connect', t => {
@@ -13,14 +14,14 @@ test('client - connect', t => {
   const client = top.someHub
 
   // const clientInstance = client.create()
-  // contextClient.set(null)
 
   const topInstance = top.create()
   topInstance.set(null)
+  // clientInstance.set(null)
   // client.context = null
   // client.contextLevel = null
 
-  // console.log(client.keys())
+  // console.log(hubC.clients)
 
   const server = hub({
     key: 'server',
@@ -28,22 +29,11 @@ test('client - connect', t => {
     id: 'server'
   })
 
+  // console.log(server.clients)
   const server2 = hub({
     key: 'server-2',
     port: 6061,
     id: 'server-2'
-  })
-
-  // client.get('connected').set({
-  //   on: {
-  //     data: {
-  //       bla: () => {}
-  //     }
-  //   }
-  // })
-
-  client.get('connected').once(true).then(() => {
-
   })
 
   const isConnected = server => client.get('connected').once(true).then(() => {
@@ -58,29 +48,31 @@ test('client - connect', t => {
 
   isConnected(server).then(() => {
     client.set({ url: 'ws://localhost:6061' })
-    t.equal(client.get('connected').compute(), false)
+    t.equal(client.get('connected').compute(), false, 'disconnected')
     return isConnected(server2)
   })
-  // .then(() => {
-  //   t.same(server.clients.keys(), [], 'removed client from server')
-  //   client.set({ url: false })
-  //   t.equal(client.get('connected').compute(), false, 'disconnected')
-  //   return server2.clients.once(clients => clients.keys().length === 0)
-  // }).then(() => {
-  //   t.pass('server2 has an empty clients array')
-  //   t.equal(client.socket, false, 'socket is removed')
-  //   client.set({ url: 'ws://localhost:6060' })
-  //   return isConnected(server)
-  // }).then(() => {
-  //   console.log('REMOVE CLIENT')
-  //   client.set(null)
-  //   return server.clients.once(clients => clients.keys().length === 0)
-  // }).then(() => {
-  //   t.pass('removal of client clears server')
-  //   server.set(null)
-  //   server2.set(null)
-  //   t.end()
-  // })
+  .then(() => {
+    t.same(server.get('clients').keys(), [], 'removed client from server')
+    client.set({ url: false })
+    t.equal(client.get('connected').compute(), false, 'disconnected')
+    return server2.clients.once(clients => clients.keys().length === 0)
+  })
+  .then(() => {
+    t.pass('server2 has an empty clients array')
+    t.equal(client.socket, false, 'socket is removed')
+    client.set({ url: 'ws://localhost:6060' })
+    return isConnected(server)
+  })
+  .then(() => {
+    console.log('REMOVE CLIENT')
+    client.set(null)
+    return server.clients.once(clients => clients.keys().length === 0)
+  }).then(() => {
+    t.pass('removal of client clears server')
+    server.set(null)
+    server2.set(null)
+    t.end()
+  })
 })
 
 //  add receiveOnly as well
