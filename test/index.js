@@ -12,8 +12,12 @@ test('client - connect', t => {
 
   const client = top.someHub
 
+  const instance = client.create()
+
   const topInstance = top.create()
   topInstance.set(null)
+
+  instance.set(null)
 
   const server = hub({
     key: 'server',
@@ -23,8 +27,10 @@ test('client - connect', t => {
 
   const server2 = hub({
     key: 'server-2',
-    port: 6061,
-    id: 'server-2'
+    deep: {
+      port: 6061,
+      id: 'server-2'
+    }
   })
 
   const isConnected = server => client.get('connected').once(true).then(() => {
@@ -40,13 +46,13 @@ test('client - connect', t => {
   isConnected(server).then(() => {
     client.set({ url: 'ws://localhost:6061' })
     t.equal(client.get('connected').compute(), false, 'disconnected')
-    return isConnected(server2)
+    return isConnected(server2.deep)
   })
   .then(() => {
     t.same(server.get('clients').keys(), [], 'removed client from server')
     client.set({ url: false })
     t.equal(client.get('connected').compute(), false, 'disconnected')
-    return server2.clients.once(clients => clients.keys().length === 0)
+    return server2.deep.clients.once(clients => clients.keys().length === 0)
   })
   .then(() => {
     t.pass('server2 has an empty clients array')
