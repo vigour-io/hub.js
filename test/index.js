@@ -3,16 +3,19 @@ import test from 'tape'
 
 test('client - connect', t => {
   const client = hub({
+    key: 'client-hub',
     url: 'ws://localhost:6060',
     id: 'client'
   })
 
   const server = hub({
+    key: 'server',
     port: 6060,
     id: 'server'
   })
 
   const server2 = hub({
+    key: 'server-2',
     port: 6061,
     id: 'server-2'
   })
@@ -29,11 +32,23 @@ test('client - connect', t => {
 
   isConnected(server).then(() => {
     client.set({ url: 'ws://localhost:6061' })
-    t.equal(client.connected.compute(), false)
+    t.equal(client.get('connected').compute(), false)
     return isConnected(server2)
   }).then(() => {
     t.same(server.clients.keys(), [], 'removed client from server')
     client.set({ url: false })
+    t.equal(client.get('connected').compute(), false, 'disconnected')
+    return server2.clients.once(clients => clients.keys().length === 0)
+  }).then(() => {
+    t.pass('server2 has an empty clients array')
+    t.equal(client.socket, false, 'socket is removed')
+    client.set({ url: 'ws://localhost:6060' })
+    return isConnected(server)
+  }).then(() => {
+    console.log(client.instances)
+    client.set(null)
+  }).catch(err => {
+    console.log(err)
   })
 })
 
