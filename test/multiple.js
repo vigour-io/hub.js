@@ -8,12 +8,6 @@ test('client - multiple', t => {
     id: 'server'
   })
 
-  server.subscribe({
-    val: true
-  }, (t, type) => {
-    console.log('server', t.path(), type)
-  })
-
   const hybrid = hub({
     key: 'hybrid',
     port: 6061,
@@ -24,21 +18,28 @@ test('client - multiple', t => {
   hybrid.subscribe({
     val: true
   }, (t, type) => {
-    console.log('hybrid', t.path(), type)
+    // console.log('hybrid', t.path(), type)
   })
 
   const client = hub({
     key: 'client',
-    url: 'ws://localhost:6061'
+    url: 'ws://localhost:6061',
+    id: 'client'
   })
 
   client.subscribe({
     val: true
   }, (t, type) => {
-    console.log('client', t.path(), type)
+    // console.log('client', t.path(), type)
   })
 
-  setTimeout(() => {
-    client.set('hello')
-  }, 100)
+  client.set({ blurf: 'hello' })
+
+  server.get('blurf', {}).once('hello', () => {
+    console.log('\n🐵 !!!omfg!!! 🐵')
+
+    // client.set({ blurf: 'x' })
+
+    server.set({ blarf: 'yyy' })
+  })
 })
