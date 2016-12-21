@@ -34,6 +34,7 @@
   ],
   "dependencies": {
     "brisky-stamp": "^2.1.6",
+    "string-hash": "^1.1.0",
     "brisky-struct": "git+ssh://git@github.com/vigour-io/brisky-struct#feature/rollup",
     "monotonic-timestamp": "^0.0.9",
     "quick-hash": "^1.0.1",
