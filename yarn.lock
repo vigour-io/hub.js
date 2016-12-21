@@ -266,9 +266,9 @@ braces@^1.8.2:
     preserve "^0.2.0"
     repeat-element "^1.1.2"
 
-brisky-stamp@^2.1.5:
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/brisky-stamp/-/brisky-stamp-2.1.5.tgz#b1e24acb73d0e21ac8a69cf40bcb815a6fbd0f21"
+brisky-stamp@^2.1.1, brisky-stamp@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/brisky-stamp/-/brisky-stamp-2.1.6.tgz#ab9446091ad386210376e1d799fcd93bc1f382e5"
   dependencies:
     bubleify "0.5.1"
 
