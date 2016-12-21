@@ -53,7 +53,8 @@ test('client - multiple', t => {
 
     client.get('blarf', {}).once('yyy', () => {
       console.log('recieved blarf!')
-      client.set(null)
+      server.set({ somefield: null })
+      // client.set(null)
     })
   })
 })
