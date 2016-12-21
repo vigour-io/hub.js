@@ -35,7 +35,6 @@ test('data size', { timeout: 2000 }, t => {
 
   server.set({ someData })
 
-
   client.subscribe({ someData: { val: true } }, () => {
     t.ok(true, 'subscription fired')
     t.end()
