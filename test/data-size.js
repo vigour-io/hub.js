@@ -20,7 +20,8 @@ test('data size', { timeout: 2000 }, t => {
   var someData = {}
   const val = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor ' +
     'incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud ' +
-    'exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    'exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure ' +
+    'dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
   let i = 1e3
   while (i-- > 0) {
     const d = 1e11 + Math.round(Math.random() * 1e11)
@@ -34,7 +35,6 @@ test('data size', { timeout: 2000 }, t => {
   }
 
   server.set({ someData })
-
 
   client.subscribe({ someData: { val: true } }, () => {
     t.ok(true, 'subscription fired')
