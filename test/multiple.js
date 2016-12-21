@@ -5,13 +5,16 @@ test('client - multiple', t => {
   const server = hub({
     key: 'server',
     port: 6060,
-    id: 'server'
+    id: 'server',
+    somefield: {
+      val: 'somefield!',
+      stamp: 'client|0.1'
+    }
   })
 
   const hybrid = hub({
     key: 'hybrid',
     port: 6061,
-    url: 'ws://localhost:6060',
     id: 'hybrid'
   })
 
@@ -35,11 +38,17 @@ test('client - multiple', t => {
 
   client.set({ blurf: 'hello' })
 
+  // url: 'ws://localhost:6060'
+  client.connected.once(true).then(() => {
+    console.log('go go go')
+    hybrid.set({
+      url: 'ws://localhost:6060'
+    })
+  })
+
   server.get('blurf', {}).once('hello', () => {
     console.log('\n🐵 !!!omfg!!! 🐵')
-
     // client.set({ blurf: 'x' })
-
     server.set({ blarf: 'yyy' })
 
     client.get('blarf', {}).once('yyy', () => {
