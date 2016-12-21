@@ -3,9 +3,9 @@ import test from 'tape'
 
 test('client - multiple', t => {
   const server = hub({
+    id: 'server',
     key: 'server',
     port: 6060,
-    id: 'server',
     somefield: {
       val: 'somefield!',
       stamp: 'client|0.1'
@@ -14,8 +14,8 @@ test('client - multiple', t => {
 
   const hybrid = hub({
     key: 'hybrid',
-    port: 6061,
-    id: 'hybrid'
+    id: 'hybrid',
+    port: 6061
   })
 
   hybrid.subscribe({
