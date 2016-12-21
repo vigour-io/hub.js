@@ -1,3 +1,3 @@
 // import './connect'
-import './data-size'
+// import './data-size'
 import './multiple'
