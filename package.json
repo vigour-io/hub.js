@@ -14,6 +14,7 @@
     "test": "standard && (node dist/test/index.js)",
     "wip": "rollup -c rollup/browser.js -w ",
     "dev": "rollup -c rollup/test.js -w & nodemon -C -w dist/test/index.js --harmony-async-await dist/test/index.js",
+    "dev-linked": "rollup -c rollup/test.js -w & nodemon --harmony-async-await dist/test/index.js",
     "cover": "nyc npm test"
   },
   "repository": {
@@ -33,10 +34,9 @@
     "realtime"
   ],
   "dependencies": {
-    "brisky-stamp": "^2.1.6",
+    "brisky-stamp": "^3.0.7",
     "brisky-struct": "git+ssh://git@github.com/vigour-io/brisky-struct#feature/rollup",
-    "monotonic-timestamp": "^0.0.9",
-    "quick-hash": "^1.0.1",
+    "string-hash": "^1.1.0",
     "uws": "0.12.0",
     "vigour-ua": "^2.0.0"
   },

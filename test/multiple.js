@@ -1,5 +1,6 @@
 import hub from '../lib'
 import test from 'tape'
+import bs from 'brisky-stamp'
 
 test('client - multiple', t => {
   const server = hub({
@@ -8,7 +9,7 @@ test('client - multiple', t => {
     port: 6060,
     somefield: {
       val: 'somefield!',
-      stamp: 'client|0.1'
+      stamp: bs.create('click', 'client', 0.0001)
     }
   })
 
@@ -36,11 +37,12 @@ test('client - multiple', t => {
     // console.log('client', t.path(), type)
   })
 
+  console.log('\n\nSET BLURF')
   client.set({ blurf: 'hello' })
 
-  // url: 'ws://localhost:6060'
+  // // url: 'ws://localhost:6060'
   client.connected.once(true).then(() => {
-    console.log('go go go')
+    console.log('🐵 clientIsConnected 🐵')
     hybrid.set({
       url: 'ws://localhost:6060'
     })
@@ -49,10 +51,11 @@ test('client - multiple', t => {
   server.get('blurf', {}).once('hello', () => {
     console.log('\n🐵 !!!omfg!!! 🐵')
     // client.set({ blurf: 'x' })
+    console.log('\n\n\n---->SET SERVER')
     server.set({ blarf: 'yyy' })
 
     client.get('blarf', {}).once('yyy', () => {
-      console.log('recieved blarf!')
+      console.log('??????? recieved blarf!')
       server.set({ somefield: null })
       // client.set(null)
     })

@@ -17,8 +17,7 @@ export default {
   external: [
     'tape',
     'brisky-stamp',
-    'monotonic-timestamp',
-    'quick-hash',
+    'string-hash',
     'uws',
     'brisky-struct'
   ],
