@@ -10,7 +10,7 @@
     "watch": "rollup -c rollup/dist.js -w & rollup -c rollup/browser.js -w",
     "pretest": "rollup -c rollup/test.js",
     "prepublish": "npm run build",
-    "postinstall": "[ -d dist ] || npm run build",
+    "postinstall": "[ -d dist ] || npm run build || ( mkdir dist && yarn && npm run build )",
     "test": "standard && (node dist/test/index.js)",
     "wip": "rollup -c rollup/browser.js -w ",
     "dev": "rollup -c rollup/test.js -w & nodemon -C -w dist/test/index.js --harmony-async-await dist/test/index.js",
