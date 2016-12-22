@@ -39,7 +39,7 @@ test('client - multiple', t => {
 
   client.set({ blurf: 'hello' })
 
-  // url: 'ws://localhost:6060'
+  // // url: 'ws://localhost:6060'
   client.connected.once(true).then(() => {
     console.log('go go go')
     hybrid.set({
