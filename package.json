@@ -33,7 +33,7 @@
     "realtime"
   ],
   "dependencies": {
-    "brisky-stamp": "^3.0.6",
+    "brisky-stamp": "^3.0.7",
     "brisky-struct": "git+ssh://git@github.com/vigour-io/brisky-struct#feature/rollup",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
