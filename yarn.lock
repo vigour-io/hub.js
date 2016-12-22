@@ -272,13 +272,6 @@ brisky-stamp@^3.0.8:
   dependencies:
     global "^4.3.1"
 
-"brisky-struct@git+ssh://git@github.com/vigour-io/brisky-struct#feature/rollup":
-  version "0.0.33"
-  resolved "git+ssh://git@github.com/vigour-io/brisky-struct#a16752edabd056c28f0de60672df07eb198c6b51"
-  dependencies:
-    brisky-stamp "^2.1.1"
-    monotonic-timestamp "0.0.9"
-
 browser-resolve@^1.11.0:
   version "1.11.2"
   resolved "https://registry.yarnpkg.com/browser-resolve/-/browser-resolve-1.11.2.tgz#8ff09b0a2c421718a1051c260b32e48f442938ce"
