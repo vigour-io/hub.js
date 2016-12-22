@@ -1,5 +1,6 @@
 import hub from '../lib'
 import test from 'tape'
+import bs from 'brisky-stamp'
 
 test('client - multiple', t => {
   const server = hub({
@@ -8,7 +9,7 @@ test('client - multiple', t => {
     port: 6060,
     somefield: {
       val: 'somefield!',
-      stamp: 'client|0.1'
+      stamp: bs.create('click', 'client', 0.0001)
     }
   })
 
