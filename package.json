@@ -53,6 +53,7 @@
     "./lib/client/websocket/index.js": "./lib/client/websocket/browser.js"
   },
   "devDependencies": {
+    "source-map-support": "^0.4.7",
     "buble": "0.15.1",
     "nodemon": "^1.11.0",
     "nyc": "^10.0.0",
