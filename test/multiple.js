@@ -29,8 +29,6 @@ test('client - multiple', t => {
     id: 'client'
   })
 
-  client.subscribe(true)
-
   client.set({ blurf: 'hello' })
 
   client.connected.once(true).then(() => {
@@ -40,6 +38,7 @@ test('client - multiple', t => {
 
   server.get('blurf', {}).once('hello', () => {
     server.set({ blarf: 'yyy' })
+    client.subscribe(true)
     client.get('blarf', {}).once('yyy', () => {
       t.pass('client receives blarf from server')
       server.set({ somefield: null })
