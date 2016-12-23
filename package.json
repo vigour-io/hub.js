@@ -34,11 +34,11 @@
     "realtime"
   ],
   "dependencies": {
-    "brisky-stamp": "^3.0.8",
-    "brisky-struct": "git+ssh://git@github.com/vigour-io/brisky-struct#feature/rollup",
+    "brisky-stamp": "^3.0.11",
+    "brisky-struct": "^1.0.2",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
-    "vigour-ua": "^2.0.0"
+    "vigour-ua": "^2.2.3"
   },
   "nyc": {
     "include": [
