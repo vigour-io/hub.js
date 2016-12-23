@@ -3,6 +3,8 @@ const test = require('tape')
 const bs = require('brisky-stamp')
 
 test('client - multiple', t => {
+  console.log('\n\n\nMULTIPLE!')
+
   const server = hub({
     id: 'server',
     key: 'server',
@@ -19,11 +21,7 @@ test('client - multiple', t => {
     port: 6061
   })
 
-  hybrid.subscribe({
-    val: true
-  }, (t, type) => {
-    // console.log('hybrid', t.path(), type)
-  })
+  hybrid.subscribe(true)
 
   const client = hub({
     key: 'client',
@@ -31,33 +29,24 @@ test('client - multiple', t => {
     id: 'client'
   })
 
-  client.subscribe({
-    val: true
-  }, (t, type) => {
-    // console.log('client', t.path(), type)
-  })
+  client.subscribe(true)
 
-  console.log('\n\nSET BLURF')
   client.set({ blurf: 'hello' })
 
-  // // url: 'ws://localhost:6060'
   client.connected.once(true).then(() => {
-    console.log('🐵 clientIsConnected 🐵')
-    hybrid.set({
-      url: 'ws://localhost:6060'
-    })
+    t.pass('client is connected')
+    hybrid.set({ url: 'ws://localhost:6060' })
   })
 
   server.get('blurf', {}).once('hello', () => {
-    console.log('\n🐵 !!!omfg!!! 🐵')
-    // client.set({ blurf: 'x' })
-    console.log('\n\n\n---->SET SERVER')
     server.set({ blarf: 'yyy' })
-
     client.get('blarf', {}).once('yyy', () => {
-      console.log('??????? recieved blarf!')
+      t.pass('client receives blarf from server')
       server.set({ somefield: null })
-      // client.set(null)
+      client.set(null)
+      hybrid.set(null)
+      server.set(null)
+      t.end()
     })
   })
 })
