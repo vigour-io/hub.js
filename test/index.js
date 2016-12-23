@@ -1,3 +1,3 @@
-// import './connect'
-// import './data-size'
-import './multiple'
+require('./connect')
+// require('./data-size')
+// require('./multiple')

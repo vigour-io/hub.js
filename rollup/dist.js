@@ -15,6 +15,7 @@ export default {
     'brisky-stamp',
     'string-hash',
     'uws',
+    'vigour-ua',
     'brisky-struct'
   ],
   sourceMap: true,

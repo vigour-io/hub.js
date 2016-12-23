@@ -8,18 +8,17 @@
   "scripts": {
     "build": "rollup -c rollup/dist.js & rollup -c rollup/browser.js",
     "watch": "rollup -c rollup/dist.js -w & rollup -c rollup/browser.js -w",
-    "pretest": "rollup -c rollup/test.js",
+    "pretest": "npm run build && standard",
     "prepublish": "npm run build",
     "postinstall": "[ -d dist ] || npm run build || ( mkdir dist && yarn && npm run build )",
-    "test": "standard && (node dist/test/index.js)",
-    "wip": "rollup -c rollup/browser.js -w ",
-    "dev": "rollup -c rollup/test.js -w & nodemon -C -w dist/test/index.js --harmony-async-await dist/test/index.js",
-    "dev-linked": "rollup -c rollup/test.js -w & nodemon --harmony-async-await dist/test/index.js",
-    "cover": "nyc npm test"
+    "test": "node test/index.js",
+    "dev": "rollup -c rollup/dist.js -w & nodemon --harmony-async-await test/index.js",
+    "cover": "nyc npm test",
+    "travis": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vigour-io/brisky-struct.git"
+    "url": "git+https://github.com/vigour-io/hub.js.git"
   },
   "keywords": [
     "websocket",
@@ -69,9 +68,9 @@
   "author": "jim de beer",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/vigour-io/brisky-struct/issues"
+    "url": "https://github.com/vigour-io/hub.js/issues"
   },
-  "homepage": "https://github.com/vigour-io/brisky-struct#readme",
+  "homepage": "https://github.com/vigour-io/hub.js#readme",
   "contributors": [
     "Jim de Beer <jim@vigour.io>"
   ]

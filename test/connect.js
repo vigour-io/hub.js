@@ -1,5 +1,5 @@
-import hub from '../lib'
-import test from 'tape'
+const hub = require('../')
+const test = require('tape')
 
 test('client - connect', t => {
   const top = hub({

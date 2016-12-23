@@ -1,6 +1,6 @@
-import hub from '../lib'
-import test from 'tape'
-import bs from 'brisky-stamp'
+const hub = require('../')
+const test = require('tape')
+const bs = require('brisky-stamp')
 
 test('client - multiple', t => {
   const server = hub({

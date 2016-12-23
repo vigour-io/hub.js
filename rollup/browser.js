@@ -17,11 +17,10 @@ export default {
     'brisky-stamp',
     'string-hash',
     'uws',
+    'vigour-ua',
     'brisky-struct'
   ],
   targets: [
-    // { dest: 'dist/test/index.js', format: 'cjs' },
-    // { dest: 'dist/test/index.es.js', format: 'es' },
     {
       dest: 'dist/index.browser.js',
       format: 'es'
