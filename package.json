@@ -5,14 +5,20 @@
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
+  "browser": {
+    "./dist/index.js": "./dist/browser.js",
+    "./dist/index.es.js": "./dist/browser.es.js",
+    "./lib/uid/index.js": "./lib/uid/browser.js",
+    "./lib/server/index.js": "./lib/server/browser.js",
+    "./lib/client/websocket/index.js": "./lib/client/websocket/browser.js"
+  },
   "scripts": {
-    "build": "rollup -c rollup/dist.js & rollup -c rollup/browser.js",
-    "watch": "rollup -c rollup/dist.js -w & rollup -c rollup/browser.js -w",
+    "build": "node rollup/build",
     "pretest": "npm run build && standard",
     "prepublish": "npm run build",
     "postinstall": "[ -d dist ] || npm run build || ( mkdir dist && yarn && npm run build )",
     "test": "node test/index.js",
-    "dev": "rollup -c rollup/dist.js -w & nodemon --harmony-async-await test/index.js",
+    "dev": "node rollup/watch & nodemon --harmony-async-await test/index.js",
     "cover": "nyc npm test",
     "travis": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
@@ -45,12 +51,6 @@
     ],
     "sourceMap": true,
     "instrument": true
-  },
-  "browser": {
-    "./dist/index.es.js": "./dist/index.browser.js",
-    "./lib/uid/index.js": "./lib/uid/browser.js",
-    "./lib/server/index.js": "./lib/server/browser.js",
-    "./lib/client/websocket/index.js": "./lib/client/websocket/browser.js"
   },
   "devDependencies": {
     "source-map-support": "^0.4.7",
