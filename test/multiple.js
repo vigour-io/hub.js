@@ -3,8 +3,6 @@ const test = require('tape')
 const bs = require('brisky-stamp')
 
 test('client - multiple', t => {
-  console.log('\n\n\nMULTIPLE!')
-
   const server = hub({
     id: 'server',
     key: 'server',
@@ -37,15 +35,27 @@ test('client - multiple', t => {
   })
 
   server.get('blurf', {}).once('hello', () => {
+    var cnt = 0
     server.set({ blarf: 'yyy' })
-    client.subscribe(true)
+    client.subscribe({
+      blurf: true,
+      blarf: true
+    }, () => {
+      cnt++
+      // removing client yourself should not do shit
+      console.log('fire client')
+    })
     client.get('blarf', {}).once('yyy', () => {
       t.pass('client receives blarf from server')
       server.set({ somefield: null })
-      client.set(null)
+      cnt = 0
       hybrid.set(null)
-      server.set(null)
-      t.end()
+      setTimeout(() => {
+        server.set(null)
+        t.equal(cnt, 0, 'client does not fire when getting removed')
+        client.set(null) // do we want to stop firing subs it is kinda wrong...
+        t.end()
+      }, 10)
     })
   })
 })
