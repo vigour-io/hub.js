@@ -42,8 +42,6 @@ test('client - multiple', t => {
       blarf: true
     }, () => {
       cnt++
-      // removing client yourself should not do shit
-      console.log('fire client')
     })
     client.get('blarf', {}).once('yyy', () => {
       t.pass('client receives blarf from server')
@@ -55,7 +53,7 @@ test('client - multiple', t => {
         t.equal(cnt, 0, 'client does not fire when getting removed')
         client.set(null) // do we want to stop firing subs it is kinda wrong...
         t.end()
-      }, 10)
+      }, 50)
     })
   })
 })
