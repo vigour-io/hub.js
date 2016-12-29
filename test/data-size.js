@@ -36,14 +36,17 @@ test('data size', { timeout: 2000 }, t => {
 
   server.set({ someData })
 
-  client.subscribe({ someData: { val: true } }, () => {
+  client.subscribe({ someData: true }, () => {
+    console.log('fire')
     t.ok(true, 'subscription fired')
     t.end()
   })
 })
 
 test('reset', t => {
-  client.set(null)
-  server.set(null)
+  // client.set(null, false)
+  var d = Date.now()
+  server.set(null) // should not send anything
+  console.log(Date.now() - d, 'ms')
   t.end()
 })
