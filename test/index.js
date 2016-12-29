@@ -3,4 +3,4 @@ if (typeof window === 'undefined') {
 }
 require('./connect')
 require('./multiple')
-// require('./data-size')
+require('./data-size')
