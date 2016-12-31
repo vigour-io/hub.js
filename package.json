@@ -16,6 +16,7 @@
     "build": "node rollup/build",
     "pretest": "npm run build && standard",
     "prepublish": "npm run build",
+    "watch": "node rollup/watch",
     "postinstall": "[ -d dist ] || npm run build || ( mkdir dist && yarn && npm run build )",
     "test": "node test/index.js",
     "dev": "node rollup/watch & nodemon --harmony-async-await test/index.js",
@@ -40,7 +41,7 @@
   ],
   "dependencies": {
     "brisky-stamp": "^3.0.11",
-    "brisky-struct": "^1.0.2",
+    "brisky-struct": "^1.0.6",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
     "vigour-ua": "^2.2.3"
