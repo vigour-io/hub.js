@@ -281,8 +281,8 @@ brisky-stamp@^3.0.11:
     global "^4.3.1"
 
 brisky-struct@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/brisky-struct/-/brisky-struct-1.0.6.tgz#01a85a93d200955e8b3cb841e4fcc0cf0a7a0721"
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/brisky-struct/-/brisky-struct-1.0.7.tgz#632c932cf947469baa73ebe284b35abc2acec234"
   dependencies:
     brisky-stamp "^3.0.11"
 
@@ -2901,13 +2901,17 @@ window-size@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/window-size/-/window-size-0.1.0.tgz#5438cd2ea93b202efa3a19fe8887aee7c94f9c9d"
 
-wordwrap@0.0.2, wordwrap@~0.0.2:
+wordwrap@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-0.0.2.tgz#b79669bb42ecb409f83d583cad52ca17eaa1643f"
 
 wordwrap@^1.0.0, wordwrap@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
+
+wordwrap@~0.0.2:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-0.0.3.tgz#a3d5da6cd5c0bc0008d37234bbaf1bed63059107"
 
 wrap-ansi@^2.0.0:
   version "2.1.0"

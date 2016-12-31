@@ -46,7 +46,7 @@ test('data size', { timeout: 2000 }, t => {
 test('reset', t => {
   client.set(null)
   // var d = Date.now()
-  // server.set(null) // should not send anything
+  server.set(null) // should not send anything
   // console.log(Date.now() - d, 'ms')
   t.end()
 })
