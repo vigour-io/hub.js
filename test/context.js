@@ -33,6 +33,11 @@ test('context', t => {
     url: 'ws://localhost:6061'
   })
 
+  const client4 = hub({
+    id: 'client4',
+    url: 'ws://localhost:6060'
+  })
+
   client2.subscribe(true)
   client1.subscribe(true)
 
@@ -51,6 +56,15 @@ test('context', t => {
     client2.get('somefield', {}).once('hahaha')
   ]).then(() => {
     t.pass('client1 & client2 receive context updates')
+    client4.set({ smurf: true })
+  })
+
+  Promise.all([
+    client1.get('smurf', {}).once(true),
+    client2.get('smurf', {}).once(true)
+  ]).then(() => {
+    t.pass('client1 & client2 receive updates from client connected to server')
+    client4.set({ smurf: true })
   })
 
 
