@@ -3,15 +3,15 @@ const test = require('tape')
 const bs = require('brisky-stamp')
 
 test('context', t => {
-  const server = hub({
-    id: 'server',
-    key: 'server',
-    port: 6060,
-    somefield: {
-      val: 'somefield!',
-      stamp: bs.create('click', 'client', 0.0001)
-    }
-  })
+  // const server = hub({
+  //   id: 'server',
+  //   key: 'server',
+  //   port: 6060,
+  //   somefield: {
+  //     val: 'somefield!',
+  //     stamp: bs.create('click', 'client', 0.0001)
+  //   }
+  // })
 
   const hybrid = hub({
     key: 'hybrid',
@@ -27,11 +27,11 @@ test('context', t => {
     context: 'a'
   })
 
-  const client2 = hub({
-    url: 'ws://localhost:6061',
-    id: 'client2',
-    context: 'b'
-  })
+  // const client2 = hub({
+  //   url: 'ws://localhost:6061',
+  //   id: 'client2',
+  //   context: 'b'
+  // })
 
   // client
 
