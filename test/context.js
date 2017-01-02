@@ -2,46 +2,51 @@ const hub = require('../')
 const test = require('tape')
 
 test('context', t => {
-  // const server = hub({
-  //   id: 'server',
-  //   key: 'server',
-  //   port: 6060,
-  //   somefield: {
-  //     val: 'somefield!',
-  //     stamp: bs.create('click', 'client', 0.0001)
-  //   }
-  // })
+  const scraper = hub({
+    id: 'scraper',
+    port: 6060,
+    somefield: {
+      val: 'somefield!'
+    }
+  })
 
   const hybrid = hub({
-    id: 'hybrid',
+  id: 'theHub',
+    url: 'ws://localhost:6060',
     port: 6061
   })
 
+  hybrid.subscribe(true)
+
   const client1 = hub({
-    url: 'ws://localhost:6061',
     id: 'client1',
-    context: 'a'
+    url: 'ws://localhost:6061',
+    context: 'pavel'
   })
 
   const client2 = hub({
-    url: 'ws://localhost:6061',
     id: 'client2',
-    context: 'a'
+    url: 'ws://localhost:6061',
+    context: 'pavel'
   })
 
-  // const client3 = hub({
-  //   url: 'ws://localhost:6061',
-  //   id: 'client3'
-  // })
+  const client3 = hub({
+    id: 'client3',
+    url: 'ws://localhost:6061'
+  })
 
   client2.subscribe(true)
 
   client2.get('blurf', {}).once('hello', () => {
     t.pass('client2 recieves correct value')
-    console.log('??? --->')
+    console.log('??? --->', hybrid.getContext('pavel').keys(), hybrid.clients.keys())
+    console.log(hybrid.getContext('pavel').clients.client1.keys())
   })
 
   client1.set({ blurf: 'hello' })
+  // client1.client.set({
+  //   iAmTheReceiver: true
+  // })
 
   // take care of this after context
   // client1.subscribe({
