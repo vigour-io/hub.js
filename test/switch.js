@@ -26,7 +26,7 @@ test('switch', t => {
   client.subscribe({
     ref: {
       $switch: t => {
-        return t.origin().key  === 'blurf' ? {
+        return t.origin().key === 'blurf' ? {
           b: { val: true }
         } : {
           a: { val: true }
