@@ -5,13 +5,11 @@ test('context', t => {
   const scraper = hub({
     id: 'scraper',
     port: 6060,
-    somefield: {
-      val: 'somefield!'
-    }
+    somefield: 'somefield!'
   })
 
   const hybrid = hub({
-  id: 'theHub',
+    id: 'hybrid',
     url: 'ws://localhost:6060',
     port: 6061
   })
@@ -36,25 +34,27 @@ test('context', t => {
   })
 
   client2.subscribe(true)
+  client1.subscribe(true)
 
-  client2.get('blurf', {}).once('hello', () => {
+  Promise.all([
+    client2.get('blurf', {}).once('hello'),
+    client2.get('somefield', {}).once('somefield!'),
+    client1.get('somefield', {}).once('somefield!')
+  ]).then(() => {
     t.pass('client2 recieves correct value')
-    console.log('??? --->', hybrid.getContext('pavel').keys(), hybrid.clients.keys())
-    console.log(hybrid.getContext('pavel').clients.client1.keys())
+    t.pass('client2 receives server-1 somefield!')
+    client3.set({ somefield: 'hahaha' })
   })
 
-  client1.set({ blurf: 'hello' })
-  // client1.client.set({
-  //   iAmTheReceiver: true
-  // })
+  Promise.all([
+    client1.get('somefield', {}).once('hahaha'),
+    client2.get('somefield', {}).once('hahaha')
+  ]).then(() => {
+    t.pass('client1 & client2 receive context updates')
+  })
 
-  // take care of this after context
-  // client1.subscribe({
-  //   client: {
-  //     title: true
-  //   }
-  // }, (t) => {
-  //   console.log('subscribe on my client object', t.path())
-  // })
-  // client1.client.set({ title: 'HA!' })
+
+  client1.set({ blurf: 'hello' })
+  // client1.client.set({ iAmTheReceiver: true })
+
 })
