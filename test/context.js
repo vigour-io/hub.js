@@ -13,7 +13,7 @@ test('context', t => {
   // })
 
   const hybrid = hub({
-    key: 'hybrid',
+    // key: 'hybrid',
     id: 'hybrid',
     port: 6061
   })
@@ -32,8 +32,12 @@ test('context', t => {
     context: 'a'
   })
 
-  client2.subscribe(true, () => {
-    console.log('fire subs!')
+  client2.subscribe(true, (t) => {
+    console.log('client2', t.path(), t.serialize())
+  })
+
+  client2.get('blurf', {}).once('hello', () => {
+    t.pass('client2 recieves correct value')
   })
 
   client1.set({ blurf: 'hello' })
