@@ -1,6 +1,5 @@
 const hub = require('../')
 const test = require('tape')
-const bs = require('brisky-stamp')
 
 test('switch', t => {
   const server = hub({

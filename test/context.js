@@ -1,6 +1,5 @@
 const hub = require('../')
 const test = require('tape')
-const bs = require('brisky-stamp')
 
 test('context', t => {
   // const server = hub({
@@ -23,8 +22,8 @@ test('context', t => {
 
   const client1 = hub({
     url: 'ws://localhost:6061',
-    id: 'client1'
-    // context: 'a'
+    id: 'client1',
+    context: 'a'
   })
 
   // const client2 = hub({
