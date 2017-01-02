@@ -18,16 +18,15 @@ test('switch', t => {
     console.log('dirtface', err)
   })
 
-  const client1 = hub({
+  const client = hub({
     url: 'ws://localhost:6061',
     id: 'client1'
     // context: 'a'
   })
 
-  client1.subscribe({
+  client.subscribe({
     ref: {
       $switch: t => {
-        console.log(t.path(), t.origin().key  === 'blurf')
         return t.origin().key  === 'blurf' ? {
           b: { val: true }
         } : {
@@ -35,9 +34,14 @@ test('switch', t => {
         }
       }
     }
-  }, state => {
-    console.log('incoming:', state.path())
   })
 
-  client1.set({ ref: [ '@', 'blurf' ] })
+  client.set({ ref: [ '@', 'parent', 'blurf' ] })
+
+  client.get([ 'blurf', 'b' ], {}).once('hello').then(() => {
+    t.pass('received blurf.b')
+    server.set(null)
+    client.set(null)
+    t.end()
+  })
 })
