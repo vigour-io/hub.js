@@ -13,12 +13,9 @@ test('context', t => {
   // })
 
   const hybrid = hub({
-    // key: 'hybrid',
     id: 'hybrid',
     port: 6061
   })
-
-  // hybrid.subscribe(true)
 
   const client1 = hub({
     url: 'ws://localhost:6061',
@@ -32,13 +29,27 @@ test('context', t => {
     context: 'a'
   })
 
-  client2.subscribe(true, (t) => {
-    console.log('client2', t.path(), t.serialize())
-  })
+  // const client3 = hub({
+  //   url: 'ws://localhost:6061',
+  //   id: 'client3'
+  // })
+
+  client2.subscribe(true)
 
   client2.get('blurf', {}).once('hello', () => {
     t.pass('client2 recieves correct value')
+    console.log('??? --->')
   })
 
   client1.set({ blurf: 'hello' })
+
+  // take care of this after context
+  // client1.subscribe({
+  //   client: {
+  //     title: true
+  //   }
+  // }, (t) => {
+  //   console.log('subscribe on my client object', t.path())
+  // })
+  // client1.client.set({ title: 'HA!' })
 })
