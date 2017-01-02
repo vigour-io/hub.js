@@ -83,7 +83,7 @@ test('client - connect', t => {
     return server.clients.once(clients => clients.keys().length === 0)
   }).then(() => {
     t.pass('removal of client clears server')
-    t.same(server.keys(), [ 'clients' ], 'did not remove server')
+    t.same(server.keys(), [], 'did not remove server')
     server.set(null)
     server2.set(null)
     t.end()
