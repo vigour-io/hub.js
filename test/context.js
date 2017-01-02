@@ -23,8 +23,8 @@ test('context', t => {
 
   const client1 = hub({
     url: 'ws://localhost:6061',
-    id: 'client1',
-    context: 'a'
+    id: 'client1'
+    // context: 'a'
   })
 
   // const client2 = hub({
