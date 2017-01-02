@@ -38,8 +38,9 @@ test('context', t => {
     url: 'ws://localhost:6060'
   })
 
-  client2.subscribe(true)
   client1.subscribe(true)
+  client2.subscribe(true)
+  client3.subscribe(true)
 
   Promise.all([
     client2.get('blurf', {}).once('hello'),
@@ -61,14 +62,17 @@ test('context', t => {
 
   Promise.all([
     client1.get('smurf', {}).once(true),
-    client2.get('smurf', {}).once(true)
+    client2.get('smurf', {}).once(true),
+    client3.get('smurf', {}).once(true)
   ]).then(() => {
-    t.pass('client1 & client2 receive updates from client connected to server')
-    client4.set({ smurf: true })
+    t.pass('client1 & client2 & client3 receive updates')
+    client3.set({ context: 'pavel' })
+    client3.get('blurf', {}).once('hello').then(() => {
+      t.pass('client3 receives updates after switching context')
+      console.log('SICK SICK SICK')
+    })
   })
 
-
   client1.set({ blurf: 'hello' })
-  // client1.client.set({ iAmTheReceiver: true })
 
 })
