@@ -69,7 +69,25 @@ test('context', t => {
     client3.set({ context: 'pavel' })
     client3.get('blurf', {}).once('hello').then(() => {
       t.pass('client3 receives updates after switching context')
-      console.log('SICK SICK SICK')
+      client1.set({ context: false })
+      hybrid.getContext('pavel').clients.once(t => t.keys().length === 2)
+      .then(() => {
+        t.pass('removed client from hybrid')
+        client1.set(null)
+        client2.set(null)
+        client3.set(null)
+        client4.set(null)
+        hybrid.getContext('pavel').on(val => {
+          if (val === null) {
+            t.pass('removed context when there are no clients')
+            hybrid.set(null)
+            scraper.set(null)
+            t.end()
+          }
+        })
+
+
+      })
     })
   })
 
