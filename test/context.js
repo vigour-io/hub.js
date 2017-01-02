@@ -18,7 +18,7 @@ test('context', t => {
     port: 6061
   })
 
-  hybrid.subscribe(true)
+  // hybrid.subscribe(true)
 
   const client1 = hub({
     url: 'ws://localhost:6061',
@@ -26,13 +26,15 @@ test('context', t => {
     context: 'a'
   })
 
-  // const client2 = hub({
-  //   url: 'ws://localhost:6061',
-  //   id: 'client2',
-  //   context: 'b'
-  // })
+  const client2 = hub({
+    url: 'ws://localhost:6061',
+    id: 'client2',
+    context: 'a'
+  })
 
-  // client
+  client2.subscribe(true, () => {
+    console.log('fire subs!')
+  })
 
   client1.set({ blurf: 'hello' })
 })
