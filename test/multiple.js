@@ -46,13 +46,15 @@ test('client - multiple', t => {
     client.get('blarf', {}).once('yyy', () => {
       t.pass('client receives blarf from server')
       server.set({ somefield: null })
-      cnt = 0
-      hybrid.set(null)
       setTimeout(() => {
-        server.set(null)
-        t.equal(cnt, 0, 'client does not fire when getting removed')
-        client.set(null) // do we want to stop firing subs it is kinda wrong...
-        t.end()
+        cnt = 0
+        hybrid.set(null)
+        setTimeout(() => {
+          server.set(null)
+          t.equal(cnt, 0, 'client does not fire when getting removed')
+          client.set(null) // do we want to stop firing subs it is kinda wrong...
+          t.end()
+        }, 50)
       }, 50)
     })
   })
