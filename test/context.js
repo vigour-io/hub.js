@@ -57,7 +57,6 @@ test('context', t => {
     client2.get('somefield', {}).once('hahaha')
   ]).then(() => {
     t.pass('client1 & client2 receive context updates')
-    console.log('--->')
     client4.set({ smurf: true })
   })
 
