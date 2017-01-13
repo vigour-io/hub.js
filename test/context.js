@@ -18,14 +18,14 @@ test('context', t => {
 
   const client1 = hub({
     id: 'client1',
-    url: 'ws://localhost:6061',
-    context: 'pavel'
+    context: 'pavel',
+    url: 'ws://localhost:6061'
   })
 
   const client2 = hub({
     id: 'client2',
-    url: 'ws://localhost:6061',
-    context: 'pavel'
+    context: 'pavel',
+    url: 'ws://localhost:6061'
   })
 
   const client3 = hub({
@@ -57,6 +57,7 @@ test('context', t => {
     client2.get('somefield', {}).once('hahaha')
   ]).then(() => {
     t.pass('client1 & client2 receive context updates')
+    // console.log(hybrid.getContext('pavel').keys())
     client4.set({ smurf: true })
   })
 
@@ -67,6 +68,7 @@ test('context', t => {
   ]).then(() => {
     t.pass('client1 & client2 & client3 receive updates')
     client3.set({ context: 'pavel' })
+    // console.log(hybrid.getContext('pavel').keys())
     client3.get('blurf', {}).once('hello').then(() => {
       t.pass('client3 receives updates after switching context')
       client1.set({ context: false })
