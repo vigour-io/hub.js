@@ -40,7 +40,7 @@
     "realtime"
   ],
   "dependencies": {
-    "brisky-stamp": "^3.0.11",
+    "brisky-stamp": "^3.0.12",
     "brisky-struct": "^1.0.10",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
