@@ -8,7 +8,7 @@ const test = (label, fn) => {
     end: () => {
       cnt++
       console.log('\n\n\n\n-----------------------------\ncompleted cycle --- next!', cnt)
-      fn(x)
+      setTimeout(() => fn(x), 100)
     }
   }
   fn(x)
