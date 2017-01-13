@@ -1,18 +1,5 @@
 const hub = require('../')
-// const test = require('tape')
-
-const test = (label, fn) => {
-  var cnt = 0
-  var x = {
-    pass: (val) => console.log(val),
-    end: () => {
-      cnt++
-      console.log('\n\n\n\n-----------------------------\ncompleted cycle --- next!', cnt)
-      setTimeout(() => fn(x), 100)
-    }
-  }
-  fn(x)
-}
+const test = require('tape')
 
 test('context', t => {
   const scraper = hub({
@@ -70,8 +57,6 @@ test('context', t => {
     client2.get('somefield', {}).once('hahaha')
   ]).then(() => {
     t.pass('client1 & client2 receive context updates')
-    // console.log(hybrid.getContext('pavel').keys())
-    console.log('\n\n\n🐼  🐤  🐼')
     client4.set({ smurf: true })
   })
 
@@ -90,10 +75,7 @@ test('context', t => {
     client3.get('blurf', {}).once('hello').then(() => {
       t.pass('client3 receives updates after switching context')
       client1.set({ context: false })
-      hybrid.getContext('pavel').clients.once(t => {
-        console.log('??????', t.keys())
-        return t.keys().length === 2
-      })
+      hybrid.getContext('pavel').clients.once(t => t.keys().length === 2)
       .then(() => {
         t.pass('removed client from hybrid')
         client1.set(null)
