@@ -10,7 +10,6 @@ test('types', t => {
       rick: { hello: true }
     },
     bla: {
-      val: 'gur',
       type: 'rick'
     }
   })
@@ -25,8 +24,8 @@ test('types', t => {
   })
 
   setTimeout(() => {
-    console.log(scraper.bla.serialize())
-    console.log(!!client.bla, client.bla.type.val)
+    console.log(scraper.bla.keys())
+    console.log(!!client.bla, client.bla.keys())
   }, 100)
 
   t.end()
