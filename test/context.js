@@ -1,5 +1,18 @@
 const hub = require('../')
-const test = require('tape')
+// const test = require('tape')
+
+const test = (label, fn) => {
+  var cnt = 0
+  var x = {
+    pass: (val) => console.log(val),
+    end: () => {
+      cnt++
+      console.log('\n\n\n\n-----------------------------\ncompleted cycle --- next!', cnt)
+      fn(x)
+    }
+  }
+  fn(x)
+}
 
 test('context', t => {
   const scraper = hub({
@@ -58,8 +71,15 @@ test('context', t => {
   ]).then(() => {
     t.pass('client1 & client2 receive context updates')
     // console.log(hybrid.getContext('pavel').keys())
+    console.log('\n\n\n🐼  🐤  🐼')
     client4.set({ smurf: true })
   })
+
+  // client1.get('smurf', {}).once(true).then(() => console.log(1))
+  // client2.get('smurf', {}).once(true).then(() => console.log(2))
+  // client3.get('smurf', {}).once(true).then(() => console.log(3))
+  // hybrid.get('smurf', {}).once(true).then(() => console.log('hybrid'))
+  // scraper.get('smurf', {}).once(true).then(() => console.log('scraper'))
 
   Promise.all([
     client1.get('smurf', {}).once(true),
@@ -67,12 +87,13 @@ test('context', t => {
     client3.get('smurf', {}).once(true)
   ]).then(() => {
     t.pass('client1 & client2 & client3 receive updates')
-    client3.set({ context: 'pavel' })
-    // console.log(hybrid.getContext('pavel').keys())
     client3.get('blurf', {}).once('hello').then(() => {
       t.pass('client3 receives updates after switching context')
       client1.set({ context: false })
-      hybrid.getContext('pavel').clients.once(t => t.keys().length === 2)
+      hybrid.getContext('pavel').clients.once(t => {
+        console.log('??????', t.keys())
+        return t.keys().length === 2
+      })
       .then(() => {
         t.pass('removed client from hybrid')
         client1.set(null)
@@ -89,6 +110,7 @@ test('context', t => {
         })
       })
     })
+    client3.set({ context: 'pavel' })
   })
 
   client1.set({ blurf: 'hello' })
