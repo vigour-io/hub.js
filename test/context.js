@@ -60,12 +60,6 @@ test('context', t => {
     client4.set({ smurf: true })
   })
 
-  // client1.get('smurf', {}).once(true).then(() => console.log(1))
-  // client2.get('smurf', {}).once(true).then(() => console.log(2))
-  // client3.get('smurf', {}).once(true).then(() => console.log(3))
-  // hybrid.get('smurf', {}).once(true).then(() => console.log('hybrid'))
-  // scraper.get('smurf', {}).once(true).then(() => console.log('scraper'))
-
   Promise.all([
     client1.get('smurf', {}).once(true),
     client2.get('smurf', {}).once(true),
