@@ -25,6 +25,8 @@ test('types', t => {
     console.log('--->', t.path())
   })
 
+  console.log(client.upstreamSubscriptions)
+
   setTimeout(() => {
     console.log('scraper bla keys:', scraper.bla.keys())
     console.log('client bla keys:', client.bla.keys(), client.bla.type.val)
