@@ -7,7 +7,10 @@ test('types', t => {
     port: 6060,
     somefield: 'somefield!',
     types: {
-      rick: { val: 'rick', hello: true },
+      rick: {
+        val: 'rick',
+        hello: true
+      },
       james: {
         val: 'james',
         a: {
@@ -18,9 +21,9 @@ test('types', t => {
       },
       blurf: { bye: true, x: true, y: true, z: true }
     },
-    blax: {
-      type: 'james'
-    },
+    // blax: {
+    //   type: 'james'
+    // },
     bla: {
       type: 'rick'
     },
@@ -35,28 +38,41 @@ test('types', t => {
     blurf: {
       on: {
         data: (val, stamp, t) => {
-          console.log('????', t.compute(), val)
+          console.log('blurf', t.compute(), val)
+        }
+      }
+    },
+    bla: {
+      on: {
+        data: (val, stamp, t) => {
+          console.log('bla', t.compute(), val)
         }
       }
     }
   })
 
   client.subscribe({
-    bla: { val: true, type: true },
+    // the val true screws it up...
+    bla: { type: true },
     blurf: {
-      a: { b: { c: true } },
+      // a: { b: { c: true } },
       type: true
     }
   })
 
   // what really happens --- new type -- listeners gets reset old listener removed and beng
-  client.get()
+  // client.get('bla', {}).once('rick').then(() => {
+  //   console.log('???')
+  // })
 
-  client.get('blurf', {}).once('james').then(() => {
+  Promise.all([
+    client.get('blurf', {}).once('james'),
+    client.get('bla', {}).once('rick')
+  ]).then(() => {
     console.log('gold!', client.blurf.keys())
     t.same(client.blurf.keys(), [ 'a' ], 'correct keys on blurf')
     t.equal(client.blurf.compute(), 'james', 'correct val on blurf')
-    t.same(client.types.keys(), [ 'james' ], 'james type recieved')
+    t.same(client.types.keys(), [ 'rick', 'james' ], 'recieved correct types')
   })
 
   // setTimeout(() => {
