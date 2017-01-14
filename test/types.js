@@ -37,8 +37,8 @@ test('types', t => {
   client.subscribe({
     bla: { val: true, type: true },
     blurf: {
-      type: true,
-      a: { b: { c: true } }
+      a: { b: { c: true } },
+      type: true
     }
   }, t => {
     console.log('--->', t.path())
