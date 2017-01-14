@@ -7,22 +7,21 @@ test('types', t => {
     port: 6060,
     somefield: 'somefield!',
     types: {
-      rick: { hello: true },
+      rick: { val: 'rick', hello: true },
       james: {
+        val: 'james',
         a: {
           b: {
             c: 'c!'
           }
         }
       },
-      blurf: { bye: true, x: true }
+      blurf: { bye: true, x: true, y: true, z: true }
     },
     blax: {
       type: 'james'
     },
     bla: {
-      // setting val will not sync fields when using val: true this is a limit currently in the hub -- can be changed
-      // will do now
       type: 'rick'
     },
     blurf: {
@@ -32,7 +31,14 @@ test('types', t => {
 
   const client = hub({
     id: 'client',
-    url: 'ws://localhost:6060'
+    url: 'ws://localhost:6060',
+    blurf: {
+      on: {
+        data: (val, stamp, t) => {
+          console.log('????', t.compute(), val)
+        }
+      }
+    }
   })
 
   client.subscribe({
@@ -41,22 +47,26 @@ test('types', t => {
       a: { b: { c: true } },
       type: true
     }
-  }, t => {
-    console.log('--->', t.path())
+  }, () => {
+    // console.log('????', client.serialize())
   })
 
-  console.log(client.upstreamSubscriptions)
+  console.log('after subs')
 
-  setTimeout(() => {
-    console.log('scraper bla keys:', scraper.bla.keys())
-    console.log('client bla keys:', client.bla.keys(), client.bla.type.val)
-    // client.set({ bla: { type: 'blurf' } }) -- brings extra complexity (recursive update of nested fields using a type thats does not exist yet)
-    // console.log('client bla keys (after switch)', client.bla.keys(), client.bla.type.val)
-    // setTimeout(() => {
-    //   console.log('???', scraper.bla.keys(), scraper.bla.type.val)
-    //   console.log(client.bla.keys())
-    // }, 100)
-  }, 100)
+  client.get('blurf', {}).once('james').then(() => {
+    console.log('gold!')
+  })
+
+  // setTimeout(() => {
+  //   console.log('scraper bla keys:', scraper.bla.keys())
+  //   console.log('client bla keys:', client.bla.keys(), client.bla.type.val)
+  //   client.set({ bla: { type: 'blurf' } }) // -- brings extra complexity (recursive update of nested fields using a type thats does not exist yet)
+  //   console.log('client bla keys (after switch)', client.bla.keys(), client.bla.type.val)
+  //   setTimeout(() => {
+  //     console.log('???', scraper.bla.keys(), scraper.bla.type.val)
+  //     console.log(client.bla.keys())
+  //   }, 100)
+  // }, 100)
 
   t.end()
 })
