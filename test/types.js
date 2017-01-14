@@ -22,6 +22,7 @@ test('types', t => {
     },
     bla: {
       // setting val will not sync fields when using val: true this is a limit currently in the hub -- can be changed
+      // will do now
       type: 'rick'
     },
     blurf: {

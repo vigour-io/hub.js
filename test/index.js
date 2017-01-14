@@ -7,4 +7,5 @@ if (typeof window === 'undefined') {
 // require('./switch')
 // require('./context')
 // require('./references')
-require('./types')
+require('./subscription')
+// require('./types')
