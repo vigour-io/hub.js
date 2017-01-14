@@ -47,15 +47,16 @@ test('types', t => {
       a: { b: { c: true } },
       type: true
     }
-  }, () => {
-    // console.log('????', client.serialize())
   })
 
-  console.log('after subs')
-
   // what really happens --- new type -- listeners gets reset old listener removed and beng
+  client.get()
+
   client.get('blurf', {}).once('james').then(() => {
-    console.log('gold!')
+    console.log('gold!', client.blurf.keys())
+    t.same(client.blurf.keys(), [ 'a' ], 'correct keys on blurf')
+    t.equal(client.blurf.compute(), 'james', 'correct val on blurf')
+    t.same(client.types.keys(), [ 'james' ], 'james type recieved')
   })
 
   // setTimeout(() => {
