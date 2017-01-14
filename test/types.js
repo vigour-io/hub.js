@@ -53,6 +53,7 @@ test('types', t => {
 
   console.log('after subs')
 
+  // what really happens --- new type -- listeners gets reset old listener removed and beng
   client.get('blurf', {}).once('james').then(() => {
     console.log('gold!')
   })
