@@ -8,11 +8,24 @@ test('types', t => {
     somefield: 'somefield!',
     types: {
       rick: { hello: true },
+      james: {
+        a: {
+          b: {
+            c: 'c!'
+          }
+        }
+      },
       blurf: { bye: true, x: true }
+    },
+    blax: {
+      type: 'james'
     },
     bla: {
       // setting val will not sync fields when using val: true this is a limit currently in the hub -- can be changed
       type: 'rick'
+    },
+    blurf: {
+      type: 'james'
     }
   })
 
@@ -21,7 +34,13 @@ test('types', t => {
     url: 'ws://localhost:6060'
   })
 
-  client.subscribe({ bla: { val: true, type: true } }, t => {
+  client.subscribe({
+    bla: { val: true, type: true },
+    blurf: {
+      type: true,
+      a: { b: { c: true } }
+    }
+  }, t => {
     console.log('--->', t.path())
   })
 
