@@ -6,5 +6,5 @@ if (typeof window === 'undefined') {
 // require('./data-size')
 // require('./switch')
 // require('./context')
-require('./references')
+// require('./references')
 require('./types')
