@@ -57,19 +57,13 @@ test('types', t => {
           [ 'bye', 'x', 'y', 'z' ],
           'bounced back blurf type'
         )
-
         client.set({ types: { hello: { smurt: true } } })
-
-        scraper.types.on(() => {
-          console.log('???')
-        })
-
-        setTimeout(() => {
-          console.log(scraper.types.keys())
-        }, 100)
-
-        scraper.types.once().then(() => {
-          t.same(scraper.types.keys(), [], 'received types from client')
+        scraper.types.get([ 'hello', 'smurt' ], {}).once(true).then(() => {
+          t.same(
+            scraper.types.keys(),
+            [ 'rick', 'james', 'blurf', 'hello' ],
+            'received types from client'
+          )
           client.set(null)
           scraper.set(null)
           t.end()
@@ -77,6 +71,4 @@ test('types', t => {
       })
     })
   })
-
-  t.end()
 })
