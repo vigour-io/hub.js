@@ -20,14 +20,11 @@ test('types', t => {
           }
         }
       },
-      blurf: { bye: true, x: true, y: true, z: true }
+      blurf: { bye: true, x: true, y: true, z: true, shurf: 'blurf' }
     },
-    bla: {
-      type: 'rick'
-    },
-    blurf: {
-      type: 'james'
-    }
+    bla: { type: 'rick' },
+    blurf: { type: 'james' },
+    shurf: { type: 'blurf' }
   })
 
   const client = hub({
@@ -35,9 +32,26 @@ test('types', t => {
     url: 'ws://localhost:6060'
   })
 
+  const client2 = hub({
+    id: 'client2',
+    url: 'ws://localhost:6060'
+  })
+
   client.subscribe({
     bla: { type: true, val: true },
     blurf: { type: true, val: true }
+  })
+
+  client2.subscribe({
+    shurf: { smurt: true }
+  }, s => {
+    if (s.compute() === 'SMURT!') {
+      t.pass('client2 receives update on field from updated type')
+      client.set(null)
+      client2.set(null)
+      scraper.set(null)
+      t.end()
+    }
   })
 
   Promise.all([
@@ -54,19 +68,19 @@ test('types', t => {
       }).then((val) => {
         t.same(
           client.types.blurf.keys(),
-          [ 'bye', 'x', 'y', 'z' ],
+          [ 'bye', 'x', 'y', 'z', 'shurf' ],
           'bounced back blurf type'
         )
-        client.set({ types: { hello: { smurt: true } } })
-        scraper.types.get([ 'hello', 'smurt' ], {}).once(true).then(() => {
+        client.set({
+          types: { hello: { smurt: 'SMURT!' } },
+          shurf: { type: 'hello' }
+        })
+        scraper.types.get([ 'hello', 'smurt' ], {}).once('SMURT!').then(() => {
           t.same(
             scraper.types.keys(),
             [ 'rick', 'james', 'blurf', 'hello' ],
             'received types from client'
           )
-          client.set(null)
-          scraper.set(null)
-          t.end()
         })
       })
     })
