@@ -22,9 +22,6 @@ test('types', t => {
       },
       blurf: { bye: true, x: true, y: true, z: true }
     },
-    // blax: {
-    //   type: 'james'
-    // },
     bla: {
       type: 'rick'
     },
@@ -39,12 +36,8 @@ test('types', t => {
   })
 
   client.subscribe({
-    // the val true screws it up...
-    bla: { type: true },
-    blurf: {
-      // a: { b: { c: true } },
-      type: true
-    }
+    bla: { type: true, val: true },
+    blurf: { type: true, val: true }
   })
 
   Promise.all([
@@ -56,10 +49,12 @@ test('types', t => {
     t.same(client.types.keys(), [ 'rick', 'james' ], 'recieved correct types')
     bs.on(() => {
       client.set({ bla: { type: 'blurf' } })
-      setTimeout(() => {
-        console.log('???', scraper.bla.keys(), scraper.bla.type.val)
-        console.log(client.bla.keys())
-      }, 100)
+      client.types.blurf.once(s => {
+        return s.keys().length > 0
+      }).then((val) => {
+        t.same(client.types.blurf.keys(), [ 'bye', 'x', 'y', 'z' ], 'bounced back blurf type')
+        // see if subs fire for bla
+      })
     })
   })
 
