@@ -27,6 +27,7 @@ test('client - multiple', t => {
     id: 'client'
   })
 
+  console.log('set blurf')
   client.set({ blurf: 'hello' })
 
   client.connected.once(true).then(() => {
