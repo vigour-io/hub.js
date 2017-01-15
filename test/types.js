@@ -35,21 +35,7 @@ test('types', t => {
 
   const client = hub({
     id: 'client',
-    url: 'ws://localhost:6060',
-    blurf: {
-      on: {
-        data: (val, stamp, t) => {
-          console.log('blurf', t.compute(), val)
-        }
-      }
-    },
-    bla: {
-      on: {
-        data: (val, stamp, t) => {
-          console.log('bla', t.compute(), val)
-        }
-      }
-    }
+    url: 'ws://localhost:6060'
   })
 
   client.subscribe({
@@ -61,11 +47,6 @@ test('types', t => {
     }
   })
 
-  // what really happens --- new type -- listeners gets reset old listener removed and beng
-  // client.get('bla', {}).once('rick').then(() => {
-  //   console.log('???')
-  // })
-
   Promise.all([
     client.get('blurf', {}).once('james'),
     client.get('bla', {}).once('rick')
@@ -73,11 +54,12 @@ test('types', t => {
     t.same(client.blurf.keys(), [ 'a' ], 'correct keys on blurf')
     t.equal(client.blurf.compute(), 'james', 'correct val on blurf')
     t.same(client.types.keys(), [ 'rick', 'james' ], 'recieved correct types')
-    setTimeout(() => {
+    bs.on(() => {
       client.set({ bla: { type: 'blurf' } })
-    }, 0)
-  }).catch(err => {
-    console.log(err)
+      client.types.blurf.once().then(() => {
+        console.log('!')
+      })
+    })
   })
 
   // setTimeout(() => {
