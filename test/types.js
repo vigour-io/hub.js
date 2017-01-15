@@ -56,9 +56,10 @@ test('types', t => {
     t.same(client.types.keys(), [ 'rick', 'james' ], 'recieved correct types')
     bs.on(() => {
       client.set({ bla: { type: 'blurf' } })
-      client.types.blurf.once().then(() => {
-        console.log('!')
-      })
+      setTimeout(() => {
+        console.log('???', scraper.bla.keys(), scraper.bla.type.val)
+        console.log(client.bla.keys())
+      }, 100)
     })
   })
 
