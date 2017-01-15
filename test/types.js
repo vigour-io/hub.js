@@ -52,22 +52,31 @@ test('types', t => {
       client.types.blurf.once(s => {
         return s.keys().length > 0
       }).then((val) => {
-        t.same(client.types.blurf.keys(), [ 'bye', 'x', 'y', 'z' ], 'bounced back blurf type')
-        // see if subs fire for bla
+        t.same(
+          client.types.blurf.keys(),
+          [ 'bye', 'x', 'y', 'z' ],
+          'bounced back blurf type'
+        )
+
+        client.set({ types: { hello: { smurt: true } } })
+
+        scraper.types.on(() => {
+          console.log('???')
+        })
+
+        setTimeout(() => {
+          console.log(scraper.types.keys())
+        }, 100)
+
+        scraper.types.once().then(() => {
+          t.same(scraper.types.keys(), [], 'received types from client')
+          client.set(null)
+          scraper.set(null)
+          t.end()
+        })
       })
     })
   })
-
-  // setTimeout(() => {
-  //   console.log('scraper bla keys:', scraper.bla.keys())
-  //   console.log('client bla keys:', client.bla.keys(), client.bla.type.val)
-  //   client.set({ bla: { type: 'blurf' } }) // -- brings extra complexity (recursive update of nested fields using a type thats does not exist yet)
-  //   console.log('client bla keys (after switch)', client.bla.keys(), client.bla.type.val)
-  //   setTimeout(() => {
-  //     console.log('???', scraper.bla.keys(), scraper.bla.type.val)
-  //     console.log(client.bla.keys())
-  //   }, 100)
-  // }, 100)
 
   t.end()
 })
