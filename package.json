@@ -44,7 +44,7 @@
     "brisky-struct": "^1.1.7",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
-    "vigour-ua": "^2.2.3"
+    "vigour-ua": "^3.0.0"
   },
   "nyc": {
     "include": [
