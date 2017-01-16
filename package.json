@@ -41,7 +41,7 @@
   ],
   "dependencies": {
     "brisky-stamp": "^3.0.12",
-    "brisky-struct": "^1.1.5",
+    "brisky-struct": "^1.1.7",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
     "vigour-ua": "^2.2.3"

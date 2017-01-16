@@ -278,9 +278,9 @@ brisky-stamp@^3.0.12:
   dependencies:
     global "^4.3.1"
 
-brisky-struct@^1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/brisky-struct/-/brisky-struct-1.1.5.tgz#3af001fd0e10bc83439fb116a4574cf178e8df3b"
+brisky-struct@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/brisky-struct/-/brisky-struct-1.1.7.tgz#edb80dffd9141dec427d68a29570c39cf6069ee5"
   dependencies:
     brisky-stamp "^3.0.12"
 
@@ -2711,8 +2711,8 @@ supports-color@^2.0.0:
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-2.0.0.tgz#535d045ce6b6363fa40117084629995e9df324c7"
 
 supports-color@^3.1.0, supports-color@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-3.1.2.tgz#72a262894d9d408b956ca05ff37b2ed8a6e2a2d5"
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-3.2.3.tgz#65ac0504b3954171d8a64946b2ae3cbb8a5f54f6"
   dependencies:
     has-flag "^1.0.0"
 
