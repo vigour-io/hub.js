@@ -11,6 +11,8 @@ test('subscription - val + fields', t => {
     }
   })
 
+  server.set({ nostamp: 'nostamp!' }, false)
+
   const client = hub({
     id: 'client',
     url: 'ws://localhost:6060'
@@ -20,6 +22,9 @@ test('subscription - val + fields', t => {
     client.get([ 'a', 'b', 'c' ], {}).once('c!'),
     client.get([ 'a' ], {}).once('a')
   ]).then(() => {
+    client.subscribe({ nostamp: true })
+    return client.get('nostamp', {}).once('nostamp!')
+  }).then(() => {
     t.pass('received correct payload')
     client.set(null)
     server.set(null)

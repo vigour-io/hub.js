@@ -91,3 +91,5 @@ test('context', t => {
 
   client1.set({ blurf: 'hello' })
 })
+
+// client removal problems - 1
