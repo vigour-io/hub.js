@@ -14,7 +14,7 @@ test('switch', t => {
   })
 
   server.on('error', err => {
-    console.log('dirtface', err)
+    console.log('server error', err)
   })
 
   const client = hub({
