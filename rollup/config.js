@@ -3,7 +3,7 @@ const pkg = require('../package.json')
 const deps = pkg.dependencies
 
 module.exports = [{
-  entry: 'lib/index.js',
+  entry: 'src/index.js',
   plugins: [ resolve() ],
   external: id => deps[id.split('/')[0]],
   targets: [
@@ -11,7 +11,7 @@ module.exports = [{
     { format: 'es', dest: 'dist/index.es.js', sourceMap: true }
   ]
 }, {
-  entry: 'lib/index.js',
+  entry: 'src/index.js',
   plugins: [ resolve({ browser: true }) ],
   external: id => deps[id.split('/')[0]],
   targets: [
