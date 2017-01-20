@@ -7,7 +7,7 @@ test('client - connect', t => {
     someHub: {
       key: 'client-hub',
       url: 'ws://localhost:6060',
-      id: 'client'
+      _uid_: 'client'
     }
   })
 
@@ -21,14 +21,14 @@ test('client - connect', t => {
   const server = hub({
     key: 'server',
     port: 6060,
-    id: 'server'
+    _uid_: 'server'
   })
 
   const server2 = hub({
     key: 'server-2',
     deep: {
       port: 6061,
-      id: 'server-2'
+      _uid_: 'server-2'
     }
   })
 

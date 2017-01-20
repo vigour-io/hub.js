@@ -38,7 +38,7 @@ const removeServer = hub => {
 
 const closeConnections = hub => {
   const clients = hub.clients
-  const id = hub.id // to exclude the client (not nessecary)
+  const id = hub._uid_ // to exclude the client (not nessecary)
   if (clients) {
     clients.forEach(client => {
       if (client.socket && client.key !== id) {

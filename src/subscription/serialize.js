@@ -23,7 +23,7 @@ const parse = (struct, obj, key, root) => {
       // need more just use client (since milti hub)
       if (i === 'client') { // && (!key || key === 'root' || key === 'parent')
         // console.log('CLIENT NEED TO HANDLE MORE SPECIAL THEN JUST ROOT')
-        // let id = state.id
+        // let id = state._uid_
         // if (!root.clients) { root.clients = {} }
         // if (!root.clients[id]) { root.clients[id] = {} }
         // merge(root.clients[id], parse(obj.client, i, root, state))

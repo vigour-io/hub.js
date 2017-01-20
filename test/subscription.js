@@ -3,7 +3,7 @@ const test = require('tape')
 
 test('subscription - val + fields', t => {
   const server = hub({
-    id: 'server',
+    _uid_: 'server',
     port: 6060,
     a: {
       val: 'a',
@@ -14,7 +14,7 @@ test('subscription - val + fields', t => {
   server.set({ nostamp: 'nostamp!' }, false)
 
   const client = hub({
-    id: 'client',
+    _uid_: 'client',
     url: 'ws://localhost:6060'
   })
 

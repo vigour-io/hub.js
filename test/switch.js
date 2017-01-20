@@ -3,7 +3,7 @@ const test = require('tape')
 
 test('switch', t => {
   const server = hub({
-    id: 'server',
+    _uid_: 'server',
     port: 6061,
     bla: {
       a: 'hello'
@@ -19,7 +19,7 @@ test('switch', t => {
 
   const client = hub({
     url: 'ws://localhost:6061',
-    id: 'client1'
+    _uid_: 'client1'
     // context: 'a'
   })
 

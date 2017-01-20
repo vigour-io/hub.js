@@ -4,7 +4,7 @@ const bs = require('brisky-stamp')
 
 test('types', t => {
   const scraper = hub({
-    id: 'scraper',
+    _uid_: 'scraper',
     port: 6060,
     somefield: 'somefield!',
     types: {
@@ -28,12 +28,12 @@ test('types', t => {
   })
 
   const client = hub({
-    id: 'client',
+    _uid_: 'client',
     url: 'ws://localhost:6060'
   })
 
   const client2 = hub({
-    id: 'client2',
+    _uid_: 'client2',
     url: 'ws://localhost:6060'
   })
 

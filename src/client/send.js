@@ -7,7 +7,7 @@ const next = typeof window === 'undefined'
 const parse = (stamp, hub, t) => {
   const src = bs.src(stamp)
   if (!src) {
-    return bs.create(bs.type(stamp), hub.id, bs.val(stamp))
+    return bs.create(bs.type(stamp), hub._uid_, bs.val(stamp))
   } else {
     const val = bs.val(stamp)
     if (!t[1]) t[1] = {}
@@ -62,7 +62,7 @@ const meta = hub => {
   if (hub.context) {
     store[1].context = hub.context.compute() || false
   }
-  store[1].id = hub.id
+  store[1]._uid_ = hub._uid_
   store[1].subscriptions = hub.upstreamSubscriptions
 }
 
@@ -80,7 +80,7 @@ const send = (val, stamp, struct) => {
           return
         }
       } else if (struct._p.key === 'clients') {
-        if (struct.key !== hub.id) {
+        if (struct.key !== hub._uid_) {
           return
         }
       }

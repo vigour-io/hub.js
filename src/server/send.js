@@ -50,7 +50,7 @@ const send = (hub, client, struct, type, subs, tree) => {
         let l = p
         while (p) {
           if (p._p && p._p[p.key]) {
-            serialize(hub.id, client, progress(client), subs, l, null, get(hub, 'serverIndex'), tree)
+            serialize(hub._uid_, client, progress(client), subs, l, null, get(hub, 'serverIndex'), tree)
           }
           l = p
           p = p._p
@@ -58,7 +58,7 @@ const send = (hub, client, struct, type, subs, tree) => {
       }
     }
     if (struct.val !== void 0 || val === null || subs.val === true) {
-      serialize(hub.id, client, progress(client), subs, struct, val, get(hub, 'serverIndex'), tree)
+      serialize(hub._uid_, client, progress(client), subs, struct, val, get(hub, 'serverIndex'), tree)
     }
   }
 }

@@ -47,7 +47,7 @@ export default (hub, socket, data) => {
 const create = (hub, socket, meta) => {
   const stamp = bs.create('connect')
   const context = meta.context
-  const id = meta.id
+  const id = meta._uid_
   const t = context ? hub.getContext(context) : hub
   // const ip = socket._socket.remoteAddress
   const client = socket.client = createClient(
@@ -67,7 +67,7 @@ const incomingSubscriptions = (hub, client, meta, id) => {
       let subs = parse(meta.subscriptions[key], hub)
       client.upstreamSubscriptions[uid] = subs
       subscribe(hub, subs, update)
-      hub.subscriptions[hub.subscriptions.length - 1].id = id
+      hub.subscriptions[hub.subscriptions.length - 1]._uid_ = id
     }
   }
 }

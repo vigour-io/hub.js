@@ -10,7 +10,7 @@ import createClient from './create'
 
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
-  const id = hub.id
+  const id = hub._uid_
   const client = createClient(hub, id, {}, false)
 
   hub.set({ client }, false)
@@ -18,7 +18,7 @@ const connect = (hub, url, reconnect) => {
   hub.reconnect = null
 
   const close = () => {
-    const stamp = bs.create('disconnect', hub.id)
+    const stamp = bs.create('disconnect', hub._uid_)
     hub.socket = false
     hub.set({ connected: false }, stamp)
     bs.close()
@@ -39,7 +39,7 @@ const connect = (hub, url, reconnect) => {
   }
 
   socket.onopen = () => {
-    const stamp = bs.create('connected', hub.id)
+    const stamp = bs.create('connected', hub._uid_)
     hub.socket = socket
     meta(hub)
     hub.set({ connected: true }, stamp)
@@ -104,7 +104,7 @@ const removeClients = (hub, stamp) => {
       if (
         client.val !== null &&
         // !client.socket &&
-        client.key != hub.id // eslint-disable-line
+        client.key != hub._uid_ // eslint-disable-line
       ) {
         client.set(null, stamp)
       }
