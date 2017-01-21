@@ -8,9 +8,6 @@ const Server = uws.Server
 const create = (hub, port) => {
   const server = new Server({ port })
   server.on('connection', socket => {
-
-    console.log('incoming')
-
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
     socket.on('message', (data) => {
       data = JSON.parse(data)
