@@ -83,11 +83,12 @@ const defStamp = bs.create(void 0, void 0, 0)
 // clean the cached up a bit
 const serialize = (id, client, t, subs, struct, val, level) => {
   if (!struct.isHub) return
-  const stamp = get(struct, 'stamp') || struct.val && defStamp
+  const stamp = get(struct, 'stamp') || defStamp
+
   var cached, isType
+
   if (stamp && (val === null || !(cached = isCached(client, struct, stamp))) || subs.val === true) {
     const src = bs.src(stamp)
-
     // not a good location move and clean
     let getVal = get(struct, 'val')
 
@@ -140,8 +141,8 @@ const serialize = (id, client, t, subs, struct, val, level) => {
             setStamp(s, stamp, src, struct, id, client, level, val)
             s.val = null
           } else {
-            if (struct.key === 'type' || subs.type) {                //
-              typeSerialize(id, client, t, subs, struct, val, level, subs.type, s)
+            if (struct.key === 'type') {
+              typeSerialize(id, client, t, subs, struct, val, level)
             }
             // dont send the val as an extra
             setStamp(s, stamp, src, struct, id, client, level)
@@ -164,12 +165,18 @@ const serialize = (id, client, t, subs, struct, val, level) => {
   }
 }
 
-const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s) => {
-  // console.log('💫 typeSerializee', struct.path().join('/'))
-
+const typeSerialize = (id, client, t, subs, struct, val, level) => {
+  console.log('\n\n💫 typeSerializee', struct.path().join('/'))
   // gaurd for wrong types e.g. hub or struct...
-  if (fromParent) s.type = {}
-  serialize(id, client, t, fromParent || subs, getType(struct.parent(fromParent ? 1 : 2), struct.compute()), val, level)
+  // if (fromParent) {
+    // s.type = get(struct, 'type').compute()
+    // // console.log(s.type, getType(struct.parent(1), get(struct, 'type').compute())
+    // // console.log('GET TYPE:', getType(struct.parent(1), get(struct, 'type').compute()))
+    // console.log('w00t', getType(struct.parent(1), get(struct, 'type').compute()).path())
+    // serialize(id, client, t, fromParent, getType(struct.parent(1), get(struct, 'type').compute()), val, level)
+  // } else {
+  serialize(id, client, t, subs, getType(struct.parent(2), struct.compute()), val, level)
+  // }
 }
 
 const deepSerialize = (keys, id, client, t, subs, struct, val, level) => {
