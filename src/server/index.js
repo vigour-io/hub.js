@@ -75,17 +75,23 @@ const port = (hub, val, key, stamp) => {
     } else {
       if (!hub.port) {
         c(struct, {
-          on: { data: { port: (val, stamp) => port(hub, val, 'port', stamp) } }
+          on: {
+            data: {
+              port: (val, stamp, struct) => {
+                val = struct.compute()
+                if (val) {
+                  let i = -1
+                  if (hub.key) i++
+                  hub.parent(() => { i++ })
+                  hub.serverIndex = i
+                  hub.server = createServer(hub, val)
+                }
+              }
+            }
+          }
         }, stamp, hub, key)
       }
-      // add listener that calls port
-      console.log(`💫  hub listening on ${val} 💫`)
       hub.port.set(val, stamp)
-      let i = -1
-      if (hub.key) i++
-      hub.parent(() => { i++ })
-      hub.serverIndex = i
-      hub.server = createServer(hub, val)
     }
   }
 }
