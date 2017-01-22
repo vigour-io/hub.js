@@ -167,12 +167,18 @@ const serialize = (id, client, t, subs, struct, val, level) => {
 const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s) => {
   console.log('\n\n💫 typeSerializee', struct.path().join('/'))
   if (fromParent) {
-    //  val: get(struct, 'type').compute(), stamp: get(struct, 'stamp') || defStamp
-    s.type = { val: get(struct, 'type').compute(), stamp: get(struct, 'stamp') || defStamp }
+    const type = get(struct, 'type').compute()
+    if (type !== 'hub') {
+      //  val: get(struct, 'type').compute(), stamp: get(struct, 'stamp') || defStamp
+      s.type = { val: type, stamp: get(struct, 'stamp') || defStamp }
+    }
     // need to know if its empty
     // serialize(id, client, t, fromParent, getType(struct.parent(1), get(struct, 'type').compute()), val, level)
   } else {
-    serialize(id, client, t, subs, getType(struct.parent(2), struct.compute()), val, level)
+    const type = struct.compute()
+    if (type !== 'hub') {
+      serialize(id, client, t, subs, getType(struct.parent(2), type), val, level)
+    }
   }
 }
 
