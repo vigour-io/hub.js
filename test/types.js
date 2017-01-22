@@ -56,7 +56,10 @@ test('types', t => {
     }
   })
 
-  client.get('blurf', {}).once('james').then(() => {
+  client.get('blurf', {}).once(val => {
+    console.log('?????', val.compute())
+    return val.compute() === 'james'
+  }).then(() => {
     console.log('got james')
   })
 
