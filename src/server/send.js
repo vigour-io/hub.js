@@ -138,19 +138,11 @@ const serialize = (id, client, t, subs, struct, val, level) => {
             }
           }
           if (getVal === null) {
-            if (!s) {
-              throw new Error('???')
-            }
             setStamp(s, stamp, src, struct, id, client, level, val)
             s.val = null
           } else {
             if (struct.key === 'type' || subs.type) {
               typeSerialize(id, client, t, subs, struct, val, level, subs.type, s)
-            }
-            // dont send the val as an extra
-            if (!s || typeof s !== 'object') {
-              console.log(s, t)
-              throw new Error('???' + s)
             }
             setStamp(s, stamp, src, struct, id, client, level)
             if (getVal && getVal.inherits) {
