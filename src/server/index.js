@@ -2,10 +2,11 @@ import uws from 'uws'
 import incoming from './incoming'
 import bs from 'brisky-stamp'
 import { removeClient, removeSubscriptions } from './remove'
+import { c, struct } from 'brisky-struct'
 
 const Server = uws.Server
 
-const create = (hub, port) => {
+const createServer = (hub, port) => {
   const server = new Server({ port })
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
@@ -56,7 +57,7 @@ const removePort = hub => {
   hub.emitters.set({ data: { port$: null } })
 }
 
-const port = (hub, val) => {
+const port = (hub, val, key, stamp) => {
   hub.on((val, stamp, t) => {
     if (val === null && !t._c && t === hub) {
       removeServer(hub)
@@ -64,20 +65,27 @@ const port = (hub, val) => {
     }
   }, 'port$')
   if (!val) val = null
-  if (val !== hub.port) {
+  if ((!hub.port && val) || (hub.port.compute() !== val)) {
     if (hub.server) {
       removeServer(hub)
     }
     if (!val) {
+      if (hub.port) hub.port.set(null, stamp)
       removePort(hub)
     } else {
+      if (!hub.port) {
+        c(struct, {
+          on: { data: { port: (val, stamp) => port(hub, val, 'port', stamp) } }
+        }, stamp, hub, key)
+      }
+      // add listener that calls port
       console.log(`💫  hub listening on ${val} 💫`)
-      hub.port = val
+      hub.port.set(val, stamp)
       let i = -1
       if (hub.key) i++
       hub.parent(() => { i++ })
       hub.serverIndex = i
-      hub.server = create(hub, val)
+      hub.server = createServer(hub, val)
     }
   }
 }
