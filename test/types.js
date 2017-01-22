@@ -40,6 +40,8 @@ test('types', t => {
   client.subscribe({
     bla: { type: true, val: true },
     blurf: { type: true, val: true }
+  }, () => {
+    console.log('incoming --->', client.blurf && client.blurf.val)
   })
 
   client2.subscribe({
@@ -52,6 +54,10 @@ test('types', t => {
       scraper.set(null)
       t.end()
     }
+  })
+
+  client.get('blurf', {}).once('james').then(() => {
+    console.log('got james')
   })
 
   Promise.all([
@@ -84,5 +90,7 @@ test('types', t => {
         })
       })
     })
+  }).catch((err) => {
+    console.log('error', err)
   })
 })
