@@ -8,6 +8,7 @@ const Server = uws.Server
 
 const createServer = (hub, port) => {
   const server = new Server({ port })
+  console.log(`💫 hub listening on ${port} 💫`)
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
     socket.on('message', (data) => {
