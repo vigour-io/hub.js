@@ -16,7 +16,8 @@ const isEmpty = t => {
 const parse = (struct, obj, key, root) => {
   const result = {}
   if (!root) { root = result }
-  if (obj.type) result.type = obj.type // need to be done before the rest of subs to sync correctly
+  // need to be done before the rest of subs to sync correctly
+  if (obj.type) result.type = parse(struct, obj.type, 'type')
   for (let i in obj) {
     if (i !== '_' && i !== 'type') {
       // @todo more resolve for parent and client

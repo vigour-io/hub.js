@@ -143,7 +143,9 @@ const stub = () => {}
 const define = {
   subscribe (subs, cb, raw, tree) {
     if (!raw) subs = parse(subs)
+    console.log('???', subs)
     const parsed = serialize(this, subs)
+    console.log(parsed)
     if (parsed) {
       const key = hash(JSON.stringify(parsed))
       if (!this.upstreamSubscriptions) {
