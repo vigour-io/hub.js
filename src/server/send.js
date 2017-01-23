@@ -68,7 +68,7 @@ const cache = (client, struct, stamp, level, val) => {
   client.cache[struct.uid()] = stamp[0]
 }
 
-const isCached = (client, struct, stamp) => client.cache &&
+const isCached = (client, struct, stamp) => struct.key !== 'type' && client.cache &&
   client.cache[struct.uid()] === stamp[0]
 
 const setStamp = (s, stamp, src, struct, id, client, level) => {
