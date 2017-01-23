@@ -57,6 +57,9 @@ const send = (hub, client, struct, type, subs, tree) => {
         }
       }
     }
+
+    // tripple checks not so nice
+    // can just send empty objects as well ofc....
     if (get(struct, 'val') !== void 0 || val === null || subs.val === true) {
       serialize(hub._uid_, client, progress(client), subs, struct, val, get(hub, 'serverIndex'), tree)
     }
@@ -88,6 +91,7 @@ const serialize = (id, client, t, subs, struct, val, level) => {
 
   var cached, isType
 
+  // remove this whole src thing here
   if (stamp && (val === null || !(cached = isCached(client, struct, stamp))) || subs.val === true) {
     const src = bs.src(stamp)
     // not a good location move and clean
@@ -99,6 +103,7 @@ const serialize = (id, client, t, subs, struct, val, level) => {
       (isType = struct.key === 'type')
     ) {
       if (
+        // can remove this as well
         client.resolve &&
         client.resolve[src] &&
         bs.val(stamp) >= client.resolve[src]
@@ -168,10 +173,13 @@ const serialize = (id, client, t, subs, struct, val, level) => {
 const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s) => {
   console.log('\n\n💫 typeSerializee', struct.path().join('/'))
   if (fromParent) {
-    const type = get(struct, 'type').compute()
+    const type = get(struct, 'type')
     if (type !== 'hub') {
-      //  val: get(struct, 'type').compute(), stamp: get(struct, 'stamp') || defStamp
-      s.type = { val: type, stamp: get(struct, 'stamp') || defStamp }
+      const stamp = get(type, 'stamp') || defStamp
+      if (!isCached(client, type, stamp)) {
+        //  val: get(struct, 'type').compute(), stamp: get(struct, 'stamp') || defStamp
+        s.type = { val: type.compute(), stamp }
+      }
     }
     // need to know if its empty
     // serialize(id, client, t, fromParent, getType(struct.parent(1), get(struct, 'type').compute()), val, level)
