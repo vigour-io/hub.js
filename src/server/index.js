@@ -27,7 +27,7 @@ const createServer = (hub, port) => {
 }
 
 const removeServer = hub => {
-  const server = hub.server
+  const server = hub._server_
   const instances = hub.instances
   closeConnections(hub)
   for (let i = 0, len = instances && instances.length; i < len; i++) {
@@ -35,7 +35,7 @@ const removeServer = hub => {
   }
   server.httpServer.close()
   // remove all clients subscriptions
-  hub.server = null
+  hub._server_ = null
 }
 
 const closeConnections = hub => {
@@ -67,7 +67,7 @@ const port = (hub, val, key, stamp) => {
   }, 'port$')
   if (!val) val = null
   if ((!hub.port && val) || (hub.port.compute() !== val)) {
-    if (hub.server) {
+    if (hub._server_) {
       removeServer(hub)
     }
     if (!val) {
@@ -85,7 +85,7 @@ const port = (hub, val, key, stamp) => {
                   if (hub.key) i++
                   hub.parent(() => { i++ })
                   hub.serverIndex = i
-                  hub.server = createServer(hub, val)
+                  hub._server_ = createServer(hub, val)
                 }
               }
             }
@@ -98,7 +98,7 @@ const port = (hub, val, key, stamp) => {
 }
 
 const props = {
-  server: true,
+  _server_: true,
   serverIndex: true,
   port
 }
