@@ -57,7 +57,7 @@ const send = (hub, client, struct, type, subs, tree) => {
         }
       }
     }
-    if (struct.val !== void 0 || val === null || subs.val === true) {
+    if (get(struct, 'val') !== void 0 || val === null || subs.val === true) {
       serialize(hub._uid_, client, progress(client), subs, struct, val, get(hub, 'serverIndex'), tree)
     }
   }
@@ -65,11 +65,12 @@ const send = (hub, client, struct, type, subs, tree) => {
 
 const cache = (client, struct, stamp, level, val) => {
   if (!client.cache) client.cache = {}
-  client.cache[struct.uid()] = stamp[0]
+  client.cache[struct.path().join('/')] = stamp[0]
 }
 
-const isCached = (client, struct, stamp) => struct.key !== 'type' && client.cache &&
-  client.cache[struct.uid()] === stamp[0]
+// dont use uid just use somethign like path this is not enough im affraid
+const isCached = (client, struct, stamp) => client.cache &&
+  client.cache[struct.path().join('/')] === stamp[0]
 
 const setStamp = (s, stamp, src, struct, id, client, level) => {
   cache(client, struct, stamp, level)

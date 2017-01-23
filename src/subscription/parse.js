@@ -53,11 +53,11 @@ const parse = (obj, state, key) => {
         // do we want to test for null / void 0?
       } catch (e) {
         let msg
-        if (!pass) {
-          msg = `cannot parse function ${key}.exec\n${val}`
-        } else {
-          msg = `cannot run function ${key}.exec\n${val}`
-        }
+        // if (!pass) {
+        msg = `cannot parse function ${key}.exec\n${val}`
+        // } else {
+        //   msg = `cannot run function ${key}.exec\n${val}`
+        // }
         state.emit('error', new Error(msg))
         obj[i] = dummy
       }
