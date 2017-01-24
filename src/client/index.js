@@ -49,8 +49,19 @@ const connect = (hub, url, reconnect) => {
   // once incoming and make a check for it in the handler itself
   socket.onmessage = ({ data }) => {
     const stamp = bs.create('upstream')
-    console.log('incoming:', JSON.stringify(JSON.parse(data), false, 2))
-    hub.set(JSON.parse(data), stamp)
+    // console.log('incoming:', JSON.stringify(JSON.parse(data), false, 2))
+    console.error('INCOMING!', JSON.parse(data))
+    const d = JSON.parse(data)
+    if (d.page && d.page.things && d.page.things.list && d.page.things.list.items) {
+      console.log('----')
+      global.logit = true
+      console.warn(hub.page && hub.page.things && hub.page.things.list)
+      hub.set(JSON.parse(data), stamp)
+      console.log('???', Object.keys(d.page.things.list.items), hub.page.things.list.items.keys())
+      global.logit = false
+    } else {
+      hub.set(JSON.parse(data), stamp)
+    }
     bs.close(stamp)
   }
 }

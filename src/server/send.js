@@ -72,8 +72,9 @@ const cache = (client, struct, stamp, level, val) => {
 }
 
 // dont use uid just use somethign like path this is not enough im affraid
-const isCached = (client, struct, stamp) => client.cache &&
-  client.cache[struct.path().join('/')] === stamp[0]
+const isCached = (client, struct, stamp) => false
+// client.cache &&
+  // client.cache[struct.path().join('/')] === stamp[0]
 
 const setStamp = (s, stamp, src, struct, id, client, level) => {
   cache(client, struct, stamp, level)
@@ -127,10 +128,7 @@ const serialize = (id, client, t, subs, struct, val, level) => {
           }
         }
 
-        if (isType) { // means its blocked otherwise (could be a set form own client)
-          // do need to check cached
-          typeSerialize(id, client, t, subs, struct, val, level)
-        } else if (!cached && (getVal !== void 0 || val === null)) {
+        if (!cached) {
           const path = struct.path()
           const len = path.length
           let s = t
@@ -143,20 +141,28 @@ const serialize = (id, client, t, subs, struct, val, level) => {
               if (s.val === null) return
             }
           }
-          if (getVal === null) {
-            setStamp(s, stamp, src, struct, id, client, level, val)
-            s.val = null
-          } else {
-            if (struct.key === 'type' || subs.type) {
-              typeSerialize(id, client, t, subs, struct, val, level, subs.type, s)
-            }
-            setStamp(s, stamp, src, struct, id, client, level)
-            if (getVal && getVal.inherits) {
-              s.val = struct.val.path()
-              s.val.unshift('@', 'root')
-              serialize(id, client, t, subs, struct.val, val, level)
-            } else if (getVal !== void 0) {
-              s.val = getVal
+
+          if (isType) { // means its blocked otherwise (could be a set form own client)
+            // do need to check cached
+            typeSerialize(id, client, t, subs, struct, val, level, false, s, stamp, src)
+          } else if ((getVal !== void 0 || val === null)) {
+            if (getVal === null) {
+              setStamp(s, stamp, src, struct, id, client, level, val)
+              s.val = null
+            } else {
+              if (struct.key === 'type' || subs.type) {
+                typeSerialize(id, client, t, subs, struct, val, level, subs.type, s, stamp, src)
+              }
+              if (struct.key !== 'type') {
+                setStamp(s, stamp, src, struct, id, client, level)
+                if (getVal && getVal.inherits) {
+                  s.val = struct.val.path()
+                  s.val.unshift('@', 'root')
+                  serialize(id, client, t, subs, struct.val, val, level)
+                } else if (getVal !== void 0) {
+                  s.val = getVal
+                }
+              }
             }
           }
         }
@@ -170,22 +176,22 @@ const serialize = (id, client, t, subs, struct, val, level) => {
   }
 }
 
-const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s) => {
-  console.log('\n\n💫 typeSerializee', struct.path().join('/'))
+const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s, ss, src) => {
+  console.log('\n\n💫 typeSerialize', struct.path().join('/'))
+  console.log(struct)
   if (fromParent) {
     const type = get(struct, 'type')
-    if (type !== 'hub') {
+    if (type.compute() !== 'hub') {
       const stamp = get(type, 'stamp') || defStamp
       if (!isCached(client, type, stamp)) {
-        //  val: get(struct, 'type').compute(), stamp: get(struct, 'stamp') || defStamp
-        s.type = { val: type.compute(), stamp }
+        s.type = {}
       }
     }
-    // need to know if its empty
-    // serialize(id, client, t, fromParent, getType(struct.parent(1), get(struct, 'type').compute()), val, level)
   } else {
     const type = struct.compute()
     if (type !== 'hub') {
+      setStamp(s, ss, src, struct, id, client, level)
+      s.val = struct.compute()
       serialize(id, client, t, subs, getType(struct.parent(2), type), val, level)
     }
   }
@@ -193,7 +199,6 @@ const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s) =
 
 const deepSerialize = (keys, id, client, t, subs, struct, val, level) => {
   if (keys) {
-    // console.log('💫 deepSerialize', struct.path().join('/'))
     for (let i = 0, len = keys.length; i < len; i++) {
       let prop = get(struct, keys[i])
       if (prop && prop.isHub) serialize(id, client, t, subs, prop, val, level)
