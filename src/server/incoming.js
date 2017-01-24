@@ -31,7 +31,7 @@ export default (hub, socket, data) => {
 
   if (payload) {
     console.log('\n-------------------------------')
-    console.log('💫 INCOMING PAYLOAD', '\ncontext:', t.contextKey, '\n', JSON.stringify(payload, false, 2).slice(0, 300), '....\n')
+    // console.log('💫 INCOMING PAYLOAD', '\ncontext:', t.contextKey, '\n', JSON.stringify(payload, false, 2).slice(0, 300), '....\n')
     if (meta && meta.resolve) {
       client.resolve = meta.resolve
       t.set(payload, false)
