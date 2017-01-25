@@ -42,7 +42,8 @@ const connect = (hub, url, reconnect) => {
 
   // once incoming and make a check for it in the handler itself
   socket.onmessage = ({ data }) => {
-    hub.set(JSON.parse(data), -1)
+    console.log('INCOMING', data)
+    hub.set(JSON.parse(data), -bs.create())
     bs.close()
   }
 }
