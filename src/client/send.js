@@ -53,7 +53,7 @@ const meta = hub => {
 
 const send = (val, stamp, struct) => {
   // -1 means upsteam (floats for extra speed)
-  if (!(stamp < -1)) {
+  if (!(stamp < 0)) {
     let hub
     let p = struct
     while (p) {

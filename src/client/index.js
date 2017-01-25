@@ -43,7 +43,7 @@ const connect = (hub, url, reconnect) => {
   var cnt = 0
   // once incoming and make a check for it in the handler itself
   socket.onmessage = ({ data }) => {
-    console.log('INCOMING\n', JSON.stringify(JSON.parse(data), false, 2))
+    console.error('INCOMING\n', JSON.parse(data))
     hub.set(JSON.parse(data), --cnt)
     bs.close()
   }
