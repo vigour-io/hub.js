@@ -7,44 +7,37 @@ import { removeClient } from './remove'
 
 export default (hub, socket, data) => {
   const payload = data[0]
+
+  if (payload) {
+    console.log('INCOMING PAYLOAD', payload)
+  }
+
   const meta = data[1]
   var client = socket.client
-  var t
   if (meta) {
+    let t
     if (client) {
       t = hub
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
         removeClient(client)
-        t = create(hub, socket, meta)
+        t = create(hub, socket, meta, payload)
         client = socket.client
       } else if (meta.subscriptions) {
+        if (payload) t.set(payload, false)
         incomingSubscriptions(t, client, meta, client.key)
         bs.close()
       }
     } else {
-      t = create(hub, socket, meta)
+      t = create(hub, socket, meta, payload)
       client = socket.client
     }
   } else {
-    t = client.parent(2)
-  }
-
-  if (payload) {
-    // console.log('\n-------------------------------')
-    // console.log('💫 INCOMING PAYLOAD', '\ncontext:', t.contextKey, '\n', JSON.stringify(payload, false, 2).slice(0, 300), '....\n')
-    if (meta && meta.resolve) {
-      client.resolve = meta.resolve
-      t.set(payload, false)
-      bs.on(() => { client.resolve = false })
-    } else {
-      t.set(payload, false)
-    }
+    client.parent(2).set(payload, false)
     bs.close()
-    // console.log('-------------------------------\n')
   }
 }
 
-const create = (hub, socket, meta) => {
+const create = (hub, socket, meta, payload) => {
   const stamp = bs.create('connect')
   const context = meta.context
   const id = meta._uid_
@@ -53,8 +46,9 @@ const create = (hub, socket, meta) => {
   const client = socket.client = createClient(
     t, id, { socket, context }, stamp, socket.useragent
   )
+  if (payload) t.set(payload, false)
   if (meta.subscriptions) incomingSubscriptions(t, client, meta, id)
-  bs.close(stamp)
+  bs.close()
   return t
 }
 

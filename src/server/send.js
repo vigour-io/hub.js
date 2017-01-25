@@ -105,78 +105,63 @@ const serialize = (id, client, t, subs, struct, val, level) => {
       bs.src(t.tStamp) != client.key || // eslint-disable-line
       (isType = struct.key === 'type')
     ) {
-      if (
-        // can remove this as well
-        client.resolve &&
-        client.resolve[src] &&
-        bs.val(stamp) >= client.resolve[src]
-      ) {
-        if (val !== null) {
-          if (getVal !== void 0) cache(client, struct, stamp, level)
-          if (subs.val === true) {
-            const keys = getKeys(struct)
-            if (keys) deepSerialize(keys, id, client, t, subs, struct, val, level)
+      if (subs.type) {
+        // simple but will make it better need more checks
+        var p = struct
+        while (p) {
+          if (p.key === 'types') {
+            return
           }
+          p = p._p
         }
-      } else {
-        if (subs.type) {
-          // simple but will make it better need more checks
-          var p = struct
-          while (p) {
-            if (p.key === 'types') {
-              return
-            }
-            p = p._p
-          }
-        }
-
-        if (!cached) {
-          const path = struct.path()
-          const len = path.length
-          let s = t
-          for (let i = level; i < len; i++) {
-            let tt = s[path[i]]
-            if (!tt) {
-              s = s[path[i]] = {}
-            } else {
-              s = tt
-              if (s.val === null) return
-            }
-          }
-
-          if (isType) { // means its blocked otherwise (could be a set form own client)
-            // do need to check cached
-            typeSerialize(id, client, t, subs, struct, val, level, false, s, stamp, src)
-          } else if ((getVal !== void 0 || val === null)) {
-            if (val === null) {
-              setStamp(s, stamp, src, struct, id, client, level, val)
-              s.val = null
-            } else {
-              if (struct.key === 'type' || subs.type) {
-                typeSerialize(id, client, t, subs, struct, val, level, subs.type, s, stamp, src)
-              }
-              if (struct.key !== 'type' && val !== null) {
-                setStamp(s, stamp, src, struct, id, client, level)
-                if (getVal && getVal.inherits) {
-                  s.val = struct.val.path()
-                  s.val.unshift('@', 'root')
-
-                  serialize(id, client, t, subs, struct.val, val, level)
-                } else if (getVal !== void 0) {
-                  s.val = getVal
-                }
-              }
-            }
-          }
-        }
-
-        if (subs.val === true) {
-          const keys = getKeys(struct)
-          if (keys) deepSerialize(keys, id, client, t, subs, struct, val, level)
-        }
-
-        // if s === empty dont send shit
       }
+
+      if (!cached) {
+        const path = struct.path()
+        const len = path.length
+        let s = t
+        for (let i = level; i < len; i++) {
+          let tt = s[path[i]]
+          if (!tt) {
+            s = s[path[i]] = {}
+          } else {
+            s = tt
+            if (s.val === null) return
+          }
+        }
+
+        if (isType) { // means its blocked otherwise (could be a set form own client)
+          // do need to check cached
+          typeSerialize(id, client, t, subs, struct, val, level, false, s, stamp, src)
+        } else if ((getVal !== void 0 || val === null)) {
+          if (val === null) {
+            setStamp(s, stamp, src, struct, id, client, level, val)
+            s.val = null
+          } else {
+            if (struct.key === 'type' || subs.type) {
+              typeSerialize(id, client, t, subs, struct, val, level, subs.type, s, stamp, src)
+            }
+            if (struct.key !== 'type' && val !== null) {
+              setStamp(s, stamp, src, struct, id, client, level)
+              if (getVal && getVal.inherits) {
+                s.val = struct.val.path()
+                s.val.unshift('@', 'root')
+
+                serialize(id, client, t, subs, struct.val, val, level)
+              } else if (getVal !== void 0) {
+                s.val = getVal
+              }
+            }
+          }
+        }
+      }
+
+      if (subs.val === true) {
+        const keys = getKeys(struct)
+        if (keys) deepSerialize(keys, id, client, t, subs, struct, val, level)
+      }
+
+      // if s === empty dont send shit
     }
   }
 }

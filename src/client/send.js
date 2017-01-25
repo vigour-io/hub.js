@@ -4,20 +4,11 @@ const next = typeof window === 'undefined'
   ? process.nextTick
   : global.requestAnimationFrame
 
-const parse = (stamp, hub, t) => {
-  const src = bs.src(stamp)
-  if (!src) {
-    return bs.create(bs.type(stamp), hub._uid_, bs.val(stamp))
-  } else {
-    // const val = bs.val(stamp)
-    // if (!t[1]) t[1] = {}
-    // const meta = t[1]
-    // if (!meta.resolve) meta.resolve = {} // resolve will be removed
-    // const resolve = meta.resolve[src]
-    // if (!resolve || val < resolve) meta.resolve[src] = val
-    return stamp
-  }
-}
+// will remove the meta tag src for sure
+// prob will remove type as well from stamps -- make it lean and mean
+const parse = (stamp, hub, t) => !bs.src(stamp)
+  ? bs.create(bs.type(stamp), hub._uid_, bs.val(stamp))
+  : stamp
 
 const serialize = (hub, t, struct, val, level) => {
   const path = struct.path()
