@@ -10,11 +10,11 @@ const parse = (stamp, hub, t) => {
     return bs.create(bs.type(stamp), hub._uid_, bs.val(stamp))
   } else {
     const val = bs.val(stamp)
-    if (!t[1]) t[1] = {}
-    const meta = t[1]
-    if (!meta.resolve) meta.resolve = {} // resolve will be removed
-    const resolve = meta.resolve[src]
-    if (!resolve || val < resolve) meta.resolve[src] = val
+    // if (!t[1]) t[1] = {}
+    // const meta = t[1]
+    // if (!meta.resolve) meta.resolve = {} // resolve will be removed
+    // const resolve = meta.resolve[src]
+    // if (!resolve || val < resolve) meta.resolve[src] = val
     return stamp
   }
 }

@@ -75,7 +75,7 @@ const cache = (client, struct, stamp, level, val) => {
 const isCached = (client, struct, stamp) => client.cache &&
   client.cache[struct.path().join('/')] === stamp[0]
 
-// const isCached = false
+// const isCached = () => false
 
 const setStamp = (s, stamp, src, struct, id, client, level) => {
   cache(client, struct, stamp, level)
@@ -89,9 +89,7 @@ const defStamp = bs.create(void 0, void 0, 0)
 // clean the cached up a bit
 const serialize = (id, client, t, subs, struct, val, level) => {
   if (!struct.isHub) return
-  if (global.logTimes) {
-    console.log(2, struct, val)
-  }
+
   const stamp = get(struct, 'stamp') || defStamp
 
   var cached, isType
@@ -191,7 +189,9 @@ const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s, s
     if (type.compute() !== 'hub') {
       const stamp = get(type, 'stamp') || defStamp
       if (!isCached(client, type, stamp)) {
-        s.type = {}
+        // s.type = {}
+        serialize(id, client, t, fromParent, type, val, level)
+        // console.log('ok type mi bitch')
       }
     }
   } else {
