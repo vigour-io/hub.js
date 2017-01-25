@@ -39,12 +39,7 @@ const send = (hub, client, struct, type, subs, tree) => {
   if (client.val !== null) {
     var val
     if (type === 'remove') {
-      if (!struct._p[struct.key]) {
-        val = null
-        if (bs.src(struct._p.tStamp) === client.key) {
-          return
-        }
-      }
+      if (!struct._p[struct.key]) val = null
     } else if (type === 'update' && tree.$t !== struct) {
       if (tree.$t && tree.$t._p && !tree.$t._p[tree.$t.key]) {
         let p = tree.$t
@@ -73,21 +68,18 @@ const cache = (client, struct, stamp, level, val) => {
 const isCached = (client, struct, stamp) => client.cache &&
   client.cache[struct.path().join('/')] === stamp[0]
 
-const setStamp = (s, stamp, src, struct, id, client, level) => {
+const setStamp = (s, stamp, struct, id, client, level) => {
   cache(client, struct, stamp, level)
-  s.stamp = !src
-    ? bs.create(bs.type(stamp), id, bs.val(stamp))
-    : stamp
+  s.stamp = stamp
 }
 
 const defStamp = bs.create(void 0, void 0, 0)
 
-// clean the cached up a bit
 const serialize = (id, client, t, subs, struct, val, level) => {
   if (!struct.isHub) return
   const stamp = get(struct, 'stamp') || defStamp
   var cached = isCached(client, struct, stamp)
-  let src = 'crap'
+
   // remove this whole src thing here
   if (val === null || !cached || subs.val === true) {
     if (subs.type) {
@@ -100,7 +92,6 @@ const serialize = (id, client, t, subs, struct, val, level) => {
       }
     }
     let getVal = get(struct, 'val')
-
     if (!cached) {
       const path = struct.path()
       const len = path.length
@@ -114,17 +105,16 @@ const serialize = (id, client, t, subs, struct, val, level) => {
           if (s.val === null) return
         }
       }
-
       if (getVal !== void 0 || val === null) {
         if (val === null) {
-          setStamp(s, stamp, src, struct, id, client, level, val)
+          setStamp(s, stamp, struct, id, client, level, val)
           s.val = null
         } else {
           if (struct.key === 'type' || subs.type) {
-            typeSerialize(id, client, t, subs, struct, val, level, subs.type, s, stamp, src)
+            typeSerialize(id, client, t, subs, struct, val, level, subs.type, s, stamp)
           }
           if (struct.key !== 'type' && val !== null) {
-            setStamp(s, stamp, src, struct, id, client, level)
+            setStamp(s, stamp, struct, id, client, level)
             if (getVal && getVal.inherits) {
               s.val = struct.val.path()
               s.val.unshift('@', 'root')
@@ -144,11 +134,12 @@ const serialize = (id, client, t, subs, struct, val, level) => {
   }
 }
 
-const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s, ss, src) => {
+// clean this up
+const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s, stamp) => {
   if (fromParent) {
     const type = get(struct, 'type')
     if (type.compute() !== 'hub') {
-      const stamp = get(type, 'stamp') || defStamp
+      stamp = get(type, 'stamp') || defStamp
       if (!isCached(client, type, stamp)) {
         serialize(id, client, t, fromParent, type, val, level)
       }
@@ -156,7 +147,7 @@ const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s, s
   } else {
     const type = struct.compute()
     if (type !== 'hub') {
-      setStamp(s, ss, src, struct, id, client, level)
+      setStamp(s, stamp, struct, id, client, level)
       s.val = struct.compute()
       serialize(id, client, t, subs, getType(struct.parent(2), type), val, level)
     }
