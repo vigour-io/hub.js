@@ -49,16 +49,10 @@ const connect = (hub, url, reconnect) => {
   // once incoming and make a check for it in the handler itself
   socket.onmessage = ({ data }) => {
     const stamp = bs.create('upstream')
-    // console.log('incoming:', JSON.stringify(JSON.parse(data), false, 2))
-    console.error('INCOMING!', JSON.parse(data))
+    // console.error('INCOMING!', JSON.parse(data))
     const d = JSON.parse(data)
     if (d.page && d.page.things && d.page.things.list && d.page.things.list.items) {
-      console.log('----')
-      global.logit = true
-      console.warn(hub.page && hub.page.things && hub.page.things.list)
       hub.set(JSON.parse(data), stamp)
-      console.log('???', Object.keys(d.page.things.list.items), hub.page.things.list.items.keys())
-      global.logit = false
     } else {
       hub.set(JSON.parse(data), stamp)
     }
@@ -107,14 +101,12 @@ const url = (hub, val, stamp) => {
   }
 }
 
-// very context as well
 const removeClients = (hub, stamp) => {
   const clients = hub.clients
   if (clients && clients.keys().length > 1) {
     clients.forEach(client => {
       if (
         client.val !== null &&
-        // !client.socket &&
         client.key != hub._uid_ // eslint-disable-line
       ) {
         client.set(null, stamp)
@@ -127,7 +119,6 @@ const connected = { type: 'struct' }
 
 const context = (hub, val, key, stamp) => {
   if (!hub.context || val !== hub.context.compute()) {
-    // can also add a listener
     if (!hub.context) {
       c(struct, val, stamp, hub, key)
     } else {
@@ -154,9 +145,7 @@ const stub = () => {}
 const define = {
   subscribe (subs, cb, raw, tree) {
     if (!raw) subs = parse(subs)
-    console.log('???', subs)
     const parsed = serialize(this, subs)
-    console.log(parsed)
     if (parsed) {
       const key = hash(JSON.stringify(parsed))
       if (!this.upstreamSubscriptions) {

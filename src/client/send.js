@@ -9,7 +9,7 @@ const parse = (stamp, hub, t) => {
   if (!src) {
     return bs.create(bs.type(stamp), hub._uid_, bs.val(stamp))
   } else {
-    const val = bs.val(stamp)
+    // const val = bs.val(stamp)
     // if (!t[1]) t[1] = {}
     // const meta = t[1]
     // if (!meta.resolve) meta.resolve = {} // resolve will be removed
@@ -104,7 +104,6 @@ const inProgress = (hub, tick) => {
 }
 
 const out = t => {
-  console.log(JSON.stringify(t.inProgress, false, 2))
   t.socket.send(JSON.stringify(t.inProgress))
   t.inProgress = false
 }
