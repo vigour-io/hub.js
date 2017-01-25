@@ -62,7 +62,7 @@ const send = (val, stamp, struct) => {
     let hub
     let p = struct
     while (p) {
-      if (p._url_ && !p._c) { hub = p }
+      if (p._url_ && !p._c) hub = p
       p = p.parent() // needs to walk over context (for multi server)
     }
     if (hub && !hub.receiveOnly) {
