@@ -82,18 +82,27 @@ const serialize = (id, client, t, subs, struct, val, level) => {
         if (s.val === null) return
       }
     }
+
     if (getVal !== void 0 || val === null) {
       if (val === null) {
         cache(client, struct, stamp, level)
         s.stamp = stamp
         s.val = null
       } else {
-        if (struct.key === 'type' || subs.type) {
-          typeSerialize(id, client, t, subs, struct, val, level, subs.type, s, stamp)
+        if (subs.type) {
+          const type = get(struct, 'type')
+          if (type.compute() !== 'hub') {
+            serialize(id, client, t, subs.type, type, val, level)
+          }
         }
-        if (struct.key !== 'type' && val !== null) {
+
+        if (val !== null) {
           cache(client, struct, stamp, level)
           s.stamp = stamp
+          if (struct.key === 'type') {
+            serialize(id, client, t, subs, getType(struct.parent(2), getVal), val, level)
+          }
+
           if (typeof getVal === 'object' && getVal.inherits) {
             s.val = getVal.path()
             s.val.unshift('@', 'root')
@@ -111,27 +120,6 @@ const serialize = (id, client, t, subs, struct, val, level) => {
   if (subs.val === true) {
     const keys = getKeys(struct)
     if (keys) deepSerialize(keys, id, client, t, subs, struct, val, level)
-  }
-}
-
-// clean this up
-const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s, stamp) => {
-  if (fromParent) {
-    const type = get(struct, 'type')
-    if (type.compute() !== 'hub') {
-      stamp = get(type, 'stamp') || (struct.stamp = bs.create())
-      if (!isCached(client, type, stamp)) {
-        serialize(id, client, t, fromParent, type, val, level)
-      }
-    }
-  } else {
-    const type = struct.compute()
-    if (type !== 'hub') {
-      cache(client, struct, stamp, level)
-      s.stamp = stamp
-      s.val = struct.compute()
-      serialize(id, client, t, subs, getType(struct.parent(2), type), val, level)
-    }
   }
 }
 

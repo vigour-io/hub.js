@@ -52,7 +52,8 @@ const meta = hub => {
 }
 
 const send = (val, stamp, struct) => {
-  if (bs.type(stamp) !== 'upstream') {
+  // -1 means upsteam (floats for extra speed)
+  if (stamp[0] !== -1) {
     let hub
     let p = struct
     while (p) {

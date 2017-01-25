@@ -42,14 +42,8 @@ const connect = (hub, url, reconnect) => {
 
   // once incoming and make a check for it in the handler itself
   socket.onmessage = ({ data }) => {
-    const stamp = bs.create('upstream')
-    const d = JSON.parse(data)
-    if (d.page && d.page.things && d.page.things.list && d.page.things.list.items) {
-      hub.set(JSON.parse(data), stamp)
-    } else {
-      hub.set(JSON.parse(data), stamp)
-    }
-    bs.close(stamp)
+    hub.set(JSON.parse(data), [ -1 ])
+    bs.close()
   }
 }
 
@@ -134,7 +128,6 @@ const context = (hub, val, key, stamp) => {
     if (!hub.context) {
       c(struct, val, stamp, hub, key)
     } else {
-      console.log('dangerous...')
       removeClients(hub, stamp)
       hub.context.set(val, stamp)
     }
