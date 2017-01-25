@@ -22,7 +22,7 @@ const connect = (hub, url, reconnect) => {
     hub.socket = false
     hub.set({ connected: false }, stamp)
     bs.close()
-    if (!socket.blockReconnect && hub.url) {
+    if (!socket.blockReconnect && hub._url_) {
       reconnect = Math.min((reconnect * 1.5), 2000)
       hub.reconnect = setTimeout(connect, reconnect, hub, url, reconnect)
     }
@@ -90,6 +90,7 @@ const url = (hub, val, key, stamp) => {
     removeSocket(hub)
     if (!val) {
       hub.set({ connected: false }, stamp)
+      hub._url_ = null
       if (hub.url) hub.url.set(null, stamp)
     } else {
       if (!hub.url) {
@@ -106,6 +107,8 @@ const url = (hub, val, key, stamp) => {
                   hub.urlIndex = i // use this for checks
                   hub._url_ = val
                   connect(hub, val, 50)
+                } else {
+                  hub._url_ = null
                 }
               }
             }
