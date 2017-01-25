@@ -30,7 +30,7 @@ export default (hub, socket, data) => {
   }
 
   if (payload) {
-    console.log('\n-------------------------------')
+    // console.log('\n-------------------------------')
     // console.log('💫 INCOMING PAYLOAD', '\ncontext:', t.contextKey, '\n', JSON.stringify(payload, false, 2).slice(0, 300), '....\n')
     if (meta && meta.resolve) {
       client.resolve = meta.resolve
@@ -40,7 +40,7 @@ export default (hub, socket, data) => {
       t.set(payload, false)
     }
     bs.close()
-    console.log('-------------------------------\n')
+    // console.log('-------------------------------\n')
   }
 }
 

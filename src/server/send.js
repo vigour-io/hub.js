@@ -58,9 +58,6 @@ const send = (hub, client, struct, type, subs, tree) => {
       }
     }
 
-    if (global.logTimes) {
-      console.log(1, struct, val)
-    }
     // tripple checks not so nice
     // can just send empty objects as well ofc....
     if (get(struct, 'val') !== void 0 || val === null || subs.val === true) {
@@ -165,9 +162,7 @@ const serialize = (id, client, t, subs, struct, val, level) => {
                 if (getVal && getVal.inherits) {
                   s.val = struct.val.path()
                   s.val.unshift('@', 'root')
-                  if (global.logTimes) {
-                    console.log(4, struct)
-                  }
+
                   serialize(id, client, t, subs, struct.val, val, level)
                 } else if (getVal !== void 0) {
                   s.val = getVal
@@ -178,9 +173,6 @@ const serialize = (id, client, t, subs, struct, val, level) => {
         }
 
         if (subs.val === true) {
-          if (global.logTimes) {
-            console.log(3, struct)
-          }
           const keys = getKeys(struct)
           if (keys) deepSerialize(keys, id, client, t, subs, struct, val, level)
         }
@@ -192,9 +184,6 @@ const serialize = (id, client, t, subs, struct, val, level) => {
 }
 
 const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s, ss, src) => {
-  if (global.logTimes) {
-    console.log(4, struct)
-  }
   // console.log('\n\n💫 typeSerialize', struct.path().join('/'))
   // console.log(struct)
   if (fromParent) {
