@@ -6,19 +6,17 @@ import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
 
-// const useragent = typeof window !== 'undefined' && global.navigator.userAgent
-
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
-  const id = hub._uid_
-  const client = createClient(hub, id, {}, false)
+  // t, val, stamp, useragent, id
+  const client = createClient(hub, {}, false)
 
   hub.set({ client }, false)
 
   hub.reconnect = null
 
   const close = () => {
-    const stamp = bs.create('disconnect', hub._uid_)
+    const stamp = bs.create('disconnect')
     hub.socket = false
     hub.set({ connected: false }, stamp)
     bs.close()
@@ -30,16 +28,12 @@ const connect = (hub, url, reconnect) => {
 
   socket.onclose = close
 
-  socket.onerror = () => {
-    if (typeof window === 'undefined') {
-      close()
-    } else {
-      socket.close()
-    }
-  }
+  socket.onerror = typeof window === 'undefined'
+    ? close
+    : () => socket.close()
 
   socket.onopen = () => {
-    const stamp = bs.create('connected', hub._uid_)
+    const stamp = bs.create('connected')
     hub.socket = socket
     meta(hub)
     hub.set({ connected: true }, stamp)
@@ -49,7 +43,6 @@ const connect = (hub, url, reconnect) => {
   // once incoming and make a check for it in the handler itself
   socket.onmessage = ({ data }) => {
     const stamp = bs.create('upstream')
-    console.error('INCOMING!', JSON.parse(data))
     const d = JSON.parse(data)
     if (d.page && d.page.things && d.page.things.list && d.page.things.list.items) {
       hub.set(JSON.parse(data), stamp)
@@ -126,7 +119,7 @@ const removeClients = (hub, stamp) => {
     clients.forEach(client => {
       if (
         client.val !== null &&
-        client.key != hub._uid_ // eslint-disable-line
+        client !== hub.client
       ) {
         client.set(null, stamp)
       }
@@ -141,6 +134,7 @@ const context = (hub, val, key, stamp) => {
     if (!hub.context) {
       c(struct, val, stamp, hub, key)
     } else {
+      console.log('dangerous...')
       removeClients(hub, stamp)
       hub.context.set(val, stamp)
     }

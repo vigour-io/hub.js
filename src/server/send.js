@@ -1,5 +1,6 @@
 import bs from 'brisky-stamp'
 import { get, getKeys, getType } from 'brisky-struct'
+import { cache, isCached } from './cache'
 
 const isEmpty = obj => {
   for (let i in obj) { //eslint-disable-line
@@ -8,15 +9,18 @@ const isEmpty = obj => {
   return true
 }
 
+// good idea -- no stamp means no sync
+
 const progress = (client) => {
   if (!client.inProgress) {
     client.inProgress = {}
     bs.on(() => {
       if (client.val !== null) {
-        const empty = isEmpty(client.inProgress)
-        if (!empty) {
+        if (!isEmpty(client.inProgress)) {
           if (client.inProgress.types) {
             for (let i in client.inProgress) {
+              // order is still important since settign types after the facts is still broken
+              // this will be a big update
               if (i === 'types') {
                 break
               } else {
@@ -59,78 +63,54 @@ const send = (hub, client, struct, type, subs, tree) => {
   }
 }
 
-const cache = (client, struct, stamp, level, val) => {
-  if (!client.cache) client.cache = {}
-  client.cache[struct.path().join('/')] = stamp[0]
-}
-
-// dont use uid just use somethign like path this is not enough im affraid
-const isCached = (client, struct, stamp) => client.cache &&
-  client.cache[struct.path().join('/')] === stamp[0]
-
-const setStamp = (s, stamp, struct, id, client, level) => {
-  cache(client, struct, stamp, level)
-  s.stamp = stamp
-}
-
-const defStamp = bs.create(void 0, void 0, 0)
-
 const serialize = (id, client, t, subs, struct, val, level) => {
   if (!struct.isHub) return
-  const stamp = get(struct, 'stamp') || defStamp
+  const stamp = get(struct, 'stamp') || (struct.stamp = bs.create()) // remove this-- things without a stamp cannot be synced
   var cached = isCached(client, struct, stamp)
+  let getVal = get(struct, 'val')
 
-  // remove this whole src thing here
-  if (val === null || !cached || subs.val === true) {
-    if (subs.type) {
-      var p = struct
-      while (p) {
-        if (p.key === 'types') {
-          return
-        }
-        p = p._p
+  if (!cached) { // val === null -- double chck if this is nessecary
+    const path = struct.path()
+    const len = path.length
+    let s = t
+    for (let i = level; i < len; i++) {
+      let tt = s[path[i]]
+      if (!tt) {
+        s = s[path[i]] = {}
+      } else {
+        s = tt
+        if (s.val === null) return
       }
     }
-    let getVal = get(struct, 'val')
-    if (!cached) {
-      const path = struct.path()
-      const len = path.length
-      let s = t
-      for (let i = level; i < len; i++) {
-        let tt = s[path[i]]
-        if (!tt) {
-          s = s[path[i]] = {}
-        } else {
-          s = tt
-          if (s.val === null) return
+    if (getVal !== void 0 || val === null) {
+      if (val === null) {
+        cache(client, struct, stamp, level)
+        s.stamp = stamp
+        s.val = null
+      } else {
+        if (struct.key === 'type' || subs.type) {
+          typeSerialize(id, client, t, subs, struct, val, level, subs.type, s, stamp)
         }
-      }
-      if (getVal !== void 0 || val === null) {
-        if (val === null) {
-          setStamp(s, stamp, struct, id, client, level, val)
-          s.val = null
-        } else {
-          if (struct.key === 'type' || subs.type) {
-            typeSerialize(id, client, t, subs, struct, val, level, subs.type, s, stamp)
-          }
-          if (struct.key !== 'type' && val !== null) {
-            setStamp(s, stamp, struct, id, client, level)
-            if (getVal && getVal.inherits) {
-              s.val = struct.val.path()
-              s.val.unshift('@', 'root')
-
-              serialize(id, client, t, subs, struct.val, val, level)
-            } else if (getVal !== void 0) {
-              s.val = getVal
-            }
+        if (struct.key !== 'type' && val !== null) {
+          cache(client, struct, stamp, level)
+          s.stamp = stamp
+          if (typeof getVal === 'object' && getVal.inherits) {
+            s.val = getVal.path()
+            s.val.unshift('@', 'root')
+            serialize(id, client, t, subs, getVal, val, level)
+          } else if (getVal !== void 0) {
+            s.val = getVal
           }
         }
       }
     }
-    if (subs.val === true) {
-      const keys = getKeys(struct)
-      if (keys) deepSerialize(keys, id, client, t, subs, struct, val, level)
-    }
+  } else if (typeof getVal === 'object' && getVal.inherits) {
+    serialize(id, client, t, subs, getVal, val, level)
+  }
+
+  if (subs.val === true) {
+    const keys = getKeys(struct)
+    if (keys) deepSerialize(keys, id, client, t, subs, struct, val, level)
   }
 }
 
@@ -139,7 +119,7 @@ const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s, s
   if (fromParent) {
     const type = get(struct, 'type')
     if (type.compute() !== 'hub') {
-      stamp = get(type, 'stamp') || defStamp
+      stamp = get(type, 'stamp') || (struct.stamp = bs.create())
       if (!isCached(client, type, stamp)) {
         serialize(id, client, t, fromParent, type, val, level)
       }
@@ -147,7 +127,8 @@ const typeSerialize = (id, client, t, subs, struct, val, level, fromParent, s, s
   } else {
     const type = struct.compute()
     if (type !== 'hub') {
-      setStamp(s, stamp, struct, id, client, level)
+      cache(client, struct, stamp, level)
+      s.stamp = stamp
       s.val = struct.compute()
       serialize(id, client, t, subs, getType(struct.parent(2), type), val, level)
     }

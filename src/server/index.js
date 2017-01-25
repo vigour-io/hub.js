@@ -1,16 +1,18 @@
 import uws from 'uws'
 import incoming from './incoming'
-import bs from 'brisky-stamp'
 import { removeClient, removeSubscriptions } from './remove'
 import { c, struct } from 'brisky-struct'
+import on from './on'
 
 const Server = uws.Server
 
 const createServer = (hub, port) => {
   const server = new Server({ port })
   console.log(`💫 hub listening on ${port} 💫`)
+
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
+    // need to remove when done -- its the best thing todo (mem!!!)
     socket.on('message', (data) => {
       data = JSON.parse(data)
       if (data) { incoming(hub, socket, data) }
@@ -102,42 +104,6 @@ const props = {
   _server_: true,
   serverIndex: true,
   port
-}
-
-var removedInProgress
-const on = {
-  data: {
-    remove$: (val, stamp, struct) => {
-      if (val === null && (!struct._c || struct._cLevel === 1)) {
-        let p = struct
-        let hub
-        while (p) {
-          if (p.port && !p._c) { hub = p }
-          p = p.parent()
-        }
-        if (hub) {
-          // probably not working correctly with context
-          const target = struct.parent()
-          if (target) {
-            if (!target._removed) {
-              target._removed = []
-              if (!removedInProgress) {
-                removedInProgress = []
-                bs.on(() => {
-                  let i = removedInProgress.length
-                  while (i--) {
-                    delete removedInProgress[i]._removed
-                  }
-                })
-              }
-              removedInProgress.push(target)
-            }
-            target._removed.push(struct)
-          }
-        }
-      }
-    }
-  }
 }
 
 export { props, on }

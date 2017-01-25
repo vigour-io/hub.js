@@ -1,12 +1,7 @@
-import _uid_ from './uid'
 import { c, set, create, struct } from 'brisky-struct'
 import * as client from './client'
 import * as server from './server'
 import * as context from './context'
-
-if (typeof window === 'undefined') {
-  require('source-map-support').install()
-}
 
 const types = struct.props.types
 
@@ -15,8 +10,8 @@ const hub = create({
   instances: false,
   define: { isHub: true },
   props: {
+    _uid_: true,
     default: 'self',
-    _uid_: (t, val) => { t.set({ define: { _uid_: val } }) },
     clients: (t, val, key, stamp) => {
       if (!t.clients) {
         t.clients = c(clients, val, stamp, t, key)
@@ -27,8 +22,7 @@ const hub = create({
     types: types.bind(), // to not interfere with struct type
     type: struct.props.type.bind(),
     client: true
-  },
-  _uid_
+  }
 })
 
 hub.props.types.struct = c(hub, {

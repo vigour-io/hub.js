@@ -4,12 +4,6 @@ const next = typeof window === 'undefined'
   ? process.nextTick
   : global.requestAnimationFrame
 
-// will remove the meta tag src for sure
-// prob will remove type as well from stamps -- make it lean and mean
-const parse = (stamp, hub, t) => !bs.src(stamp)
-  ? bs.create(bs.type(stamp), hub._uid_, bs.val(stamp))
-  : stamp
-
 const serialize = (hub, t, struct, val, level) => {
   const path = struct.path()
   if (struct.key === 'clients' && (!struct._p || struct._p.key !== 'clients')) return
@@ -28,7 +22,7 @@ const serialize = (hub, t, struct, val, level) => {
       }
     }
 
-    s.stamp = parse(struct.stamp, hub, t)
+    s.stamp = struct.stamp
 
     if (val === null) {
       for (let key in s) {
@@ -53,7 +47,7 @@ const meta = hub => {
   if (hub.context) {
     store[1].context = hub.context.compute() || false
   }
-  store[1]._uid_ = hub._uid_
+  store[1].id = hub.client.key
   store[1].subscriptions = hub.upstreamSubscriptions
 }
 
@@ -71,7 +65,7 @@ const send = (val, stamp, struct) => {
           return
         }
       } else if (struct._p.key === 'clients') {
-        if (struct.key !== hub._uid_) {
+        if (struct.key !== hub.client.key) {
           return
         }
       }

@@ -8,9 +8,7 @@ test('client - connect', t => {
     someHub: {
       key: 'client-hub',
       url: {
-        on: () => {
-          cnt++
-        }
+        on: () => { cnt++ }
       },
       _uid_: 'client'
     }

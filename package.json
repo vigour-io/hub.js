@@ -8,9 +8,10 @@
   "browser": {
     "./dist/index.js": "./dist/browser.js",
     "./dist/index.es.js": "./dist/browser.es.js",
-    "./src/uid/index.js": "./src/uid/browser.js",
+    "./src/client/uid/index.js": "./src/client/uid/browser.js",
     "./src/server/index.js": "./src/server/browser.js",
-    "./src/client/websocket/index.js": "./src/client/websocket/browser.js"
+    "./src/client/websocket/index.js": "./src/client/websocket/browser.js",
+    "source-map-support": false
   },
   "scripts": {
     "build": "node rollup/build",

@@ -4,16 +4,13 @@ import bs from 'brisky-stamp'
 import send from './send'
 import createClient from '../client/create'
 import { removeClient } from './remove'
+import { cache } from './cache'
 
 export default (hub, socket, data) => {
   const payload = data[0]
-
-  if (payload) {
-    console.log('INCOMING PAYLOAD', payload)
-  }
-
   const meta = data[1]
   var client = socket.client
+
   if (meta) {
     let t
     if (client) {
@@ -23,7 +20,7 @@ export default (hub, socket, data) => {
         t = create(hub, socket, meta, payload)
         client = socket.client
       } else if (meta.subscriptions) {
-        if (payload) t.set(payload, false)
+        if (payload) setPayload(t, payload, client)
         incomingSubscriptions(t, client, meta, client.key)
         bs.close()
       }
@@ -32,21 +29,39 @@ export default (hub, socket, data) => {
       client = socket.client
     }
   } else {
-    client.parent(2).set(payload, false)
+    setPayload(client.parent(2), payload, client)
     bs.close()
   }
+}
+
+const addToCache = (client, hub, payload) => {
+  if (typeof payload === 'object') {
+    for (let key in payload) {
+      if (key !== 'val' && key !== 'stamp') {
+        addToCache(client, hub[key], payload[key])
+      }
+    }
+    if (payload.val !== void 0 && payload.stamp) {
+      cache(client, hub, payload.stamp)
+    }
+  }
+}
+
+const setPayload = (hub, payload, client) => {
+  hub.set(payload, false)
+  addToCache(client, hub, payload)
 }
 
 const create = (hub, socket, meta, payload) => {
   const stamp = bs.create('connect')
   const context = meta.context
-  const id = meta._uid_
+  const id = meta.id
   const t = context ? hub.getContext(context) : hub
   // const ip = socket._socket.remoteAddress
   const client = socket.client = createClient(
-    t, id, { socket, context }, stamp, socket.useragent
+    t, { socket, context }, stamp, socket.useragent, id
   )
-  if (payload) t.set(payload, false)
+  if (payload) setPayload(t, payload, client)
   if (meta.subscriptions) incomingSubscriptions(t, client, meta, id)
   bs.close()
   return t

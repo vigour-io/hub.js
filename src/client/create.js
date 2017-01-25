@@ -1,10 +1,9 @@
 import ua from 'vigour-ua'
+import uid from './uid'
 
-export default (t, id, val, stamp, useragent) => {
-  useragent = ua(useragent)
-  val.device = useragent.device
-  val.platform = useragent.platform
-  val.browser = useragent.browser
+export default (t, val, stamp, useragent, id) => {
+  if (!id) id = t._uid_ || uid()
+  ua(useragent, val) // just merge it into it
   t.set({ clients: { [id]: val } }, stamp)
   return t.clients[id]
 }
