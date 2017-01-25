@@ -3,9 +3,7 @@ const cache = (client, struct, stamp) => {
   if (!client.cache) client.cache = {}
   // uid is horror
   // when doing stamp sanitation (prob do it in struct itself) x < y etc
-
   // make uid
-
   client.cache[struct.path().join('/')] = stamp
 }
 
