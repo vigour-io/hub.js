@@ -3,13 +3,22 @@ const hub = require('../')
 const test = require('tape')
 
 test('client - connect', t => {
+  var cnt = 0
   const top = hub({
     someHub: {
       key: 'client-hub',
-      url: 'ws://localhost:6060',
+      url: {
+        on: () => {
+          cnt++
+        }
+      },
       _uid_: 'client'
     }
   })
+
+  top.someHub.set({ url: 'ws://localhost:6060' })
+
+  t.equal(cnt, 1, 'fired listener on url')
 
   const client = top.someHub
   const instance = client.create()

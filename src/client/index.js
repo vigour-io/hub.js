@@ -86,7 +86,7 @@ const url = (hub, val, key, stamp) => {
   }, 'url$')
 
   if (!val) val = null
-  if ((!hub.url && val) || (hub.url.compute() && hub.url.compute() !== val)) {
+  if ((!hub.url && val) || (hub.url.compute() !== val)) {
     removeSocket(hub)
     if (!val) {
       hub.set({ connected: false }, stamp)
@@ -105,7 +105,6 @@ const url = (hub, val, key, stamp) => {
                   hub.parent(() => { i++ })
                   hub.urlIndex = i // use this for checks
                   hub._url_ = val
-                  console.log('connect!', val)
                   connect(hub, val, 50)
                 }
               }
