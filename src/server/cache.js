@@ -13,4 +13,5 @@ const cache = (client, struct, stamp) => {
 const isCached = (client, struct, stamp) => client.cache &&
   client.cache[struct.path().join('/')] === stamp
 
+// const isCached = () => false
 export { cache, isCached }

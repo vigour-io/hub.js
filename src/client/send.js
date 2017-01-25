@@ -53,25 +53,23 @@ const meta = hub => {
 
 const send = (val, stamp, struct) => {
   // -1 means upsteam (floats for extra speed)
-  if (!(stamp < 0)) {
-    let hub
-    let p = struct
-    while (p) {
-      if (p._url_ && !p._c) hub = p
-      p = p.parent() // needs to walk over context (for multi server)
-    }
-    if (hub && !hub.receiveOnly) {
-      if (struct === hub) {
-        if (val === null) {
-          return
-        }
-      } else if (struct._p.key === 'clients') {
-        if (struct.key !== hub.client.key) {
-          return
-        }
+  let hub
+  let p = struct
+  while (p) {
+    if (p._url_ && !p._c) hub = p
+    p = p.parent() // needs to walk over context (for multi server)
+  }
+  if (hub && !hub.client._incoming_ && !hub.receiveOnly) {
+    if (struct === hub) {
+      if (val === null) {
+        return
       }
-      serialize(hub, inProgress(hub, bs.on), struct, val, hub.urlIndex)
+    } else if (struct._p.key === 'clients') {
+      if (struct.key !== hub.client.key) {
+        return
+      }
     }
+    serialize(hub, inProgress(hub, bs.on), struct, val, hub.urlIndex)
   }
 }
 

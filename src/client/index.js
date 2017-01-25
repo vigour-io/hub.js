@@ -40,11 +40,13 @@ const connect = (hub, url, reconnect) => {
     bs.close()
   }
 
-  var cnt = 0
   // once incoming and make a check for it in the handler itself
   socket.onmessage = ({ data }) => {
     console.error('INCOMING\n', JSON.parse(data))
-    hub.set(JSON.parse(data), --cnt)
+    hub.client._incoming_ = true
+    // THIS IS WRONG HAS TO BE ABLE TO BECOME 1 THING NO EMPTY SET FROM UPSTREAM
+    hub.set(JSON.parse(data), false)
+    hub.client._incoming_ = null
     bs.close()
   }
 }
