@@ -40,13 +40,15 @@ const connect = (hub, url, reconnect) => {
     bs.close()
   }
 
-  // once incoming and make a check for it in the handler itself
   socket.onmessage = ({ data }) => {
     console.error('INCOMING\n', JSON.parse(data))
-    hub.client._incoming_ = true
-    // THIS IS WRONG HAS TO BE ABLE TO BECOME 1 THING NO EMPTY SET FROM UPSTREAM
-    hub.set(JSON.parse(data), false)
-    hub.client._incoming_ = null
+    if (!hub.receiveOnly) {
+      hub.receiveOnly = true
+      hub.set(JSON.parse(data), false)
+      hub.receiveOnly = null
+    } else {
+      hub.set(JSON.parse(data), false)
+    }
     bs.close()
   }
 }
