@@ -16,7 +16,7 @@ const connect = (hub, url, reconnect) => {
   hub.reconnect = null
 
   const close = () => {
-    const stamp = bs.create('disconnect')
+    const stamp = bs.create()
     hub.socket = false
     hub.set({ connected: false }, stamp)
     bs.close()
@@ -33,7 +33,7 @@ const connect = (hub, url, reconnect) => {
     : () => socket.close()
 
   socket.onopen = () => {
-    const stamp = bs.create('connected')
+    const stamp = bs.create()
     hub.socket = socket
     meta(hub)
     hub.set({ connected: true }, stamp)
@@ -42,7 +42,7 @@ const connect = (hub, url, reconnect) => {
 
   // once incoming and make a check for it in the handler itself
   socket.onmessage = ({ data }) => {
-    hub.set(JSON.parse(data), [ -1 ])
+    hub.set(JSON.parse(data), -1)
     bs.close()
   }
 }

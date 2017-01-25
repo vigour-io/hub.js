@@ -41,7 +41,7 @@
     "realtime"
   ],
   "dependencies": {
-    "brisky-stamp": "^3.0.12",
+    "brisky-stamp": "^4.0.0",
     "brisky-struct": "git://github.com/vigour-io/brisky-struct.git#feature/enhancements",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",

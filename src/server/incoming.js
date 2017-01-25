@@ -53,7 +53,7 @@ const setPayload = (hub, payload, client) => {
 }
 
 const create = (hub, socket, meta, payload) => {
-  const stamp = bs.create('connect')
+  const stamp = bs.create()
   const context = meta.context
   const id = meta.id
   const t = context ? hub.getContext(context) : hub
