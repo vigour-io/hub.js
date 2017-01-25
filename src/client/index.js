@@ -49,7 +49,7 @@ const connect = (hub, url, reconnect) => {
   // once incoming and make a check for it in the handler itself
   socket.onmessage = ({ data }) => {
     const stamp = bs.create('upstream')
-    // console.error('INCOMING!', JSON.parse(data))
+    console.error('INCOMING!', JSON.parse(data))
     const d = JSON.parse(data)
     if (d.page && d.page.things && d.page.things.list && d.page.things.list.items) {
       hub.set(JSON.parse(data), stamp)
