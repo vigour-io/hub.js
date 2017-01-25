@@ -61,7 +61,7 @@ const connect = (hub, url, reconnect) => {
 }
 
 const removeUrl = hub => {
-  hub.url = hub.urlIndex = null
+  hub.url = hub._url_ = hub.urlIndex = null
   hub.emitters.set({ data: { url$: null } }, false)
 }
 
@@ -76,7 +76,7 @@ const removeSocket = hub => {
   }
 }
 
-const url = (hub, val, stamp) => {
+const url = (hub, val, key, stamp) => {
   hub.on((val, stamp, t) => {
     if (val === null && !t._c && t === hub) {
       hub.subscriptions = []
@@ -84,19 +84,36 @@ const url = (hub, val, stamp) => {
       removeSocket(hub)
     }
   }, 'url$')
+
   if (!val) val = null
-  if (val !== hub.url) {
+  if ((!hub.url && val) || (hub.url.compute() && hub.url.compute() !== val)) {
     removeSocket(hub)
-    hub.set({ connected: false }, stamp)
     if (!val) {
-      removeUrl(hub)
+      hub.set({ connected: false }, stamp)
+      if (hub.url) hub.url.set(null, stamp)
     } else {
-      let i = -1
-      if (hub.key) i++
-      hub.parent(() => { i++ })
-      hub.urlIndex = i
-      hub.url = val
-      connect(hub, val, 50)
+      if (!hub.url) {
+        c(struct, {
+          on: {
+            data: {
+              url: (val, stamp, struct) => {
+                val = struct.compute()
+                if (val) {
+                  hub.set({ connected: false }, stamp)
+                  let i = -1
+                  if (hub.key) i++
+                  hub.parent(() => { i++ })
+                  hub.urlIndex = i // use this for checks
+                  hub._url_ = val
+                  console.log('connect!', val)
+                  connect(hub, val, 50)
+                }
+              }
+            }
+          }
+        }, stamp, hub, key)
+      }
+      hub.url.set(val, stamp)
     }
   }
 }

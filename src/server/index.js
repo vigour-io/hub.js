@@ -59,6 +59,7 @@ const removePort = hub => {
 }
 
 const port = (hub, val, key, stamp) => {
+  // use remove
   hub.on((val, stamp, t) => {
     if (val === null && !t._c && t === hub) {
       removeServer(hub)
@@ -66,7 +67,7 @@ const port = (hub, val, key, stamp) => {
     }
   }, 'port$')
   if (!val) val = null
-  if ((!hub.port && val) || (hub.port.compute() !== val)) {
+  if ((!hub.port && val) || (hub.port.compute() && hub.port.compute() !== val)) {
     if (hub._server_) {
       removeServer(hub)
     }
