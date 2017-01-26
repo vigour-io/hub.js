@@ -16,6 +16,7 @@ const hub = create({
   define: { isHub: true },
   props: {
     default: 'self',
+    _uid_: (t, val) => { t.set({ define: { _uid_: val } }) },
     clients: (t, val, key, stamp) => {
       if (!t.clients) {
         t.clients = c(clients, val, stamp, t, key)
