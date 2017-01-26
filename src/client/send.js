@@ -5,7 +5,7 @@ const next = typeof window === 'undefined'
   : global.requestAnimationFrame
 
 const serialize = (hub, t, struct, val, level) => {
-  if (struct.key === 'clients' || (struct._p && struct._p.key !== 'clients')) {
+  if (struct.key === 'clients' || (struct._p && struct._p.key === 'clients')) {
     return
   }
 

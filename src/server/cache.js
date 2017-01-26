@@ -1,17 +1,26 @@
-// needs a crazy speed up....
-const cache = (client, struct, stamp) => {
-  if (!client.cache) client.cache = {}
-  // uid is horror
-  // when doing stamp sanitation (prob do it in struct itself) x < y etc
-  // make uid
-  client.cache[struct.path().join('/')] = stamp
+import hash from 'string-hash'
+
+const pid = t => {
+  var id = 5381
+  var p = t
+  while (p) {
+    let key = p.key
+    if (key !== void 0) {
+      id = id * 33 ^ hash(key)
+      p = p._cLevel === 1 ? p._c : p._p
+    } else {
+      return id
+    }
+  }
+  return id
 }
 
-// auto clear cache -- make 2 of them
-// every 1e3 or somehting lets see
-// dont use uid just use somethign like path this is not enough im affraid
-// const isCached = (client, struct, stamp) => client.cache &&
-//   client.cache[struct.path().join('/')] === stamp
+const cache = (client, struct, stamp) => {
+  if (!client.cache) client.cache = {}
+  client.cache[pid(struct)] = stamp
+}
 
-const isCached = () => false
-export { cache, isCached }
+const isCached = (client, struct, stamp) => client.cache &&
+  client.cache[pid(struct)] === stamp
+
+export { cache, isCached, pid }
