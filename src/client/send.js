@@ -5,8 +5,11 @@ const next = typeof window === 'undefined'
   : global.requestAnimationFrame
 
 const serialize = (hub, t, struct, val, level) => {
-  const path = struct.path()
-  if (struct.key === 'clients' && (!struct._p || struct._p.key !== 'clients')) return
+  if (struct.key === 'clients' || (struct._p && struct._p.key !== 'clients')) {
+    return
+  }
+
+  const path = struct.path() // cached version (later)
   const len = path.length
 
   if (struct.val !== void 0 || val === null) {
@@ -59,7 +62,7 @@ const send = (val, stamp, struct) => {
     if (p._url_ && !p._c) hub = p
     p = p.parent() // needs to walk over context (for multi server)
   }
-  if (hub && !hub.client._incoming_ && !hub.receiveOnly) {
+  if (hub && !hub.receiveOnly) {
     if (struct === hub) {
       if (val === null) {
         return

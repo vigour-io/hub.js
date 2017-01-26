@@ -9,7 +9,7 @@ import createClient from './create'
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
   // t, val, stamp, useragent, id
-  const client = createClient(hub, {}, false)
+  const client = hub.client || createClient(hub, {}, false)
 
   hub.set({ client }, false)
 
@@ -116,18 +116,32 @@ const url = (hub, val, key, stamp) => {
 const removeClients = (hub, stamp) => {
   const clients = hub.clients
   if (clients && clients.keys().length > 1) {
-    clients.forEach(client => {
+    clients.forEach((client, key) => {
       if (
         client.val !== null &&
         client !== hub.client
       ) {
         client.set(null, stamp)
+        delete clients[key]
       }
     })
   }
 }
 
-const connected = { type: 'struct' }
+const connected = {
+  type: 'struct',
+  on: {
+    data: {
+      removeClients: (val, stamp, t) => {
+        if (t.compute() === false) {
+          console.warn('\n\n', 'REMOVE CLIENTS')
+          // all instances! -- fix this
+          removeClients(t._p, stamp)
+        }
+      }
+    }
+  }
+}
 
 const context = (hub, val, key, stamp) => {
   if (!hub.context || val !== hub.context.compute()) {

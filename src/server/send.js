@@ -1,6 +1,5 @@
 import bs from 'brisky-stamp'
-// getVal
-import { get, getKeys, getType } from 'brisky-struct'
+import { get, getKeys, getType, getVal } from 'brisky-struct'
 import { cache, isCached } from './cache'
 
 const isEmpty = obj => {
@@ -40,31 +39,32 @@ const progress = (client) => {
 
 const send = (hub, client, struct, type, subs, tree) => {
   if (struct.isHub && client.val !== null) {
-    let val
+    let isRemoved
     if (type === 'remove') {
-      if (!struct._p[struct.key]) val = null
+      if (!struct._p[struct.key]) isRemoved = true
     } else if (type === 'update' && tree.$t !== struct) {
       if (tree.$t && tree.$t._p && !tree.$t._p[tree.$t.key]) {
-        let p = tree.$t
-        let l = p
-        while (p) {
-          if (p._p && p._p[p.key]) {
-            serialize(client, progress(client), subs, l, null, get(hub, 'serverIndex'), tree)
+        let previous = tree.$t
+        let prop = previous
+        while (previous) {
+          if (previous._p && previous._p[previous.key]) {
+            // think of something fast for level...
+            serialize(client, progress(client), subs, prop, get(hub, 'serverIndex'), true)
           }
-          l = p
-          p = p._p
+          prop = previous
+          previous = previous._p
         }
       }
     }
-    serialize(client, progress(client), subs, struct, val, get(hub, 'serverIndex'), tree)
+    serialize(client, progress(client), subs, struct, get(hub, 'serverIndex'), isRemoved)
   }
 }
 
-const serialize = (client, t, subs, struct, val, level) => {
-  const stamp = get(struct, 'stamp') || 1 // remove the need for these defaults...
-  const getVal = get(struct, 'val')
+const serialize = (client, t, subs, struct, level, isRemoved) => {
+  const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
+  const val = isRemoved ? null : getVal(struct)
 
-  if ((getVal !== void 0 || val === null) && stamp && !isCached(client, struct, stamp)) {
+  if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
     // val === null -- double chck if this is nessecary
     const path = struct.path()
     const len = path.length
@@ -79,56 +79,56 @@ const serialize = (client, t, subs, struct, val, level) => {
       }
     }
 
-    if (val === null) {
-      cache(client, struct, stamp, level)
+    if (isRemoved) {
+      cache(client, struct, stamp)
       s.stamp = stamp
-      s.val = null
+      s.val = val
     } else {
       if (subs.type) {
-        const type = get(struct, 'type')
-        if (type.compute() !== 'hub') {
-          serialize(client, t, subs.type, type, val, level)
+        const type = get(struct, 'type') // make getType (fast)
+        if (getVal(type) !== 'hub') {
+          serialize(client, t, subs.type, type, level)
         }
       }
 
-      if (val !== null) {
-        cache(client, struct, stamp, level)
-        s.stamp = stamp
-        if (struct.key === 'type') {
-          serialize(client, t, subs, getType(struct.parent(2), getVal), val, level)
-        }
+      cache(client, struct, stamp)
+      s.stamp = stamp
+      if (struct.key === 'type') {
+        if (val === 'hub') return
+        serialize(client, t, subs, getType(struct.parent(2), val), level)
+      // allways need a stamp!
+      }
 
-        if (typeof getVal === 'object' && getVal.inherits) {
-          s.val = getVal.path()
-          s.val.unshift('@', 'root')
-          serialize(client, t, subs, getVal, val, level)
-        } else if (getVal !== void 0) {
-          s.val = getVal
-        }
+      if (typeof val === 'object' && val.inherits) {
+        s.val = val.path()
+        s.val.unshift('@', 'root')
+        serialize(client, t, subs, val, level)
+      } else if (val !== void 0) {
+        s.val = val
       }
     }
-  } else if (typeof getVal === 'object' && getVal.inherits) {
-    // can send a bit too much data
-    serialize(client, t, subs, getVal, val, level)
+  } else if (typeof val === 'object' && val.inherits) {
+    // can send a bit too much data when val: true and overlapping keys
+    serialize(client, t, subs, val, level)
   }
 
-  if (subs.val === true) {
+  if (subs.val === true && !isRemoved) {
     const keys = getKeys(struct)
-    if (keys) deepSerialize(keys, client, t, subs, struct, val, level)
+    if (keys) deepSerialize(keys, client, t, subs, struct, level)
   }
 }
 
-const deepSerialize = (keys, client, t, subs, struct, val, level) => {
+const deepSerialize = (keys, client, t, subs, struct, level) => {
   if (keys) {
     for (let i = 0, len = keys.length; i < len; i++) {
       let prop = get(struct, keys[i])
-      if (prop && prop.isHub) serialize(client, t, subs, prop, val, level)
+      if (prop && prop.isHub) serialize(client, t, subs, prop, level)
     }
   }
   if (struct._removed) {
     for (let i = 0, len = struct._removed.length; i < len; i++) {
       let prop = struct._removed[i]
-      serialize(client, t, subs, prop, null, level)
+      serialize(client, t, subs, prop, level, true)
     }
   }
 }

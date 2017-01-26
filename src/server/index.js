@@ -35,6 +35,7 @@ const removeServer = hub => {
   for (let i = 0, len = instances && instances.length; i < len; i++) {
     closeConnections(instances[i])
   }
+
   server.httpServer.close()
   // remove all clients subscriptions
   hub._server_ = null

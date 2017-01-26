@@ -35,10 +35,13 @@ export default (hub, socket, data) => {
 }
 
 const addToCache = (client, hub, payload) => {
-  if (typeof payload === 'object') {
+  if (typeof payload === 'object' && payload) {
     for (let key in payload) {
       if (key !== 'val' && key !== 'stamp') {
-        addToCache(client, hub[key], payload[key])
+        let struct = hub[key]
+        if (struct && struct.isHub) {
+          addToCache(client, hub[key], payload[key])
+        }
       }
     }
     if (payload.val !== void 0 && payload.stamp) {

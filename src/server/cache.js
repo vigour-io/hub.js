@@ -10,8 +10,8 @@ const cache = (client, struct, stamp) => {
 // auto clear cache -- make 2 of them
 // every 1e3 or somehting lets see
 // dont use uid just use somethign like path this is not enough im affraid
-const isCached = (client, struct, stamp) => client.cache &&
-  client.cache[struct.path().join('/')] === stamp
+// const isCached = (client, struct, stamp) => client.cache &&
+//   client.cache[struct.path().join('/')] === stamp
 
-// const isCached = () => false
+const isCached = () => false
 export { cache, isCached }
