@@ -9,10 +9,10 @@ const pid = t => {
       id = id * 33 ^ hash(key)
       p = p._cLevel === 1 ? p._c : p._p
     } else {
-      return id
+      return id >>> 0
     }
   }
-  return id
+  return id >>> 0
 }
 
 const cache = (client, struct, stamp) => {
