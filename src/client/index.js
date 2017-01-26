@@ -42,7 +42,7 @@ const connect = (hub, url, reconnect) => {
 
   socket.onmessage = (data) => {
     data = data.data
-    console.error('INCOMING\n', JSON.parse(data))
+    // console.error('INCOMING\n', JSON.parse(data))
     if (!hub.receiveOnly) {
       hub.receiveOnly = true
       hub.set(JSON.parse(data), false)
