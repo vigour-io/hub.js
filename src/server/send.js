@@ -1,4 +1,5 @@
 import bs from 'brisky-stamp'
+// getVal
 import { get, getKeys, getType } from 'brisky-struct'
 import { cache, isCached } from './cache'
 
@@ -8,8 +9,6 @@ const isEmpty = obj => {
   }
   return true
 }
-
-// good idea -- no stamp means no sync
 
 const progress = (client) => {
   if (!client.inProgress) {
@@ -40,7 +39,7 @@ const progress = (client) => {
 }
 
 const send = (hub, client, struct, type, subs, tree) => {
-  if (client.val !== null) {
+  if (struct.isHub && client.val !== null) {
     let val
     if (type === 'remove') {
       if (!struct._p[struct.key]) val = null
@@ -57,25 +56,16 @@ const send = (hub, client, struct, type, subs, tree) => {
         }
       }
     }
-    if (get(struct, 'val') !== void 0 || val === null || subs.val === true) {
-      serialize(client, progress(client), subs, struct, val, get(hub, 'serverIndex'), tree)
-    }
+    serialize(client, progress(client), subs, struct, val, get(hub, 'serverIndex'), tree)
   }
 }
 
 const serialize = (client, t, subs, struct, val, level) => {
-  if (!struct.isHub) return
-  var stamp = get(struct, 'stamp')
+  const stamp = get(struct, 'stamp') || 1 // remove the need for these defaults...
+  const getVal = get(struct, 'val')
 
-  if (!stamp) {
-    stamp = bs.create()
-    console.log('NO STAMP', struct.path())
-  }
-
-  var cached = isCached(client, struct, stamp)
-  let getVal = get(struct, 'val')
-
-  if (!cached && (getVal !== void 0 || val === null)) { // val === null -- double chck if this is nessecary
+  if ((getVal !== void 0 || val === null) && stamp && !isCached(client, struct, stamp)) {
+    // val === null -- double chck if this is nessecary
     const path = struct.path()
     const len = path.length
     let s = t
@@ -117,11 +107,8 @@ const serialize = (client, t, subs, struct, val, level) => {
         }
       }
     }
-
-    if (isEmpty(s)) {
-      console.log('IS EMPTY', struct.path(), s)
-    }
   } else if (typeof getVal === 'object' && getVal.inherits) {
+    // can send a bit too much data
     serialize(client, t, subs, getVal, val, level)
   }
 
