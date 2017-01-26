@@ -40,7 +40,8 @@ const connect = (hub, url, reconnect) => {
     bs.close()
   }
 
-  socket.onmessage = ({ data }) => {
+  socket.onmessage = (data) => {
+    data = data.data
     console.error('INCOMING\n', JSON.parse(data))
     if (!hub.receiveOnly) {
       hub.receiveOnly = true
@@ -134,7 +135,6 @@ const connected = {
     data: {
       removeClients: (val, stamp, t) => {
         if (t.compute() === false) {
-          console.warn('\n\n', 'REMOVE CLIENTS')
           // all instances! -- fix this
           removeClients(t._p, stamp)
         }
