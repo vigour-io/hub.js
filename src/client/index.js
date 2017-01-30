@@ -146,7 +146,7 @@ const connected = {
 const context = (hub, val, key, stamp) => {
   if (!hub.context || val !== hub.context.compute()) {
     if (!hub.context) {
-      c(struct, val, stamp, hub, key)
+      create(val, stamp, struct, hub, key)
     } else {
       removeClients(hub, stamp)
       hub.context.set(val, stamp)
