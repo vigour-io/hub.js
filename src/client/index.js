@@ -1,7 +1,7 @@
 import bs from 'brisky-stamp'
 import { send, meta } from './send'
 import WebSocket from './websocket'
-import { c, parse, subscribe, struct } from 'brisky-struct'
+import { create, parse, subscribe, struct } from 'brisky-struct'
 import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
@@ -88,7 +88,7 @@ const url = (hub, val, key, stamp) => {
       if (hub.url) hub.url.set(null, stamp)
     } else {
       if (!hub.url) {
-        c(struct, {
+        create({
           on: {
             data: {
               url: (val, stamp, struct) => {
@@ -107,7 +107,7 @@ const url = (hub, val, key, stamp) => {
               }
             }
           }
-        }, stamp, hub, key)
+        }, stamp, struct, hub, key)
       }
       hub.url.set(val, stamp)
     }

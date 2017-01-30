@@ -1,7 +1,7 @@
 import uws from 'uws'
 import incoming from './incoming'
 import { removeClient, removeSubscriptions } from './remove'
-import { c, struct } from 'brisky-struct'
+import { create, struct } from 'brisky-struct'
 import on from './on'
 
 const Server = uws.Server
@@ -79,7 +79,7 @@ const port = (hub, val, key, stamp) => {
       removePort(hub)
     } else {
       if (!hub.port) {
-        c(struct, {
+        create({
           on: {
             data: {
               port: (val, stamp, struct) => {
@@ -94,7 +94,7 @@ const port = (hub, val, key, stamp) => {
               }
             }
           }
-        }, stamp, hub, key)
+        }, stamp, struct, hub, key)
       }
       hub.port.set(val, stamp)
     }
