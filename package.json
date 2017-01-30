@@ -18,7 +18,7 @@
     "pretest": "npm run build && standard",
     "prepublish": "npm run build",
     "watch": "node rollup/watch",
-    "postinstall": "[ -d dist ] || npm run build || ( mkdir dist && yarn && npm run build )",
+    "postinstall": "[ -d dist ] || npm run build || ( mkdir dist && yarn && npm run build );",
     "test": "node test/index.js",
     "dev": "node rollup/watch & nodemon --harmony-async-await test/index.js",
     "cover": "nyc npm test",
@@ -77,5 +77,9 @@
   "homepage": "https://github.com/vigour-io/hub.js#readme",
   "contributors": [
     "Jim de Beer <jim@vigour.io>"
+  ],
+  "files": [
+    "dist",
+    "README.md"
   ]
 }
