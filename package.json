@@ -16,8 +16,8 @@
   "scripts": {
     "build": "node rollup/build",
     "pretest": "npm run build && standard",
-    "prepublish": "npm run build",
     "watch": "node rollup/watch",
+    "prepublish": "echo \"/*\n!dist\n!docs\n!yarn.lock\" > .npmignore && npm run build",
     "postinstall": "[ -d dist ] || npm run build || ( mkdir dist && npm install --only=dev && npm run build );",
     "test": "node test/index.js",
     "dev": "node rollup/watch & nodemon --harmony-async-await test/index.js",
