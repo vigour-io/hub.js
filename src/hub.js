@@ -1,4 +1,4 @@
-import { c, set, create, struct } from 'brisky-struct'
+import { set, create, struct } from 'brisky-struct'
 import * as client from './client'
 import * as server from './server'
 import * as context from './context'
@@ -19,7 +19,7 @@ const hub = create({
     _uid_: (t, val) => { t.set({ define: { _uid_: val } }) },
     clients: (t, val, key, stamp) => {
       if (!t.clients) {
-        t.clients = c(clients, val, stamp, t, key)
+        t.clients = create(val, stamp, clients, t, key)
       } else {
         set(t.clients, val, stamp)
       }
@@ -30,9 +30,9 @@ const hub = create({
   }
 })
 
-hub.props.types.struct = c(hub, {
+hub.props.types.struct = hub.create({
   props: { default: types.struct.props.default.bind() }
-})
+}, false)
 
 hub.props.types.struct.props.default.struct = hub.props.type.struct = hub
 
@@ -42,7 +42,7 @@ hub.types._ks = void 0
 
 const clients = create({
   props: {
-    default: c(hub, {
+    default: hub.create({
       props: {
         cache: true,
         upstreamSubscriptions: true,
@@ -50,7 +50,7 @@ const clients = create({
         socket: true,
         context: true
       }
-    })
+    }, false)
   }
 }, false)
 
