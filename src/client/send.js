@@ -35,9 +35,13 @@ const serialize = (hub, t, struct, val, level) => {
       }
       s.val = null
     } else if (struct.val && struct.val.inherits) {
+      // make a bit more secure...
+      // if (!s.val) {
       s.val = struct.val.path()
       s.val.unshift('@', 'root')
+      // if allrdy serialized stop it!
       serialize(hub, t, struct.val, val, level)
+      // }
     } else if (struct.val !== void 0) {
       s.val = struct.val
     }
@@ -45,13 +49,19 @@ const serialize = (hub, t, struct, val, level) => {
 }
 
 const meta = hub => {
-  const store = inProgress(hub, bs.inProgress ? bs.on : next)
-  if (!store[1]) store[1] = {}
-  if (hub.context) {
-    store[1].context = hub.context.compute() || false
+  if (!hub.receiveOnly) {
+    const store = inProgress(hub, bs.inProgress ? bs.on : next)
+    if (!store[1]) store[1] = {}
+    if (hub.context) {
+      if (hub.context.keys().length > 0) {
+        store[1].context = hub.context.compute() ? hub.context.serialize() : false
+      } else {
+        store[1].context = hub.context.compute() || false
+      }
+    }
+    store[1].id = hub.client.key
+    store[1].subscriptions = hub.upstreamSubscriptions
   }
-  store[1].id = hub.client.key
-  store[1].subscriptions = hub.upstreamSubscriptions
 }
 
 const send = (val, stamp, struct) => {
@@ -62,6 +72,7 @@ const send = (val, stamp, struct) => {
     if (p._url_ && !p._c) hub = p
     p = p.parent() // needs to walk over context (for multi server)
   }
+
   if (hub && !hub.receiveOnly) {
     if (struct === hub) {
       if (val === null) {

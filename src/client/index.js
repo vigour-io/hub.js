@@ -42,7 +42,7 @@ const connect = (hub, url, reconnect) => {
 
   socket.onmessage = (data) => {
     data = data.data
-    // console.error('INCOMING\n', JSON.parse(data))
+    // console.warn('INCOMING\n', JSON.parse(data))
     if (!hub.receiveOnly) {
       hub.receiveOnly = true
       hub.set(JSON.parse(data), false)
@@ -173,12 +173,10 @@ const contextIsNotEqual = (val, context) => {
 }
 
 const context = (hub, val, key, stamp) => {
-  console.log('hello', val, hub.context)
   if (!hub.context || contextIsNotEqual(val, hub.context)) {
-    console.log('fire fire fire FLAME context', val, stamp)
+    console.log('⚽️ fire fire fire FLAME context ⚽️', val, stamp)
     if (!hub.context) {
-      create(val, stamp, struct, hub, key)
-      console.error('😎', hub.context, val)
+      create(val, stamp, contextStruct, hub, key)
     } else {
       removeClients(hub, stamp)
       hub.context.set(val, stamp)
@@ -203,15 +201,17 @@ const stub = () => {}
 const define = {
   subscribe (subs, cb, raw, tree) {
     if (!raw) subs = parse(subs)
-    const parsed = serialize(this, subs)
-    if (parsed) {
-      const key = hash(JSON.stringify(parsed))
-      if (!this.upstreamSubscriptions) {
-        this.upstreamSubscriptions = { [key]: parsed }
-        if (this.url) meta(this)
-      } else if (!this.upstreamSubscriptions[key]) {
-        this.upstreamSubscriptions[key] = parsed
-        if (this.url) meta(this)
+    if (!this.receiveOnly) {
+      const parsed = serialize(this, subs)
+      if (parsed) {
+        const key = hash(JSON.stringify(parsed))
+        if (!this.upstreamSubscriptions) {
+          this.upstreamSubscriptions = { [key]: parsed }
+          if (this.url) meta(this)
+        } else if (!this.upstreamSubscriptions[key]) {
+          this.upstreamSubscriptions[key] = parsed
+          if (this.url) meta(this)
+        }
       }
     }
     return subscribe(this, subs, cb || stub, tree)
