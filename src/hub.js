@@ -17,6 +17,7 @@ const hub = create({
   props: {
     default: 'self',
     _uid_: (t, val) => { t.set({ define: { _uid_: val } }) },
+    // why nto call this client id -- thats what it is
     clients: (t, val, key, stamp) => {
       if (!t.clients) {
         t.clients = create(val, stamp, clients, t, key)

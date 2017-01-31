@@ -143,10 +143,42 @@ const connected = {
   }
 }
 
+const contextStruct = struct.create({
+  props: {
+    default: {
+      on: {
+        data: {
+          updateParent: (val, stamp, t) => {
+            console.log('👻 GO UPDATE PARENT!!! 👻')
+            t.parent().emit('data', val, stamp)
+          }
+        }
+      }
+    }
+  }
+})
+
+const contextIsNotEqual = (val, context) => {
+  if (val && typeof val === 'object') {
+    for (let field in val) {
+      if (!context[field] || val[field] !== context[field].compute()) {
+        console.log('😜', field)
+        return true
+      }
+    }
+  } else {
+    console.log('😜 ?????')
+    return val !== context.compute()
+  }
+}
+
 const context = (hub, val, key, stamp) => {
-  if (!hub.context || val !== hub.context.compute()) {
+  console.log('hello', val, hub.context)
+  if (!hub.context || contextIsNotEqual(val, hub.context)) {
+    console.log('fire fire fire FLAME context', val, stamp)
     if (!hub.context) {
       create(val, stamp, struct, hub, key)
+      console.error('😎', hub.context, val)
     } else {
       removeClients(hub, stamp)
       hub.context.set(val, stamp)
