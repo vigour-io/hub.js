@@ -20,7 +20,7 @@ const hub = create({
       t.set({
         define: {
           getContext (key) {
-            fn(this, key, getContext)
+            return fn(this, key, getContext)
           }
         }
       })
