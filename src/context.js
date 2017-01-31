@@ -5,17 +5,17 @@ export default {
       t.set({
         define: {
           getContext (key) {
-            return fn(this, key, getContext)
+            const result = find(this, key)
+            return fn(key, () => createContext(this, key, result), !result, this)
           }
         }
       })
     }
   },
-  getContext: (hub, key, context) => context(hub, key)
+  getContext: (key, context) => context()
 }
 
-const getContext = (hub, val) => {
-  var result = find(hub, val)
+const createContext = (hub, val, result) => {
   if (!result) {
     result = hub.create({ contextKey: val }, false)
   }
