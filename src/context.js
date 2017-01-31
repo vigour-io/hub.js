@@ -4,8 +4,8 @@ export default {
     getContext: (t, fn) => {
       t.set({
         define: {
-          getContext (key) {
-            return fn(key, (key) => createContext(this, key), this)
+          getContext (key, socket) {
+            return fn(key, (key) => createContext(this, key), this, socket)
           }
         }
       })
