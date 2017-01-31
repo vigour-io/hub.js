@@ -1,4 +1,4 @@
-export const context = {
+export default {
   props: {
     contextKey: true,
     getContext: (t, fn) => {
@@ -14,7 +14,7 @@ export const context = {
   getContext: (hub, key, context) => context(hub, key)
 }
 
-export const getContext = (hub, val) => {
+const getContext = (hub, val) => {
   var result = find(hub, val)
   if (!result) {
     result = hub.create({ contextKey: val }, false)

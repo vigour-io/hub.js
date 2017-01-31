@@ -1,7 +1,7 @@
 import { set, create, struct } from 'brisky-struct'
 import * as client from './client'
 import * as server from './server'
-import { context } from './context'
+import context from './context'
 
 if (typeof window === 'undefined') {
   // dont do this gets added to client...
