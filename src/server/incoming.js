@@ -17,16 +17,14 @@ export default (hub, socket, data) => {
       t = hub
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
         removeClient(client)
-        t = create(hub, socket, meta, payload)
-        client = socket.client
+        create(hub, socket, meta, payload)
       } else if (meta.subscriptions) {
         if (payload) setPayload(t, payload, client)
         incomingSubscriptions(t, client, meta, client.key)
         bs.close()
       }
     } else {
-      t = create(hub, socket, meta, payload)
-      client = socket.client
+      create(hub, socket, meta, payload)
     }
   } else {
     setPayload(client.parent(2), payload, client)
@@ -55,11 +53,10 @@ const setPayload = (hub, payload, client) => {
   addToCache(client, hub, payload)
 }
 
-const create = (hub, socket, meta, payload) => {
+const set = (meta, socket, t, payload) => {
   const stamp = bs.create()
-  const context = meta.context
   const id = meta.id
-  const t = context ? hub.getContext(context) : hub
+  const context = meta.context
   // const ip = socket._socket.remoteAddress
   const client = socket.client = createClient(
     t, { socket, context }, stamp, socket.useragent, id
@@ -67,7 +64,22 @@ const create = (hub, socket, meta, payload) => {
   if (payload) setPayload(t, payload, client)
   if (meta.subscriptions) incomingSubscriptions(t, client, meta, id)
   bs.close()
-  return t
+}
+
+const create = (hub, socket, meta, payload) => {
+  const t = meta.context ? hub.getContext(meta.context) : hub
+  if (!t.inherits && t.then) {
+    t.then((t) => {
+      if (socket.external !== null) {
+        console.log('client connected and found informations')
+        set(meta, socket, t, payload)
+      } else {
+        console.log('client discconected when logging in')
+      }
+    }).catch(err => hub.emit('error', err))
+  } else {
+    set(meta, socket, t, payload)
+  }
 }
 
 const incomingSubscriptions = (hub, client, meta, id) => {
