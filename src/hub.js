@@ -1,7 +1,7 @@
 import { set, create, struct } from 'brisky-struct'
 import * as client from './client'
 import * as server from './server'
-import * as context from './context'
+import context from './context'
 
 if (typeof window === 'undefined') {
   // dont do this gets added to client...
@@ -36,7 +36,7 @@ hub.props.types.struct = hub.create({
 
 hub.props.types.struct.props.default.struct = hub.props.type.struct = hub
 
-hub.set({ types: { hub: 'self' }, inject: [ server, context, client ] }, false)
+hub.set({ types: { hub: 'self' }, inject: [ server, client, context ] }, false)
 
 hub.types._ks = void 0
 

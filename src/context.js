@@ -1,13 +1,25 @@
-export const props = { contextKey: true }
-
-export const define = {
-  getContext (val) {
-    var result = find(this, val)
-    if (!result) {
-      result = this.create({ contextKey: val }, false)
+export default {
+  props: {
+    contextKey: true,
+    getContext: (t, fn) => {
+      t.set({
+        define: {
+          getContext (key) {
+            const result = find(this, key)
+            return fn(key, () => createContext(this, key, result), !result, this)
+          }
+        }
+      })
     }
-    return result
+  },
+  getContext: (key, context) => context()
+}
+
+const createContext = (hub, val, result) => {
+  if (!result) {
+    result = hub.create({ contextKey: val }, false)
   }
+  return result
 }
 
 const find = (hub, val) => {
