@@ -55,13 +55,15 @@ test('client - connect', t => {
   })
   .then(() => {
     t.same(server.get('clients').keys(), [], 'removed client from server')
+    console.log('lets remove!')
     client.set({ url: false })
+    console.log('done')
     t.equal(client.get('connected').compute(), false, 'disconnected')
     return server2.deep.clients.once(clients => clients.keys().length === 0)
   })
   .then(() => {
     t.pass('server2 has an empty clients array')
-    t.equal(client.socket, false, 'socket is removed')
+    t.ok(!!client.socket, 'socket is removed')
     client.set({ url: 'ws://localhost:6060' })
     return isConnected(server)
   })

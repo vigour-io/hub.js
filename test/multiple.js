@@ -35,10 +35,6 @@ test('client - multiple', t => {
     t.pass('client is connected')
   })
 
-  hybrid.get('blurf', {}).once('hello', () => {
-    console.log('????')
-  })
-
   server.get('blurf', {}).once('hello', () => {
     var cnt = 0
     server.set({ blarf: 'yyy' })

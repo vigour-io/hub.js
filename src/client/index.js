@@ -28,6 +28,10 @@ const connect = (hub, url, reconnect) => {
 
   socket.onclose = close
 
+  if (typeof window === 'undefined') {
+    socket.hackyOnClose = close
+  }
+
   socket.onerror = typeof window === 'undefined'
     ? close
     : () => socket.close()
@@ -66,8 +70,15 @@ const removeSocket = hub => {
   }
   if (hub.socket) {
     hub.socket.blockReconnect = true
-    hub.socket.close()
+    console.log('GO GO GOREMOVE', hub.socket._readyState)
+    if (hub.connected.compute() === false || !hub.socket._readyState) {
+      console.log('hacky!')
+      hub.socket.hackyOnClose()
+    } else {
+      hub.socket.close()
+    }
   }
+  // hub.socket = false
 }
 
 const url = (hub, val, key, stamp) => {
