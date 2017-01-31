@@ -1,13 +1,11 @@
 export const props = { contextKey: true }
 
-export const define = {
-  getContext (val) {
-    var result = find(this, val)
-    if (!result) {
-      result = this.create({ contextKey: val }, false)
-    }
-    return result
+export const getContext = (hub, val) => {
+  var result = find(hub, val)
+  if (!result) {
+    result = hub.create({ contextKey: val }, false)
   }
+  return result
 }
 
 const find = (hub, val) => {

@@ -1,7 +1,7 @@
 import { set, create, struct } from 'brisky-struct'
 import * as client from './client'
 import * as server from './server'
-import * as context from './context'
+import { getContext } from './context'
 
 if (typeof window === 'undefined') {
   // dont do this gets added to client...
@@ -16,6 +16,15 @@ const hub = create({
   define: { isHub: true },
   props: {
     default: 'self',
+    getContext: (t, fn) => {
+      t.set({
+        define: {
+          getContext (key) {
+            fn(this, key, getContext)
+          }
+        }
+      })
+    },
     _uid_: (t, val) => { t.set({ define: { _uid_: val } }) },
     clients: (t, val, key, stamp) => {
       if (!t.clients) {
@@ -27,7 +36,8 @@ const hub = create({
     types: types.bind(), // to not interfere with struct type
     type: struct.props.type.bind(),
     client: true
-  }
+  },
+  getContext: (hub, key, context) => context(hub, key)
 })
 
 hub.props.types.struct = hub.create({
@@ -36,7 +46,7 @@ hub.props.types.struct = hub.create({
 
 hub.props.types.struct.props.default.struct = hub.props.type.struct = hub
 
-hub.set({ types: { hub: 'self' }, inject: [ server, context, client ] }, false)
+hub.set({ types: { hub: 'self' }, inject: [ server, client ] }, false)
 
 hub.types._ks = void 0
 
