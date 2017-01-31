@@ -68,12 +68,13 @@ test('client - connect', t => {
   .then(() => {
     server.set({ port: 6062 })
     client.set({
-      receiveOnly: true,
-      url: 'ws://localhost:6062',
-      hahaha: true
+      url: 'ws://localhost:6062'
     })
 
     client.subscribe({ val: true })
+
+    client.set({ receiveOnly: true })
+    client.set({ hahaha: true })
 
     return isConnected(server)
       .then(() => new Promise(resolve => {
