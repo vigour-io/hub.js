@@ -18,7 +18,7 @@
     "pretest": "npm run build && standard",
     "watch": "node rollup/watch",
     "version-commit": "npm --no-git-tag-version version $(node -pe \"require('./package.json').version.split('-')[0]\")-$(git log -n 1 --pretty=format:'%H')",
-    "publish-unstable": "npm run version-commit && npm publish --tag unstable",
+    "publish-branch": "npm run version-commit && npm publish --tag $(git rev-parse --abbrev-ref HEAD | sed 's/\\//-/g')",
     "prepublish": "npm run build",
     "test": "node test/index.js",
     "dev": "node rollup/watch & nodemon --harmony-async-await test/index.js",
