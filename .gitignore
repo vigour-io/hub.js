@@ -16,4 +16,3 @@ coverage
 yarn-error*
 isolate-*
 .nyc_output
-.npmignore
