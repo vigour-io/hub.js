@@ -1,7 +1,7 @@
 {
   "name": "hub.js",
   "description": "Seamless realtime communcation",
-  "version": "0.0.11-e65b0788649a119e9a896b60f15fc5230d58bd39",
+  "version": "0.0.11-b0159e8a2b46918d4c86b76fc2b456a954addff7",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
