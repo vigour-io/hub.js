@@ -43,7 +43,7 @@
   ],
   "dependencies": {
     "brisky-stamp": "^4.0.0",
-    "brisky-struct": "git://github.com/vigour-io/brisky-struct.git#feature/enhancements",
+    "brisky-struct": "unstable",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
     "vigour-ua": "^3.0.0",
