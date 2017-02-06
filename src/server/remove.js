@@ -1,4 +1,4 @@
-export const removeSubscriptions = (t, id) => {
+const removeSubscriptions = (t, id) => {
   if (t.subscriptions) {
     let i = t.subscriptions.length
     while (i--) { // clean this up with unsubscribe in struct
@@ -9,7 +9,7 @@ export const removeSubscriptions = (t, id) => {
   }
 }
 
-export const removeClient = (client) => {
+const removeClient = (client) => {
   const id = client.key
   client.val = null
   if (client.socket) {
@@ -23,3 +23,5 @@ export const removeClient = (client) => {
   //   t.set(null, stamp)
   // }
 }
+
+export { removeSubscriptions, removeClient }
