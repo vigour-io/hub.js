@@ -2,9 +2,7 @@
   "name": "hub.js",
   "description": "Seamless realtime communcation",
   "version": "0.0.11-f74063fa641c31cd8600af94e5e8db865eb57027",
-  "main": "dist/yuz.js",
-  "module": "dist/index.es.js",
-  "jsnext:main": "dist/index.es.js",
+  "main": "dist/index.js",
   "browser": {
     "./dist/index.js": "./dist/browser.js",
     "./dist/index.es.js": "./dist/browser.es.js",
@@ -14,17 +12,17 @@
     "source-map-support": false
   },
   "scripts": {
-    "build": "node rollup/build",
-    "pretest": "npm run build && standard",
-    "watch": "node rollup/watch",
+    "build": "builder-boy src/index.js dist/index.js",
+    "lint": "standard --fix",
     "version-commit": "npm --no-git-tag-version version $(node -pe \"require('./package.json').version.split('-')[0]\")-$(git log -n 1 --pretty=format:'%H')",
     "publish-unstable": "npm run version-commit && npm publish --tag unstable",
+    "pretest": "npm run build",
     "prepublish": "npm run build",
     "test": "node test/index.js",
-    "dev": "node rollup/watch & nodemon --harmony-async-await test/index.js",
     "cover": "nyc npm test",
     "travis": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
+  "precommit": "lint, test",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vigour-io/hub.js.git"
@@ -57,15 +55,12 @@
     "instrument": true
   },
   "devDependencies": {
+    "builder-boy": "latest",
     "buble": "0.15.1",
     "coveralls": "^2.11.9",
     "nodemon": "^1.11.0",
     "nyc": "^10.0.0",
     "pre-commit": "^1.1.3",
-    "rollup": "^0.37.0",
-    "rollup-plugin-commonjs": "^6.0.0",
-    "rollup-plugin-istanbul": "^1.1.0",
-    "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-watch": "^2.5.0",
     "source-map-support": "^0.4.7",
     "standard": "^8.1.0",
