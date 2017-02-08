@@ -1,7 +1,7 @@
 {
   "name": "hub.js",
   "description": "Seamless realtime communcation",
-  "version": "0.0.11-b0159e8a2b46918d4c86b76fc2b456a954addff7",
+  "version": "0.0.11-a77cea9de63088230954abee61135cb832057046",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
@@ -47,7 +47,8 @@
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
     "vigour-ua": "^3.0.0",
-    "websocket": "^1.0.24"
+    "websocket": "^1.0.24",
+    "source-map-support": "^0.4.7"
   },
   "nyc": {
     "include": [
@@ -67,7 +68,6 @@
     "rollup-plugin-istanbul": "^1.1.0",
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-watch": "^2.5.0",
-    "source-map-support": "^0.4.7",
     "standard": "^8.1.0",
     "tape": "4.6.0"
   },
