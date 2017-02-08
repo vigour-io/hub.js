@@ -1,11 +1,10 @@
 {
   "name": "hub.js",
   "description": "Seamless realtime communcation",
-  "version": "0.0.11-56a16229a5f5f7943db0ee0fcada5e37692fb0fc",
+  "version": "0.0.11-7d8a170431bac9b23de7c7c8468348ff668d61d0",
   "main": "dist/index.js",
   "browser": {
-    "./dist/index.js": "./dist/browser.js",
-    "./dist/index.es.js": "./dist/browser.es.js",
+    "./dist/index.js": "./dist/index.browser.js",
     "./src/client/uid/index.js": "./src/client/uid/browser.js",
     "./src/server/index.js": "./src/server/browser.js",
     "./src/client/websocket/index.js": "./src/client/websocket/browser.js",
