@@ -3,11 +3,6 @@ import * as client from './client'
 import * as server from './server'
 import context from './context'
 
-if (typeof window === 'undefined') {
-  // dont do this gets added to client...
-  require('source-map-support').install()
-}
-
 const types = struct.props.types
 
 const hub = create({

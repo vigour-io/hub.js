@@ -118,9 +118,10 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
 }
 
 const deepSerialize = (keys, client, t, subs, struct, level) => {
-  if (struct.get('type') && struct.get('type').compute() !== 'hub') {
-    serialize(client, t, subs, struct.get('type'), level)
-  }
+  console.log('dont!')
+  // if (struct.get('type') && struct.get('type').compute() !== 'hub') {
+  //   serialize(client, t, subs, struct.get('type'), level)
+  // }
   if (keys) {
     for (let i = 0, len = keys.length; i < len; i++) {
       let prop = get(struct, keys[i])
