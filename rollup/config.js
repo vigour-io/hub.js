@@ -7,15 +7,15 @@ module.exports = [{
   plugins: [ resolve() ],
   external: id => deps[id.split('/')[0]],
   targets: [
-    { format: 'cjs', dest: 'dist/index.js', sourceMap: true },
-    { format: 'es', dest: 'dist/index.es.js', sourceMap: true }
+    { format: 'cjs', dest: 'dist/index.js' },
+    { format: 'es', dest: 'dist/index.es.js' }
   ]
 }, {
   entry: 'src/index.js',
   plugins: [ resolve({ browser: true }) ],
   external: id => deps[id.split('/')[0]],
   targets: [
-    { format: 'cjs', dest: 'dist/browser.js', sourceMap: true },
-    { format: 'es', dest: 'dist/browser.es.js', sourceMap: true }
+    { format: 'cjs', dest: 'dist/browser.js' },
+    { format: 'es', dest: 'dist/browser.es.js' }
   ]
 }]

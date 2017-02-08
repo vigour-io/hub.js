@@ -15,8 +15,7 @@
     "build": "builder-boy src/index.js dist/index.js",
     "lint": "standard --fix",
     "version-commit": "npm --no-git-tag-version version $(node -pe \"require('./package.json').version.split('-')[0]\")-$(git log -n 1 --pretty=format:'%H')",
-    "publish-unstable": "npm run version-commit && npm publish --tag unstable",
-    "pretest": "npm run build",
+    "publish-branch": "npm run version-commit && npm publish --tag $(git rev-parse --abbrev-ref HEAD | sed 's/\\//-/g')",
     "prepublish": "npm run build",
     "test": "node test/index.js",
     "cover": "nyc npm test",
@@ -41,7 +40,7 @@
   ],
   "dependencies": {
     "brisky-stamp": "^4.0.0",
-    "brisky-struct": "unstable",
+    "brisky-struct": "feature-enhancements",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
     "vigour-ua": "^3.0.0",
@@ -62,7 +61,6 @@
     "nyc": "^10.0.0",
     "pre-commit": "^1.1.3",
     "rollup-watch": "^2.5.0",
-    "source-map-support": "^0.4.7",
     "standard": "^8.1.0",
     "tape": "4.6.0"
   },
