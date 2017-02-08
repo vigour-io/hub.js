@@ -1,6 +1,6 @@
 import hub from './hub'
 
-console.log('HUB START...')
+console.log('hub.js:', __dirname)
 
 const fn = (val, stamp) => hub.create(val, stamp)
 export default fn
