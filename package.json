@@ -1,7 +1,7 @@
 {
   "name": "hub.js",
   "description": "Seamless realtime communcation",
-  "version": "0.0.11-442b9d8867d48b89ad8a4114974dbd5e4eabb185",
+  "version": "0.0.11-eedc5c1d50bdd18557e0c10c18a867f085173c31",
   "main": "dist/index.js",
   "browser": {
     "./dist/index.js": "./dist/index.browser.js",
@@ -39,7 +39,7 @@
   ],
   "dependencies": {
     "brisky-stamp": "^4.0.0",
-    "brisky-struct": "feature-enhancements",
+    "brisky-struct": "builder-boy",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
     "vigour-ua": "^3.0.0",
