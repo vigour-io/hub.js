@@ -107,4 +107,5 @@ const props = {
   port
 }
 
-export { props, on }
+export default { props, on }
+

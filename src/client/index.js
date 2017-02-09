@@ -217,7 +217,8 @@ const define = {
       if (parsed) {
         const key = hash(JSON.stringify(parsed))
         if (!this.upstreamSubscriptions) {
-          this.upstreamSubscriptions = { [key]: parsed }
+          this.upstreamSubscriptions = {}
+          this.upstreamSubscriptions[key] = parsed
           if (this.url) meta(this)
         } else if (!this.upstreamSubscriptions[key]) {
           this.upstreamSubscriptions[key] = parsed
