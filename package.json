@@ -12,6 +12,8 @@
   },
   "scripts": {
     "build": "builder-boy src/index.js dist/index.js",
+    "dev": "nodemon --exec 'npm test' --ignore dist",
+    "pretest": "npm run build",
     "lint": "standard --fix",
     "version-commit": "npm --no-git-tag-version version $(node -pe \"require('./package.json').version.split('-')[0]\")-$(git log -n 1 --pretty=format:'%H')",
     "publish-branch": "npm run version-commit && npm publish --tag $(git rev-parse --abbrev-ref HEAD | sed 's/\\//-/g')",

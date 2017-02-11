@@ -70,9 +70,7 @@ const removeSocket = hub => {
   }
   if (hub.socket) {
     hub.socket.blockReconnect = true
-    console.log('GO GO GOREMOVE', hub.socket._readyState)
     if (hub.connected.compute() === false || !hub.socket._readyState) {
-      console.log('hacky!')
       hub.socket.hackyOnClose()
     } else {
       hub.socket.close()

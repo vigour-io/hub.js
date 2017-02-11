@@ -2,7 +2,7 @@ const hub = require('../')
 const test = require('tape')
 const bs = require('brisky-stamp')
 
-test('types', t => {
+test('types', { timeout: 1000 }, t => {
   const scraper = hub({
     _uid_: 'scraper',
     port: 6060,
@@ -20,7 +20,13 @@ test('types', t => {
           }
         }
       },
-      blurf: { bye: true, x: true, y: true, z: true, shurf: 'blurf' }
+      blurf: {
+        bye: true,
+        x: true,
+        y: true,
+        z: true,
+        shurf: 'blurf'
+      }
     },
     bla: { type: 'rick' },
     blurf: { type: 'james' },
@@ -60,12 +66,13 @@ test('types', t => {
   ]).then(() => {
     t.same(client.blurf.keys(), [ 'a' ], 'correct keys on blurf')
     t.equal(client.blurf.compute(), 'james', 'correct val on blurf')
-    t.same(client.types.keys(), [ 'rick', 'james' ], 'recieved correct types')
+    t.same(client.types.keys(), [ 'rick', 'james' ], 'received correct types')
+
     bs.on(() => {
       client.set({ bla: { type: 'blurf' } })
       client.types.blurf.once(s => {
         return s.keys().length > 0
-      }).then((val) => {
+      }).then(val => {
         t.same(
           client.types.blurf.keys(),
           [ 'bye', 'x', 'y', 'z', 'shurf' ],
