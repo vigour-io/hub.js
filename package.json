@@ -1,7 +1,7 @@
 {
   "name": "hub.js",
   "description": "Seamless realtime communcation",
-  "version": "0.0.11-7d2e1c177f16a9e89d7f54b1ed225552f132cece",
+  "version": "0.0.11-de498faec5625309200d99cabb6e96f8c5426a85",
   "main": "dist/index.js",
   "browser": {
     "./dist/index.js": "./dist/index.browser.js",
@@ -14,8 +14,8 @@
     "build": "builder-boy src/index.js dist/index.js",
     "dev": "nodemon --exec 'npm test' --ignore dist",
     "pretest": "npm run build",
-    "precommit": "npm run test && standard --fix",
     "preversion": "npm run precommit",
+    "precommit": "npm run test && standard --fix",
     "version-commit": "npm --no-git-tag-version version $(node -pe \"require('./package.json').version.split('-')[0]\")-$(git log -n 1 --pretty=format:'%H')",
     "publish-branch": "npm run version-commit && npm publish --tag $(git rev-parse --abbrev-ref HEAD | sed 's/\\//-/g')",
     "prepublish": "npm run build",
