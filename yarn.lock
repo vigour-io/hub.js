@@ -472,9 +472,9 @@ brisky-stamp@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/brisky-stamp/-/brisky-stamp-4.0.1.tgz#0f64287d2deb46471204b0710f4b7859ccc14469"
 
-brisky-struct@feature-enhancements:
-  version "1.1.7-b279c9343194043e5d005a7946bae1f4cdf5f2bc"
-  resolved "https://registry.yarnpkg.com/brisky-struct/-/brisky-struct-1.1.7-b279c9343194043e5d005a7946bae1f4cdf5f2bc.tgz#4226aeae6ffa91479ee22e31ef92dbb30e23f8b0"
+brisky-struct@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/brisky-struct/-/brisky-struct-1.2.0.tgz#c52cf5394f96b84f77a89e15888b08ed8d152f21"
   dependencies:
     brisky-stamp "^4.0.0"
     string-hash "^1.1.0"
@@ -2066,8 +2066,8 @@ js-yaml@3.6.1, js-yaml@^3.5.1:
     esprima "^2.6.0"
 
 jsbn@~0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.0.tgz#650987da0dd74f4ebf5a11377a2aa2d273e97dfd"
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
 jsesc@^1.3.0:
   version "1.3.0"
@@ -3309,8 +3309,8 @@ stream-splicer@^2.0.0:
     readable-stream "^2.0.2"
 
 string-hash@^1.1.0, string-hash@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/string-hash/-/string-hash-1.1.1.tgz#8e85bed291e0763b8f6809d9c3368fea048db3dc"
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/string-hash/-/string-hash-1.1.3.tgz#e8aafc0ac1855b4666929ed7dd1275df5d6c811b"
 
 string-length@^1.0.0:
   version "1.0.1"
