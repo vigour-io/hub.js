@@ -12,7 +12,8 @@
   },
   "scripts": {
     "build": "builder-boy src/index.js dist/index.js",
-    "dev": "nodemon --exec 'npm test' --ignore dist",
+    "watch": "builder-boy src/index.js dist/index.js -w",
+    "dev": "nodemon --watch dist --watch test --exec 'node test/index.js'",
     "pretest": "npm run build",
     "preversion": "npm run precommit",
     "precommit": "npm run test && standard --fix",
@@ -45,8 +46,7 @@
     "brisky-struct": "^1.2.0",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
-    "vigour-ua": "^3.0.0",
-    "websocket": "^1.0.24"
+    "vigour-ua": "^3.0.0"
   },
   "nyc": {
     "include": [

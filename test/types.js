@@ -67,28 +67,26 @@ test('types', { timeout: 1000 }, t => {
     t.same(client.blurf.keys(), [ 'a' ], 'correct keys on blurf')
     t.equal(client.blurf.compute(), 'james', 'correct val on blurf')
     t.same(client.types.keys(), [ 'rick', 'james' ], 'received correct types')
-
-    bs.on(() => {
-      client.set({ bla: { type: 'blurf' } })
-      client.types.blurf.once(s => {
-        return s.keys().length > 0
-      }).then(val => {
+    // bounce back types
+    client.set({ bla: { type: 'blurf' } })
+    client.types.blurf.once(s => {
+      return s.keys().length > 0
+    }).then(val => {
+      t.same(
+        client.types.blurf.keys(),
+        [ 'bye', 'x', 'y', 'z', 'shurf' ],
+        'bounced back blurf type'
+      )
+      client.set({
+        types: { hello: { smurt: 'SMURT!' } },
+        shurf: { type: 'hello' }
+      })
+      scraper.types.get([ 'hello', 'smurt' ], {}).once('SMURT!').then(() => {
         t.same(
-          client.types.blurf.keys(),
-          [ 'bye', 'x', 'y', 'z', 'shurf' ],
-          'bounced back blurf type'
+          scraper.types.keys(),
+          [ 'rick', 'james', 'blurf', 'hello' ],
+          'received types from client'
         )
-        client.set({
-          types: { hello: { smurt: 'SMURT!' } },
-          shurf: { type: 'hello' }
-        })
-        scraper.types.get([ 'hello', 'smurt' ], {}).once('SMURT!').then(() => {
-          t.same(
-            scraper.types.keys(),
-            [ 'rick', 'james', 'blurf', 'hello' ],
-            'received types from client'
-          )
-        })
       })
     })
   }).catch((err) => {

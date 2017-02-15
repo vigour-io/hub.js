@@ -28,10 +28,6 @@ const connect = (hub, url, reconnect) => {
 
   socket.onclose = close
 
-  if (typeof window === 'undefined') {
-    socket.hackyOnClose = close
-  }
-
   socket.onerror = typeof window === 'undefined'
     ? close
     : () => socket.close()
@@ -46,7 +42,6 @@ const connect = (hub, url, reconnect) => {
 
   socket.onmessage = (data) => {
     data = data.data
-    // console.warn('INCOMING\n', JSON.parse(data))
     if (!hub.receiveOnly) {
       hub.receiveOnly = true
       hub.set(JSON.parse(data), false)
@@ -70,13 +65,9 @@ const removeSocket = hub => {
   }
   if (hub.socket) {
     hub.socket.blockReconnect = true
-    if (hub.connected.compute() === false || !hub.socket._readyState) {
-      hub.socket.hackyOnClose()
-    } else {
-      hub.socket.close()
-    }
+    hub.socket.close()
   }
-  // hub.socket = false
+  hub.socket = false
 }
 
 const url = (hub, val, key, stamp) => {
@@ -176,14 +167,13 @@ const contextIsNotEqual = (val, context) => {
       }
     }
   } else {
-    console.log('😜 ?????')
     return val !== context.compute()
   }
 }
 
 const context = (hub, val, key, stamp) => {
-  if (!hub.context || contextIsNotEqual(val, hub.context)) {
-    console.log('⚽️ fire fire fire FLAME context ⚽️', val, stamp)
+  if ((!hub.context && val) || (hub.context && contextIsNotEqual(val, hub.context))) {
+    // console.log('⚽️ fire fire fire FLAME context ⚽️', val, stamp)
     if (!hub.context) {
       create(val, stamp, contextStruct, hub, key)
     } else {
