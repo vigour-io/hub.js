@@ -1,8 +1,9 @@
-require('./connect')
+// require('./connect')
 // require('./multiple')
-require('./data-size')
+// require('./data-size')
 // require('./switch')
 // require('./references')
 // require('./subscription')
-// require('./types')
-// require('./context')
+require('./client')
+// require('./types') broken! (bounce back)
+// require('./context') broken!

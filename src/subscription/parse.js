@@ -1,52 +1,53 @@
 const isFn = /^\$fn\|/
 const dummy = () => false
-// const client = (tree) => {
-//   while (tree) {
-//     if (tree._ && tree._.client) {
-//       return tree._.client
-//     }
-//     tree = tree._p
-//   }
-// }
 
-// const clientContext = fn => (state, subs, tree, key) => {
-//   if (state) {
-//     const $root = state.root
-//     const inContext = $root._client
-//     var prev
-//     if (inContext) {
-//       $root._client = client(tree)
-//     } else {
-//       prev = $root.client
-//       $root.client = client(tree)
-//     }
-//     const ret = fn(state, tree, subs, key)
-//     if (inContext) {
-//       $root._client = inContext
-//     } else {
-//       $root.client = prev
-//     }
-//     return ret
-//   } else {
-//     return fn(state, tree, subs, key)
-//   }
-// }
+function merge (a, b) {
+  for (let i in b) {
+    if ((!a[i] || typeof a[i] !== 'object')) {
+      a[i] = b[i]
+    } else {
+      merge(a[i], b[i])
+    }
+  }
+}
 
-const parse = (obj, state, key) => {
+// this will all be done with an ast later!
+const replaceClient = /\.client[^a-z0-9]/g
+// can also check for dangeorus stuff and maybe even allow some requires
+// needs hashing algo
+
+const clientContext = (val, client) => {
+  const matches = val.match(replaceClient)
+  for (let i = 0, len = matches.length; i < len; i++) {
+    val = val.replace(matches[i].slice(0, -1), '.clients.' + client.key)
+  }
+  return val
+}
+
+const parse = (obj, state, key, client, root) => {
   const result = {}
+  if (!root) root = result
   for (let i in obj) {
-    if (isFn.test(i)) {
+    let block
+    if (i === 'client' && (!key || key === 'root' || key === 'parent')) {
+      block = true
+      console.log('client subs parsing work in progress, missing parent and references')
+      let id = client.key // wrong need to get client
+      if (!root.clients) { root.clients = {} }
+      if (!root.clients[id]) { root.clients[id] = {} }
+      merge(root.clients[id], parse(obj.client, i, key, client, root))
+    } else if (isFn.test(i)) {
       let val = obj[i]
       i = i.slice(4)
-      // need to fix bublé stuff in these fn creations -- prop need to add buble
-      // runtime in a hub
-      let pass
+      // need to fix bublé / babel stuff in these fn creations -- prop need to add buble
+      // runtime in a hub, and ast
+      // let pass
       try {
+        if (replaceClient.test(val)) { // eslint-disable-line
+          val = clientContext(val, client)
+        }
         obj[i] = new Function('return ' + val)() // eslint-disable-line
-        // if (/\.client|\[['"']client['"]\]/.test(val)) { // eslint-disable-line
-        //   obj[i] = clientContext(obj[i])
-        // }
-        pass = true
+        // pass = true
         // do dry run with your own key in a props object
         // 2 options for this ofcourse
         // obj[i](state, {}, {}, i)
@@ -62,10 +63,14 @@ const parse = (obj, state, key) => {
         obj[i] = dummy
       }
     }
-    if (typeof obj[i] !== 'object') {
-      result[i] = obj[i]
-    } else {
-      result[i] = parse(obj[i], state, i)
+    if (!block) {
+      if (i === 'clients' && result.clients) {
+        merge(result[i], obj[i])
+      } else if (typeof obj[i] !== 'object') {
+        result[i] = obj[i]
+      } else {
+        result[i] = parse(obj[i], state, i, client, root)
+      }
     }
   }
   return result

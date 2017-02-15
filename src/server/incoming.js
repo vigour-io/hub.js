@@ -86,10 +86,11 @@ const incomingSubscriptions = (hub, client, meta, id) => {
   const update = (t, type, subs, tree) => send(hub, client, t, type, subs, tree)
   if (!client.upstreamSubscriptions) client.upstreamSubscriptions = {}
   for (let key in meta.subscriptions) {
-    let uid = key + '-' + id
+    const uid = key + '-' + id
     if (!client.upstreamSubscriptions[uid]) {
-      let subs = parse(meta.subscriptions[key], hub)
+      const subs = parse(meta.subscriptions[key], hub, void 0, client)
       client.upstreamSubscriptions[uid] = subs
+      console.log('subscribe!', subs.clients && subs.clients.$any && subs.clients.$any.$keys)
       subscribe(hub, subs, update)
       hub.subscriptions[hub.subscriptions.length - 1]._uid_ = id
     }
