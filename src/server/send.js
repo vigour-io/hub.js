@@ -41,7 +41,7 @@ const send = (hub, client, struct, type, subs, tree) => {
   if (struct.isHub && client.val !== null) {
     let isRemoved
     if (type === 'remove') {
-      if (!struct._p[struct.key]) isRemoved = true
+      if (!struct._p || !struct._p[struct.key]) isRemoved = true
     } else if (type === 'update' && tree.$t !== struct) {
       if (tree.$t && tree.$t._p && !tree.$t._p[tree.$t.key]) {
         let previous = tree.$t
