@@ -1,4 +1,4 @@
-// require('./connect')
+require('./connect')
 // require('./multiple')
 require('./data-size')
 // require('./switch')
