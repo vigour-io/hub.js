@@ -90,7 +90,6 @@ const incomingSubscriptions = (hub, client, meta, id) => {
     if (!client.upstreamSubscriptions[uid]) {
       const subs = parse(meta.subscriptions[key], hub, void 0, client)
       client.upstreamSubscriptions[uid] = subs
-      console.log('subscribe!', subs.clients && subs.clients.$any && subs.clients.$any.$keys)
       subscribe(hub, subs, update)
       hub.subscriptions[hub.subscriptions.length - 1]._uid_ = id
     }
