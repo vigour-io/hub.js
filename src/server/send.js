@@ -41,7 +41,7 @@ const progress = (client) => {
             }
           }
           const raw = JSON.stringify(client.inProgress)
-          console.log(size(raw))
+          // console.log(size(raw))
           client.socket.send(raw)
         }
         client.inProgress = false

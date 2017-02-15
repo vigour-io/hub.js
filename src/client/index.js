@@ -176,14 +176,13 @@ const contextIsNotEqual = (val, context) => {
       }
     }
   } else {
-    console.log('😜 ?????')
     return val !== context.compute()
   }
 }
 
 const context = (hub, val, key, stamp) => {
-  if (!hub.context || contextIsNotEqual(val, hub.context)) {
-    console.log('⚽️ fire fire fire FLAME context ⚽️', val, stamp)
+  if ((!hub.context && val) || (hub.context && contextIsNotEqual(val, hub.context))) {
+    // console.log('⚽️ fire fire fire FLAME context ⚽️', val, stamp)
     if (!hub.context) {
       create(val, stamp, contextStruct, hub, key)
     } else {
