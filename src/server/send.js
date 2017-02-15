@@ -9,6 +9,18 @@ const isEmpty = obj => {
   return true
 }
 
+const size = str => {
+  // returns the byte length of an utf8 string
+  var s = str.length
+  for (var i= str.length - 1; i >= 0; i--) {
+    var code = str.charCodeAt(i)
+    if (code > 0x7f && code <= 0x7ff) { s++ }
+    else if (code > 0x7ff && code <= 0xffff) { s += 2 }
+    if (code >= 0xDC00 && code <= 0xDFFF) i-- // trail surrogate
+  }
+  return s
+}
+
 const progress = (client) => {
   if (!client.inProgress) {
     client.inProgress = {}
@@ -17,7 +29,7 @@ const progress = (client) => {
         if (!isEmpty(client.inProgress)) {
           if (client.inProgress.types) {
             for (let i in client.inProgress) {
-              // order is still important since settign types after the facts is still broken
+              // order is still important since setting types after the fact is still broken
               // this will be a big update
               if (i === 'types') {
                 break
@@ -28,7 +40,9 @@ const progress = (client) => {
               }
             }
           }
-          client.socket.send(JSON.stringify(client.inProgress))
+          const raw = JSON.stringify(client.inProgress)
+          console.log(size(raw))
+          client.socket.send(raw)
         }
         client.inProgress = false
       }
