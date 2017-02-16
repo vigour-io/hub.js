@@ -61,25 +61,23 @@ const meta = hub => {
     }
     store[1].id = hub.client.key
     store[1].subscriptions = hub.upstreamSubscriptions
-  } else {
-    if (hub.upstreamSubscriptions) {
-      let override
-      for (let key in hub.upstreamSubscriptions) {
-        if (hub.upstreamSubscriptions[key].__force__) {
-          if (!override) override = []
-          override.push(key)
-        }
+  } else if (hub.upstreamSubscriptions) {
+    let override
+    for (let key in hub.upstreamSubscriptions) {
+      if (hub.upstreamSubscriptions[key].__force__) {
+        if (!override) override = []
+        override.push(key)
       }
-      if (override) {
-        const store = inProgress(hub, bs.inProgress ? bs.on : next)
-        if (!store[1]) store[1] = {}
-        const obj = {}
-        let i = override.length
-        while (i--) {
-          obj[override[i]] = hub.upstreamSubscriptions[override[i]]
-        }
-        store[1].subscriptions = obj
+    }
+    if (override) {
+      const store = inProgress(hub, bs.inProgress ? bs.on : next)
+      if (!store[1]) store[1] = {}
+      const obj = {}
+      let i = override.length
+      while (i--) {
+        obj[override[i]] = hub.upstreamSubscriptions[override[i]]
       }
+      store[1].subscriptions = obj
     }
   }
 }
