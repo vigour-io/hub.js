@@ -35,7 +35,6 @@ const connect = (hub, url, reconnect) => {
     const stamp = bs.create()
     hub.socket = socket
     if (hub.emitters && hub.emitters.incoming) {
-      console.log('enable incoming...')
       enableIncomingListener(socket, hub)
     }
     meta(hub)
@@ -227,13 +226,10 @@ const define = {
 }
 
 const enableIncomingListener = (socket, hub) => {
-  console.log('incoming')
-  if (socket.incomingOverride) {
-    console.log('2 ENABLE incoming')
+  if (!socket.incomingOverride) {
     socket.incomingOverride = true
-    const msg = hub.socke.onmessage
-    socket.onmessage = (data) => {
-      console.log('emit incoming!')
+    const msg = hub.socket.internalOnMessage
+    socket.internalOnMessage = (data) => {
       hub.emit('incoming', data)
       msg(data)
     }
