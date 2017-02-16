@@ -198,11 +198,15 @@ const props = {
 const stub = () => {}
 
 const define = {
-  subscribe (subs, cb, raw, tree) {
+  subscribe (subs, cb, raw, tree, forceUpstream) {
     if (!raw) subs = parse(subs)
-    if (!this.receiveOnly) {
+    if (!this.receiveOnly || forceUpstream) {
       const parsed = serialize(this, subs)
       if (parsed) {
+        if (forceUpstream) {
+          parsed.__force__ = true
+        }
+        // why not keep it stringified? -- saves lots of speed
         const key = hash(JSON.stringify(parsed))
         if (!this.upstreamSubscriptions) {
           this.upstreamSubscriptions = {}
