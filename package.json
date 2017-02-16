@@ -11,8 +11,8 @@
     "source-map-support": false
   },
   "scripts": {
-    "build": "builder-boy src/index.js dist/index.js",
-    "watch": "builder-boy src/index.js dist/index.js -w",
+    "build": "builder-boy src/index.js dist/index.js -r -t node -t browser",
+    "watch": "builder-boy src/index.js dist/index.js -w -r -t node -t browser",
     "dev": "nodemon --watch dist --watch test --exec 'node test/index.js'",
     "pretest": "npm run build",
     "preversion": "npm run precommit",
