@@ -1,14 +1,13 @@
 import bs from 'brisky-stamp'
 import { send, meta } from './send'
 import WebSocket from './websocket'
-import { create, parse, subscribe, struct } from 'brisky-struct'
+import { create, parse, subscribe, struct, emitterProperty } from 'brisky-struct'
 import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
 
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
-  // t, val, stamp, useragent, id
   const client = hub.client || createClient(hub, {}, false)
 
   hub.set({ client }, false)
@@ -35,11 +34,16 @@ const connect = (hub, url, reconnect) => {
   socket.onopen = () => {
     const stamp = bs.create()
     hub.socket = socket
+    if (hub.emitters && hub.emitters.incoming) {
+      console.log('enable incoming...')
+      enableIncomingListener(socket, hub)
+    }
     meta(hub)
     hub.set({ connected: true }, stamp)
     bs.close()
   }
 
+  // use outside function non anon since its slowe apprantly
   socket.onmessage = (data) => {
     data = data.data
     if (!hub.receiveOnly) {
@@ -222,6 +226,29 @@ const define = {
   }
 }
 
-const on = { data: { send } }
+const enableIncomingListener = (socket, hub) => {
+  console.log('incoming')
+  if (socket.incomingOverride) {
+    console.log('2 ENABLE incoming')
+    socket.incomingOverride = true
+    const msg = hub.socke.onmessage
+    socket.onmessage = (data) => {
+      console.log('emit incoming!')
+      hub.emit('incoming', data)
+      msg(data)
+    }
+  }
+}
+
+const on = {
+  data: { send },
+  props: {
+    incoming: (t, val, key, stamp) => {
+      const hub = t._p
+      if (hub.socket) enableIncomingListener(hub.socket, hub)
+      return emitterProperty(t, val, key, stamp)
+    }
+  }
+}
 
 export { props, on, define }
