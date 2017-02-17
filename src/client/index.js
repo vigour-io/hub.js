@@ -228,8 +228,9 @@ const define = {
 const enableIncomingListener = (socket, hub) => {
   if (!socket.incomingOverride) {
     socket.incomingOverride = true
-    const msg = hub.socket.internalOnMessage
-    socket.internalOnMessage = (data) => {
+    const field = typeof window === 'undefined' ? 'internalOnMessage' : 'onmessage'
+    const msg = hub.socket[field]
+    socket[field] = (data) => {
       hub.emit('incoming', data)
       msg(data)
     }
@@ -240,6 +241,7 @@ const on = {
   data: { send },
   props: {
     incoming: (t, val, key, stamp) => {
+      console.log('incoming!????')
       const hub = t._p
       if (hub.socket) enableIncomingListener(hub.socket, hub)
       return emitterProperty(t, val, key, stamp)
