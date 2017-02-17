@@ -113,7 +113,7 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
       // allways need a stamp!
       }
 
-      if (typeof val === 'object' && val.inherits) {
+      if (typeof val === 'object' && val !== null && val.inherits) {
         s.val = val.path()
         s.val.unshift('@', 'root')
         serialize(client, t, subs, val, level)
