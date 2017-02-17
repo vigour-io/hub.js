@@ -63,7 +63,8 @@ const parse = (obj, state, key, client, root) => {
         obj[i] = dummy
       }
     }
-    if (!block) {
+    // can go to client as well...
+    if (!block && i !== '__force__') {
       if (i === 'clients' && result.clients) {
         merge(result[i], obj[i])
       } else if (typeof obj[i] !== 'object') {

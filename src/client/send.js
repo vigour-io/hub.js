@@ -61,6 +61,24 @@ const meta = hub => {
     }
     store[1].id = hub.client.key
     store[1].subscriptions = hub.upstreamSubscriptions
+  } else if (hub.upstreamSubscriptions) {
+    let override
+    for (let key in hub.upstreamSubscriptions) {
+      if (hub.upstreamSubscriptions[key].__force__) {
+        if (!override) override = []
+        override.push(key)
+      }
+    }
+    if (override) {
+      const store = inProgress(hub, bs.inProgress ? bs.on : next)
+      if (!store[1]) store[1] = {}
+      const obj = {}
+      let i = override.length
+      while (i--) {
+        obj[override[i]] = hub.upstreamSubscriptions[override[i]]
+      }
+      store[1].subscriptions = obj
+    }
   }
 }
 
@@ -73,17 +91,19 @@ const send = (val, stamp, struct) => {
     p = p.parent() // needs to walk over context (for multi server)
   }
 
-  if (hub && !hub.receiveOnly) {
-    if (struct === hub) {
-      if (val === null) {
-        return
+  if (hub) {
+    if (!hub.receiveOnly) {
+      if (struct === hub) {
+        if (val === null) {
+          return
+        }
+      } else if (struct._p.key === 'clients') {
+        if (struct.key !== hub.client.key) {
+          return
+        }
       }
-    } else if (struct._p.key === 'clients') {
-      if (struct.key !== hub.client.key) {
-        return
-      }
+      serialize(hub, inProgress(hub, bs.on), struct, val, hub.urlIndex)
     }
-    serialize(hub, inProgress(hub, bs.on), struct, val, hub.urlIndex)
   }
 }
 

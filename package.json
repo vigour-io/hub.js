@@ -11,8 +11,8 @@
     "source-map-support": false
   },
   "scripts": {
-    "build": "builder-boy src/index.js dist/index.js",
-    "watch": "builder-boy src/index.js dist/index.js -w",
+    "build": "builder-boy src/index.js dist/index.js -r -t node -t browser",
+    "watch": "builder-boy src/index.js dist/index.js -w -r -t node -t browser",
     "dev": "nodemon --watch dist --watch test --exec 'node test/index.js'",
     "pretest": "npm run build",
     "preversion": "npm run precommit",
@@ -43,7 +43,7 @@
   ],
   "dependencies": {
     "brisky-stamp": "^4.0.0",
-    "brisky-struct": "^1.2.0",
+    "brisky-struct": "^1.3.0",
     "string-hash": "^1.1.0",
     "uws": "0.12.0",
     "vigour-ua": "^3.0.0"
