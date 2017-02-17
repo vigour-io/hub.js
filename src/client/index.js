@@ -241,7 +241,6 @@ const on = {
   data: { send },
   props: {
     incoming: (t, val, key, stamp) => {
-      console.log('incoming!????')
       const hub = t._p
       if (hub.socket) enableIncomingListener(hub.socket, hub)
       return emitterProperty(t, val, key, stamp)
