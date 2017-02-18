@@ -1,7 +1,7 @@
 const hub = require('../')
 const test = require('tape')
 
-test('context', { timeout: 2000 } ,t => {
+test('context', { timeout: 2000 }, t => {
   const scraper = hub({
     _uid_: 'scraper',
     port: 6060,

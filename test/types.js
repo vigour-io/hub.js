@@ -1,6 +1,6 @@
 const hub = require('../')
 const test = require('tape')
-const bs = require('brisky-stamp')
+// const bs = require('brisky-stamp')
 
 test('types', { timeout: 1000 }, t => {
   const scraper = hub({
