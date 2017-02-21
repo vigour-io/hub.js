@@ -15,18 +15,11 @@ const createServer = (hub, port) => {
     // need to remove when done -- its the best thing todo (mem!!!)
     socket.on('message', (data) => {
       data = JSON.parse(data)
-      if (data) {
-        console.log('????', socket.client, data[1])
-        incoming(hub, socket, data)
-      }
+      if (data) incoming(hub, socket, data)
     })
 
     const close = () => {
-      console.log('remove it?')
-      if (socket.client) {
-        console.log('remove it!', socket.client)
-        removeClient(socket.client)
-      }
+      if (socket.client) removeClient(socket.client)
     }
 
     socket.on('close', close)
