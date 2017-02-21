@@ -16,8 +16,7 @@ export default (hub, socket, data) => {
     if (client) {
       t = hub
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
-        removeClient(client)
-        create(hub, socket, meta, payload)
+        create(hub, socket, meta, payload, client)
       } else if (meta.subscriptions) {
         if (payload) setPayload(t, payload, client)
         incomingSubscriptions(t, client, meta, client.key)
@@ -66,18 +65,20 @@ const set = (meta, socket, t, payload) => {
   bs.close()
 }
 
-const create = (hub, socket, meta, payload) => {
+const create = (hub, socket, meta, payload, client) => {
   const t = meta.context ? hub.getContext(meta.context, socket) : hub
   if (!t.inherits && t.then) {
     t.then((t) => {
       if (socket.external !== null) {
         console.log('client connected and found informations')
+        if (client) removeClient(client)
         set(meta, socket, t, payload)
       } else {
         console.log('client discconected when logging in')
       }
     }).catch(err => hub.emit('error', err))
   } else {
+    if (client) removeClient(client)
     set(meta, socket, t, payload)
   }
 }

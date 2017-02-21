@@ -13,6 +13,7 @@ const removeClient = (client) => {
   const id = client.key
   client.val = null
   if (client.socket) {
+    console.log('remove it!!!')
     client.socket.client = null
     client.socket = null
   }
