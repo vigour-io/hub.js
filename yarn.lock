@@ -1252,18 +1252,7 @@ glob@^5.0.15:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@^7.0.6:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.1.tgz#805211df04faaf1c63a3600306cdf5ade50b2ec8"
-  dependencies:
-    fs.realpath "^1.0.0"
-    inflight "^1.0.4"
-    inherits "2"
-    minimatch "^3.0.2"
-    once "^1.3.0"
-    path-is-absolute "^1.0.0"
-
-glob@~7.0.4:
+glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@^7.0.6, glob@~7.0.4:
   version "7.0.6"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.0.6.tgz#211bafaf49e525b8cd93260d14ab136152b3f57a"
   dependencies:
@@ -2982,9 +2971,9 @@ uuid@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
 
-uws@0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/uws/-/uws-0.12.0.tgz#07163ea6e687d9731e66821107b5fdf1ee644cbd"
+uws@0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/uws/-/uws-0.13.0.tgz#09fedbb9f9eb074de4feaec5b8b10b3ffdd4f707"
 
 validate-npm-package-license@^3.0.1:
   version "3.0.1"
