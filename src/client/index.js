@@ -112,6 +112,7 @@ const url = (hub, val, key, stamp) => {
           }
         }, stamp, struct, hub, key)
       }
+      if (/^https?/.test(val)) val = val.replace(/^http/, 'ws')
       hub.url.set(val, stamp)
     }
   }
