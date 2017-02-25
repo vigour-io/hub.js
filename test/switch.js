@@ -1,9 +1,10 @@
 const hub = require('../')
 const test = require('tape')
 
-test('switch', t => {
+test('switch', { timeout: 1e3 }, t => {
   const server = hub({
     _uid_: 'server',
+    key: 'server',
     port: 6061,
     bla: {
       a: 'hello'

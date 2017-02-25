@@ -49,7 +49,6 @@ hub.set({
     clients: (t, val, key, stamp) => {
       if (!t.clients) {
         const clients = getType(t, key)
-        console.log('CLIENTS TYPE:', clients)
         t.clients = create(val, stamp, clients, t, key)
       } else {
         set(t.clients, val, stamp)

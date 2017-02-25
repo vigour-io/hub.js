@@ -153,7 +153,6 @@ const contextStruct = struct.create({
       on: {
         data: {
           updateParent: (val, stamp, t) => {
-            console.log('👻 GO UPDATE PARENT!!! 👻')
             t.parent().emit('data', val, stamp)
           }
         }
@@ -177,7 +176,6 @@ const contextIsNotEqual = (val, context) => {
 
 const context = (hub, val, key, stamp) => {
   if ((!hub.context && val) || (hub.context && contextIsNotEqual(val, hub.context))) {
-    // console.log('⚽️ fire fire fire FLAME context ⚽️', val, stamp)
     if (!hub.context) {
       create(val, stamp, contextStruct, hub, key)
     } else {
