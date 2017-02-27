@@ -87,4 +87,25 @@ test('context', { timeout: 2000 }, t => {
   client1.set({ blurf: 'hello' })
 })
 
-// client removal problems - 1
+test('context - getContext', { timeout: 2000 }, t => {
+  const server = hub({
+    _uid_: 'server',
+    getContext: (context, retrieve, hub, socket) => new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject(new Error('💩'))
+      }, 100)
+    }),
+    port: 6060
+  })
+  server.on('error', () => {
+    t.equal(server.instances, void 0)
+    client.set(null)
+    server.set(null)
+    t.end()
+  })
+  const client = hub({
+    _uid_: 'client1',
+    context: 'pavel',
+    url: 'ws://localhost:6060'
+  })
+})
