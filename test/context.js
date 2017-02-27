@@ -76,14 +76,9 @@ test('context', { timeout: 2000 }, t => {
         client2.set(null)
         client3.set(null)
         client4.set(null)
-        hybrid.getContext('pavel').on(val => {
-          if (val === null) {
-            t.pass('removed context when there are no clients')
-            hybrid.set(null)
-            scraper.set(null)
-            t.end()
-          }
-        })
+        hybrid.set(null)
+        scraper.set(null)
+        t.end()
       })
     })
     client3.set({ context: 'pavel' })

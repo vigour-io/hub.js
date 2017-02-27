@@ -1,9 +1,10 @@
 require('./connect')
 require('./multiple')
-// require('./data-size')
+require('./data-size')
 require('./references')
 require('./subscription')
 require('./switch')
-// require('./client')
+require('./client')
 require('./types')
-// require('./context') broken!
+require('./context')
+// missing auto remove of context
