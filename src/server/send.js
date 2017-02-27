@@ -1,4 +1,4 @@
-import bs from 'brisky-stamp'
+import bs from 'stamp'
 import { get, getKeys, getType, getVal } from 'brisky-struct'
 import { cache, isCached } from './cache'
 

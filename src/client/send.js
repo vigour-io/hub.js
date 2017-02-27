@@ -1,4 +1,4 @@
-import bs from 'brisky-stamp'
+import bs from 'stamp'
 
 const next = typeof window === 'undefined'
   ? process.nextTick

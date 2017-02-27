@@ -1,4 +1,4 @@
-import bs from 'brisky-stamp'
+import bs from 'stamp'
 import { send, meta } from './send'
 import WebSocket from './websocket'
 import { create, parse, subscribe, struct, emitterProperty } from 'brisky-struct'

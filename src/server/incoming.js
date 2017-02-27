@@ -1,6 +1,6 @@
 import parse from '../subscription/parse'
 import { subscribe } from 'brisky-struct'
-import bs from 'brisky-stamp'
+import bs from 'stamp'
 import send from './send'
 import createClient from '../client/create'
 import { removeClient } from './remove'

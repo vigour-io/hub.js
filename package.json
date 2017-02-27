@@ -42,11 +42,11 @@
     "realtime"
   ],
   "dependencies": {
-    "brisky-stamp": "^4.0.0",
-    "brisky-struct": "^1.3.1",
+    "stamp": "^4.0.1",
+    "brisky-struct": "^1.4.1",
     "string-hash": "^1.1.0",
     "uws": "0.13.0",
-    "vigour-ua": "^3.0.0"
+    "vigour-ua": "^3.1.1"
   },
   "nyc": {
     "include": [
