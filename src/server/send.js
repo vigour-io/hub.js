@@ -75,6 +75,10 @@ const send = (hub, client, struct, type, subs, tree) => {
 }
 
 const serialize = (client, t, subs, struct, level, isRemoved) => {
+  if (!struct) {
+    console.log('NO STRUCT FISHY!')
+    return
+  }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
   const val = isRemoved ? null : getVal(struct)
 
