@@ -3,16 +3,16 @@ const test = require('tape')
 
 var server, client
 
-test('data size', { timeout: 2000 }, t => {
+test('data size', { timeout: 4000 }, t => {
   server = hub({
     key: 'server',
-    id: 'server',
+    _uid_: 'server',
     port: 6000
   })
 
   client = hub({
     key: 'client',
-    id: 'client',
+    _uid_: 'client',
     url: 'ws://localhost:6000',
     context: false
   })

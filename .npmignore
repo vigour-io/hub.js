@@ -1,9 +1,4 @@
-# Ignore root
 /*
-
-# But not these
 !dist
 !docs
-!package.json
-!README.md
 !yarn.lock

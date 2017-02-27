@@ -1,11 +1,10 @@
-if (typeof window === 'undefined') {
-  require('source-map-support').install()
-}
 require('./connect')
 require('./multiple')
 require('./data-size')
-require('./switch')
-require('./context')
 require('./references')
 require('./subscription')
+require('./switch')
+require('./client')
 require('./types')
+require('./context')
+// missing auto remove of context

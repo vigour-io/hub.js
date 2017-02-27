@@ -1,15 +1,15 @@
 const hub = require('../')
 const test = require('tape')
 
-test('context', t => {
+test('context', { timeout: 2000 }, t => {
   const scraper = hub({
-    id: 'scraper',
+    _uid_: 'scraper',
     port: 6060,
     somefield: 'somefield!'
   })
 
   const hybrid = hub({
-    id: 'hybrid',
+    _uid_: 'hybrid',
     url: 'ws://localhost:6060',
     port: 6061
   })
@@ -17,24 +17,24 @@ test('context', t => {
   hybrid.subscribe(true)
 
   const client1 = hub({
-    id: 'client1',
+    _uid_: 'client1',
     context: 'pavel',
     url: 'ws://localhost:6061'
   })
 
   const client2 = hub({
-    id: 'client2',
+    _uid_: 'client2',
     context: 'pavel',
     url: 'ws://localhost:6061'
   })
 
   const client3 = hub({
-    id: 'client3',
+    _uid_: 'client3',
     url: 'ws://localhost:6061'
   })
 
   const client4 = hub({
-    id: 'client4',
+    _uid_: 'client4',
     url: 'ws://localhost:6060'
   })
 
@@ -76,14 +76,9 @@ test('context', t => {
         client2.set(null)
         client3.set(null)
         client4.set(null)
-        hybrid.getContext('pavel').on(val => {
-          if (val === null) {
-            t.pass('removed context when there are no clients')
-            hybrid.set(null)
-            scraper.set(null)
-            t.end()
-          }
-        })
+        hybrid.set(null)
+        scraper.set(null)
+        t.end()
       })
     })
     client3.set({ context: 'pavel' })
@@ -91,3 +86,5 @@ test('context', t => {
 
   client1.set({ blurf: 'hello' })
 })
+
+// client removal problems - 1

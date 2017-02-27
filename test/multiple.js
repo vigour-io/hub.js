@@ -1,21 +1,17 @@
 const hub = require('../')
 const test = require('tape')
-const bs = require('brisky-stamp')
 
 test('client - multiple', t => {
   const server = hub({
-    id: 'server',
+    _uid_: 'server',
     key: 'server',
     port: 6060,
-    somefield: {
-      val: 'somefield!',
-      stamp: bs.create('click', 'client', 0.0001)
-    }
+    somefield: 'somefield!'
   })
 
   const hybrid = hub({
     key: 'hybrid',
-    id: 'hybrid',
+    _uid_: 'hybrid',
     port: 6061
   })
 
@@ -24,15 +20,19 @@ test('client - multiple', t => {
   const client = hub({
     key: 'client',
     url: 'ws://localhost:6061',
-    id: 'client'
+    _uid_: 'client'
   })
 
-  console.log('set blurf')
   client.set({ blurf: 'hello' })
+
+  hybrid.set({ url: 'ws://localhost:6060' })
+
+  hybrid.connected.once(true).then(() => {
+    t.pass('hybrid is connected')
+  })
 
   client.connected.once(true).then(() => {
     t.pass('client is connected')
-    hybrid.set({ url: 'ws://localhost:6060' })
   })
 
   server.get('blurf', {}).once('hello', () => {

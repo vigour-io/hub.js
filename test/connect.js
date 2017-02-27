@@ -1,15 +1,21 @@
-
 const hub = require('../')
 const test = require('tape')
 
 test('client - connect', t => {
+  var cnt = 0
   const top = hub({
     someHub: {
       key: 'client-hub',
-      url: 'ws://localhost:6060',
-      id: 'client'
+      url: {
+        on: () => { cnt++ }
+      },
+      _uid_: 'client'
     }
   })
+
+  top.someHub.set({ url: 'ws://localhost:6060' })
+
+  t.equal(cnt, 1, 'fired listener on url')
 
   const client = top.someHub
   const instance = client.create()
@@ -21,14 +27,14 @@ test('client - connect', t => {
   const server = hub({
     key: 'server',
     port: 6060,
-    id: 'server'
+    _uid_: 'server'
   })
 
   const server2 = hub({
     key: 'server-2',
     deep: {
       port: 6061,
-      id: 'server-2'
+      _uid_: 'server-2'
     }
   })
 
@@ -55,19 +61,20 @@ test('client - connect', t => {
   })
   .then(() => {
     t.pass('server2 has an empty clients array')
-    t.equal(client.socket, false, 'socket is removed')
+    t.ok(!client.socket, 'socket is removed')
     client.set({ url: 'ws://localhost:6060' })
     return isConnected(server)
   })
   .then(() => {
     server.set({ port: 6062 })
     client.set({
-      receiveOnly: true,
-      url: 'ws://localhost:6062',
-      hahaha: true
+      url: 'ws://localhost:6062'
     })
 
     client.subscribe({ val: true })
+
+    client.set({ receiveOnly: true })
+    client.set({ hahaha: true })
 
     return isConnected(server)
       .then(() => new Promise(resolve => {

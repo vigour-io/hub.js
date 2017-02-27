@@ -3,7 +3,7 @@ const test = require('tape')
 
 test('references', t => {
   const scraper = hub({
-    id: 'scraper',
+    _uid_: 'scraper',
     port: 6060,
     a: {
       b: {
@@ -14,7 +14,7 @@ test('references', t => {
   })
 
   const client = hub({
-    id: 'client',
+    _uid_: 'client',
     url: 'ws://localhost:6060'
   })
 

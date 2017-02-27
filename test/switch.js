@@ -1,9 +1,10 @@
 const hub = require('../')
 const test = require('tape')
 
-test('switch', t => {
+test('switch', { timeout: 1e3 }, t => {
   const server = hub({
-    id: 'server',
+    _uid_: 'server',
+    key: 'server',
     port: 6061,
     bla: {
       a: 'hello'
@@ -14,12 +15,12 @@ test('switch', t => {
   })
 
   server.on('error', err => {
-    console.log('dirtface', err)
+    console.log('server error', err)
   })
 
   const client = hub({
     url: 'ws://localhost:6061',
-    id: 'client1'
+    _uid_: 'client1'
     // context: 'a'
   })
 
