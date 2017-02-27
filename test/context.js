@@ -87,7 +87,7 @@ test('context', { timeout: 2000 }, t => {
   client1.set({ blurf: 'hello' })
 })
 
-test('context - getContext', { timeout: 2000 }, t => {
+test('context - getContext - error', { timeout: 2000 }, t => {
   const server = hub({
     _uid_: 'server',
     getContext: (context, retrieve, hub, socket) => new Promise((resolve, reject) => {
@@ -107,5 +107,40 @@ test('context - getContext', { timeout: 2000 }, t => {
     _uid_: 'client1',
     context: 'pavel',
     url: 'ws://localhost:6060'
+  })
+})
+
+test('context - getContext', { timeout: 2000 }, t => {
+  const server = hub({
+    _uid_: 'server',
+    getContext: (context, retrieve, hub, socket) => new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(hub)
+      }, 100)
+    }),
+    port: 6060
+  })
+
+  const client2 = hub({
+    _uid_: 'client2',
+    context: 'pavel',
+    url: 'ws://localhost:6060'
+  })
+
+  client2.set({ x: 'yes' })
+
+  const client = hub({
+    _uid_: 'client1',
+    context: 'pavel',
+    url: 'ws://localhost:6060'
+  })
+
+  client.subscribe({ x: true })
+
+  client.get('x', {}).once('yes').then(() => {
+    client.set(null)
+    client2.set(null)
+    server.set(null)
+    t.end()
   })
 })
