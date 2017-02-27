@@ -83,7 +83,6 @@ const meta = hub => {
 }
 
 const send = (val, stamp, struct) => {
-  // -1 means upsteam (floats for extra speed)
   let hub
   let p = struct
   while (p) {
@@ -122,6 +121,7 @@ const inProgress = (hub, tick) => {
 }
 
 const out = t => {
+  console.log(JSON.stringify(t.inProgress[0], false, 2))
   t.socket.send(JSON.stringify(t.inProgress))
   t.inProgress = false
 }
