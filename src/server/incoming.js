@@ -76,7 +76,10 @@ const create = (hub, socket, meta, payload, client) => {
       } else {
         console.log('client discconected when logging in')
       }
-    }).catch(err => hub.emit('error', err))
+    }).catch(err => {
+      // maybe need to dc the client - at least send some information
+      hub.emit('error', err)
+    })
   } else {
     if (client) removeClient(client)
     set(meta, socket, t, payload)
