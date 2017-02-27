@@ -5,5 +5,5 @@ require('./references')
 require('./subscription')
 require('./switch')
 // require('./client')
-// require('./types') broken! (bounce back)
+require('./types')
 // require('./context') broken!
