@@ -121,7 +121,6 @@ const inProgress = (hub, tick) => {
 }
 
 const out = t => {
-  console.log(JSON.stringify(t.inProgress[0], false, 2))
   t.socket.send(JSON.stringify(t.inProgress))
   t.inProgress = false
 }
