@@ -25,9 +25,11 @@ export default (hub, socket, data) => {
     } else {
       create(hub, socket, meta, payload)
     }
-  } else {
+  } else if (client) {
     setPayload(client.parent(2), payload, client)
     bs.close()
+  } else {
+    console.log('NO CLIENT CLOSED SOCKET - how is this possible?', data)
   }
 }
 
