@@ -19,7 +19,11 @@ const replaceClient = /\.client[^a-z0-9]/g
 const clientContext = (val, client) => {
   const matches = val.match(replaceClient)
   for (let i = 0, len = matches.length; i < len; i++) {
-    val = val.replace(matches[i].slice(0, -1), '.clients.' + client.key)
+    if (/^function/.test(val)) {
+      val = val.replace(matches[i].slice(0, -1), `.get(['clients', '${client.key}'])`)
+    } else {
+      val = val.replace(matches[i].slice(0, -1), '.clients.' + client.key)
+    }
   }
   return val
 }
