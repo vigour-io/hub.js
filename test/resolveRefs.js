@@ -8,7 +8,7 @@ test('context', { timeout: 2000 }, t => {
     page: {}
   })
 
-  const client1 = hub({
+  const client1 = hub({ // eslint-disable-line
     _uid_: 'client1',
     context: 'friends',
     url: 'ws://localhost:6060'
@@ -23,15 +23,11 @@ test('context', { timeout: 2000 }, t => {
     },
     page: {
       a: {
-        b: {
-          val: ['@', 'root', 'page', 'b']
-        }
+        b: ['@', 'root', 'page', 'b']
       },
       b: {
-        items: [{
-          blur: 0,
-          val: ['@', 'root', 'page', 'c']
-        }]
+        blur: 0,
+        val: ['@', 'root', 'page', 'c']
       },
       c: {}
     }
