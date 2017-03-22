@@ -5,10 +5,19 @@ import { create, parse, subscribe, struct, emitterProperty } from 'brisky-struct
 import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
+import maxFrameSize from '../size'
+
+const addBuffer = (buffer1, buffer2) => {
+  const tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength)
+  tmp.set(new Uint8Array(buffer1), 0)
+  tmp.set(new Uint8Array(buffer2), buffer1.byteLength)
+  return tmp.buffer
+}
 
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
   const client = hub.client || createClient(hub, {}, false)
+  var bufferArray = false
 
   hub.set({ client }, false)
 
@@ -45,6 +54,22 @@ const connect = (hub, url, reconnect) => {
   // use outside function non anon since its slowe apprantly
   socket.onmessage = (data) => {
     data = data.data
+
+    if (data instanceof ArrayBuffer) {
+      if (!bufferArray) {
+        bufferArray = data
+      } else {
+        bufferArray = addBuffer(bufferArray, data)
+      }
+      if (data.byteLength < maxFrameSize) {
+        data = new Buffer(bufferArray).toString('utf8')
+        console.log(data.slice(0, 100))
+        bufferArray = false
+      } else {
+        return
+      }
+    }
+
     if (!hub.receiveOnly) {
       hub.receiveOnly = true
       hub.set(JSON.parse(data), false)

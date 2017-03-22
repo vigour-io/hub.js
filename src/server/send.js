@@ -2,24 +2,14 @@ import bs from 'stamp'
 import { get, getKeys, getType, getVal } from 'brisky-struct'
 import { cache, isCached } from './cache'
 
+const maxFrameSize = require('../size')
+
 const isEmpty = obj => {
   for (let i in obj) { //eslint-disable-line
     return false
   }
   return true
 }
-
-// const size = str => {
-//   // returns the byte length of an utf8 string
-//   var s = str.length
-//   for (var i= str.length - 1; i >= 0; i--) {
-//     var code = str.charCodeAt(i)
-//     if (code > 0x7f && code <= 0x7ff) { s++ }
-//     else if (code > 0x7ff && code <= 0xffff) { s += 2 }
-//     if (code >= 0xDC00 && code <= 0xDFFF) i-- // trail surrogate
-//   }
-//   return s
-// }
 
 const progress = (client) => {
   if (!client.inProgress) {
@@ -41,8 +31,23 @@ const progress = (client) => {
             }
           }
           const raw = JSON.stringify(client.inProgress)
-          // console.log(size(raw))
-          client.socket.send(raw)
+          const size = Buffer.byteLength(raw, 'utf8')
+          if (size > maxFrameSize) {
+            console.log('oops exceeds framelimit - need to start splitting up!')
+            const buf = Buffer.from(raw, 'utf8')
+            let i = 0
+            while (i * maxFrameSize <= size) {
+              if (i === 0) {
+                console.log('--->', buf.toString('utf8').slice(0, 100))
+                console.log(buf.slice(i * maxFrameSize, (i + 1) * maxFrameSize).toString('utf8'), (i + 1) * maxFrameSize)
+              }
+              // make sure you end with an empty one
+              client.socket.send(buf.slice(i * maxFrameSize, (i + 1) * maxFrameSize))
+              i++
+            }
+          } else {
+            client.socket.send(raw)
+          }
         }
         client.inProgress = false
       }

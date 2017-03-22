@@ -10,7 +10,6 @@ export default (hub, socket, data) => {
   const payload = data[0]
   const meta = data[1]
   var client = socket.client
-
   if (meta) {
     let t
     if (client) {
@@ -28,8 +27,6 @@ export default (hub, socket, data) => {
   } else if (client) {
     setPayload(client.parent(2), payload, client)
     bs.close()
-  } else {
-    console.log('NO CLIENT CLOSED SOCKET - how is this possible?', data)
   }
 }
 
