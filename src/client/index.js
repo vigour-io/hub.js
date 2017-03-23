@@ -7,13 +7,6 @@ import hash from 'string-hash'
 import createClient from './create'
 import maxFrameSize from '../size'
 
-const addBuffer = (buffer1, buffer2) => {
-  const tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength)
-  tmp.set(new Uint8Array(buffer1), 0)
-  tmp.set(new Uint8Array(buffer2), buffer1.byteLength)
-  return tmp.buffer
-}
-
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
   const client = hub.client || createClient(hub, {}, false)
@@ -51,19 +44,15 @@ const connect = (hub, url, reconnect) => {
     bs.close()
   }
 
-  // use outside function non anon since its slowe apprantly
+  // use outside function non anon since its slower (according to uws)
   socket.onmessage = (data) => {
     data = data.data
 
-    if (data instanceof ArrayBuffer) {
-      if (!bufferArray) {
-        bufferArray = data
-      } else {
-        bufferArray = addBuffer(bufferArray, data)
-      }
+    if (typeof data !== 'string' && data instanceof ArrayBuffer) {
+      if (!bufferArray) bufferArray = []
+      bufferArray.push(new Buffer(data).toString('utf8'))
       if (data.byteLength < maxFrameSize) {
-        data = new Buffer(bufferArray).toString('utf8')
-        console.log(data.slice(0, 100))
+        data = bufferArray.join('')
         bufferArray = false
       } else {
         return

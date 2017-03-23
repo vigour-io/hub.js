@@ -33,15 +33,11 @@ const progress = (client) => {
           const raw = JSON.stringify(client.inProgress)
           const size = Buffer.byteLength(raw, 'utf8')
           if (size > maxFrameSize) {
-            console.log('oops exceeds framelimit - need to start splitting up!')
+            console.log('📡 exceeds framelimit - split up', (size / 1e6) | 0, 'mb')
             const buf = Buffer.from(raw, 'utf8')
             let i = 0
+            // make sure you end with an non maxsize buffer
             while (i * maxFrameSize <= size) {
-              if (i === 0) {
-                console.log('--->', buf.toString('utf8').slice(0, 100))
-                console.log(buf.slice(i * maxFrameSize, (i + 1) * maxFrameSize).toString('utf8'), (i + 1) * maxFrameSize)
-              }
-              // make sure you end with an empty one
               client.socket.send(buf.slice(i * maxFrameSize, (i + 1) * maxFrameSize))
               i++
             }
@@ -81,7 +77,7 @@ const send = (hub, client, struct, type, subs, tree) => {
 
 const serialize = (client, t, subs, struct, level, isRemoved) => {
   if (!struct) {
-    console.log('NO STRUCT FISHY!')
+    console.log('NO STRUCT FISHY IN SERVER SERIALIZE --- BUG')
     return
   }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)

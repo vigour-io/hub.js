@@ -18,12 +18,12 @@ test('frame limit', { timeout: 4000 }, t => {
   })
 
   var someData = ''
-  var i = 100000
+  var i = 2000000
   while (i-- > 0) {
     someData += '\nhello wtf is this :)'
   }
 
-  console.log('bytes', Buffer.from(someData).byteLength)
+  // console.log('bytes to send', Buffer.from(someData).byteLength / 1e6, 'mb')
 
   server.set({ someData })
 
