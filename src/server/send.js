@@ -33,7 +33,7 @@ const progress = (client) => {
           const raw = JSON.stringify(client.inProgress)
           const size = Buffer.byteLength(raw, 'utf8')
           if (size > maxFrameSize) {
-            console.log('📡 exceeds framelimit - split up', (size / 1e6) | 0, 'mb')
+            console.log('📡 exceeds framelimit - split up', (size / (1024 * 1024)) | 0, 'mb')
             const buf = Buffer.from(raw, 'utf8')
             let i = 0
             // make sure you end with an non maxsize buffer
