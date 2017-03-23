@@ -2,24 +2,14 @@ import bs from 'stamp'
 import { get, getKeys, getType, getVal } from 'brisky-struct'
 import { cache, isCached } from './cache'
 
+const maxFrameSize = require('../size')
+
 const isEmpty = obj => {
   for (let i in obj) { //eslint-disable-line
     return false
   }
   return true
 }
-
-// const size = str => {
-//   // returns the byte length of an utf8 string
-//   var s = str.length
-//   for (var i= str.length - 1; i >= 0; i--) {
-//     var code = str.charCodeAt(i)
-//     if (code > 0x7f && code <= 0x7ff) { s++ }
-//     else if (code > 0x7ff && code <= 0xffff) { s += 2 }
-//     if (code >= 0xDC00 && code <= 0xDFFF) i-- // trail surrogate
-//   }
-//   return s
-// }
 
 const progress = (client) => {
   if (!client.inProgress) {
@@ -41,8 +31,19 @@ const progress = (client) => {
             }
           }
           const raw = JSON.stringify(client.inProgress)
-          // console.log(size(raw))
-          client.socket.send(raw)
+          const size = Buffer.byteLength(raw, 'utf8')
+          if (size > maxFrameSize) {
+            console.log('📡 exceeds framelimit - split up', (size / 1e6) | 0, 'mb')
+            const buf = Buffer.from(raw, 'utf8')
+            let i = 0
+            // make sure you end with an non maxsize buffer
+            while (i * maxFrameSize <= size) {
+              client.socket.send(buf.slice(i * maxFrameSize, (i + 1) * maxFrameSize))
+              i++
+            }
+          } else {
+            client.socket.send(raw)
+          }
         }
         client.inProgress = false
       }
@@ -76,7 +77,7 @@ const send = (hub, client, struct, type, subs, tree) => {
 
 const serialize = (client, t, subs, struct, level, isRemoved) => {
   if (!struct) {
-    console.log('NO STRUCT FISHY!')
+    console.log('NO STRUCT FISHY IN SERVER SERIALIZE --- BUG')
     return
   }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
