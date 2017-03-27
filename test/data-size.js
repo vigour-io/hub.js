@@ -43,7 +43,7 @@ test('data size', { timeout: 3000 }, t => {
     'eum. Mazim noluisse definitiones has ad, vel id erat equidem. Ex qui inani iusto delenit.'
   let i = 1e3
   while (i--) {
-    const d = 1e11 + Math.round(Math.random() * 1e11)
+    const d = 1e11 + Math.round(Math.random() * 1e9) + i
     someData[`key-${d}-longer-string-${d}`] = {
       keyOne: { subKeyOne: val, subKeyTwo: val, subKeyThree: val },
       keyTwo: { subKeyOne: val, subKeyTwo: val, subKeyThree: val },
