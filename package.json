@@ -1,7 +1,7 @@
 {
   "name": "hub.js",
   "description": "Seamless realtime communcation",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "main": "dist/index.js",
   "browser": {
     "./dist/index.js": "./dist/index.browser.js",
@@ -43,10 +43,10 @@
   ],
   "dependencies": {
     "stamp": "^4.0.1",
-    "brisky-struct": "^1.4.1",
-    "string-hash": "^1.1.0",
-    "uws": "0.13.0",
-    "vigour-ua": "^3.1.1"
+    "brisky-struct": "^1.4.4",
+    "string-hash": "^1.1.3",
+    "uws": "0.14.1",
+    "vigour-ua": "^3.1.3"
   },
   "nyc": {
     "include": [
@@ -57,12 +57,12 @@
   },
   "devDependencies": {
     "builder-boy": "latest",
-    "coveralls": "^2.11.9",
+    "coveralls": "^2.12.0",
     "nodemon": "^1.11.0",
-    "nyc": "^10.0.0",
-    "pre-commit": "^1.1.3",
-    "standard": "^8.1.0",
-    "tape": "4.6.0"
+    "nyc": "^10.2.0",
+    "pre-commit": "^1.2.2",
+    "standard": "^9.0.2",
+    "tape": "4.6.3"
   },
   "author": "jim de beer",
   "license": "ISC",
