@@ -48,8 +48,13 @@ const connect = (hub, url, reconnect) => {
   socket.onmessage = (data) => {
     data = data.data
 
-    if (typeof data !== 'string' && data instanceof ArrayBuffer) {
+    if (
+      typeof data !== 'string' &&
+      typeof window === 'undefined' &&
+      data instanceof ArrayBuffer
+    ) {
       if (!bufferArray) bufferArray = []
+      // make sure new Buffer works on the browser...
       bufferArray.push(new Buffer(data).toString('utf8'))
       if (data.byteLength < maxFrameSize) {
         data = bufferArray.join('')
@@ -153,7 +158,6 @@ const connected = {
     data: {
       removeClients: (val, stamp, t) => {
         if (t.compute() === false) {
-          // all instances! -- fix this
           removeClients(t._p, stamp)
         }
       }
@@ -179,7 +183,6 @@ const contextIsNotEqual = (val, context) => {
   if (val && typeof val === 'object') {
     for (let field in val) {
       if (!context[field] || val[field] !== context[field].compute()) {
-        console.log('😜', field)
         return true
       }
     }
