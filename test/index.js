@@ -7,6 +7,5 @@ require('./switch')
 require('./client')
 require('./types')
 require('./context')
-require('./framelimit')
 
 // missing auto remove of context
