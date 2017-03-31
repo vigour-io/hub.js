@@ -1,5 +1,4 @@
 import uws from 'uws'
-import internalIp from 'internal-ip'
 import incoming from './incoming'
 import { removeClient, removeSubscriptions } from './remove'
 import { create, struct } from 'brisky-struct'
@@ -9,7 +8,7 @@ const Server = uws.Server
 
 const createServer = (hub, port) => {
   const server = new Server({ port })
-  console.log(`💫  Hub listening on ${internalIp.v4()}:${port} 💫`)
+  console.log(`💫 hub listening on ${port} 💫`)
 
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
