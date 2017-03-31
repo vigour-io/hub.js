@@ -9,3 +9,6 @@ require('./types')
 require('./context')
 
 // missing auto remove of context
+setTimeout(() => {
+  console.log('force a wait.. or something?')
+}, 15e3)
