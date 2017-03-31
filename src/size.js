@@ -3,7 +3,9 @@ const maxSize = 1e7
 const sendLarge = (raw, client) => {
   const size = Buffer.byteLength(raw, 'utf8')
   if (size > maxSize) {
-    client.blobInProgress = []
+    if (!client.blobInProgress) {
+      client.blobInProgress = []
+    }
     console.log('📡 exceeds framelimit - split up', (size / (1024 * 1024)) | 0, 'mb')
     const buf = Buffer.from(raw, 'utf8')
     let i = 0
