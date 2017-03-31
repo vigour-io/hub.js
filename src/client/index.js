@@ -5,7 +5,7 @@ import { create, parse, subscribe, struct, emitterProperty } from 'brisky-struct
 import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
-import maxFrameSize from '../size'
+import { receiveLarge } from '../size'
 
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
@@ -54,10 +54,9 @@ const connect = (hub, url, reconnect) => {
       data instanceof ArrayBuffer
     ) {
       if (!bufferArray) bufferArray = []
-      // make sure new Buffer works on the browser...
-      bufferArray.push(new Buffer(data).toString('utf8'))
-      if (data.byteLength < maxFrameSize) {
-        data = bufferArray.join('')
+      const result = receiveLarge(data, bufferArray)
+      if (result) {
+        data = result
         bufferArray = false
       } else {
         return

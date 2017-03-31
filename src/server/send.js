@@ -1,8 +1,7 @@
 import bs from 'stamp'
 import { get, getKeys, getType, getVal } from 'brisky-struct'
 import { cache, isCached } from './cache'
-
-const maxFrameSize = require('../size')
+import { sendLarge } from '../size'
 
 const isEmpty = obj => {
   for (let i in obj) { //eslint-disable-line
@@ -31,18 +30,12 @@ const progress = (client) => {
             }
           }
           const raw = JSON.stringify(client.inProgress)
-          const size = Buffer.byteLength(raw, 'utf8')
-          if (size > maxFrameSize) {
-            console.log('📡 exceeds framelimit - split up', (size / (1024 * 1024)) | 0, 'mb')
-            const buf = Buffer.from(raw, 'utf8')
-            let i = 0
-            // make sure you end with an non maxsize buffer
-            while (i * maxFrameSize <= size) {
-              client.socket.send(buf.slice(i * maxFrameSize, (i + 1) * maxFrameSize))
-              i++
+          if (!sendLarge(raw, client)) {
+            if (client.blobInProgress) {
+              client.blobInProgress.push(raw)
+            } else {
+              client.socket.send(raw)
             }
-          } else {
-            client.socket.send(raw)
           }
         }
         client.inProgress = false
