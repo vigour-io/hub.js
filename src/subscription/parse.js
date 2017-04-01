@@ -35,7 +35,7 @@ const parse = (obj, state, key, client, root) => {
     let block
     if (i === 'client' && (!key || key === 'root' || key === 'parent')) {
       block = true
-      console.log('client subs parsing work in progress, missing parent and references')
+      // console.log('client subs parsing work in progress, missing parent and references')
       let id = client.key // wrong need to get client
       if (!root.clients) { root.clients = {} }
       if (!root.clients[id]) { root.clients[id] = {} }

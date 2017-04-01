@@ -5,10 +5,12 @@ import { create, parse, subscribe, struct, emitterProperty } from 'brisky-struct
 import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
+import { receiveLarge } from '../size'
 
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
   const client = hub.client || createClient(hub, {}, false)
+  var bufferArray = false
 
   hub.set({ client }, false)
 
@@ -42,9 +44,25 @@ const connect = (hub, url, reconnect) => {
     bs.close()
   }
 
-  // use outside function non anon since its slowe apprantly
+  // use outside function non anon since its slower (according to uws)
   socket.onmessage = (data) => {
     data = data.data
+
+    if (
+      typeof data !== 'string' &&
+      typeof window === 'undefined' &&
+      data instanceof ArrayBuffer
+    ) {
+      if (!bufferArray) bufferArray = []
+      const result = receiveLarge(data, bufferArray)
+      if (result) {
+        data = result
+        bufferArray = false
+      } else {
+        return
+      }
+    }
+
     if (!hub.receiveOnly) {
       hub.receiveOnly = true
       hub.set(JSON.parse(data), false)
@@ -139,7 +157,6 @@ const connected = {
     data: {
       removeClients: (val, stamp, t) => {
         if (t.compute() === false) {
-          // all instances! -- fix this
           removeClients(t._p, stamp)
         }
       }
@@ -165,7 +182,6 @@ const contextIsNotEqual = (val, context) => {
   if (val && typeof val === 'object') {
     for (let field in val) {
       if (!context[field] || val[field] !== context[field].compute()) {
-        console.log('😜', field)
         return true
       }
     }

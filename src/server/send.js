@@ -1,6 +1,7 @@
 import bs from 'stamp'
 import { get, getKeys, getType, getVal } from 'brisky-struct'
 import { cache, isCached } from './cache'
+import { sendLarge } from '../size'
 
 const isEmpty = obj => {
   for (let i in obj) { //eslint-disable-line
@@ -8,18 +9,6 @@ const isEmpty = obj => {
   }
   return true
 }
-
-// const size = str => {
-//   // returns the byte length of an utf8 string
-//   var s = str.length
-//   for (var i= str.length - 1; i >= 0; i--) {
-//     var code = str.charCodeAt(i)
-//     if (code > 0x7f && code <= 0x7ff) { s++ }
-//     else if (code > 0x7ff && code <= 0xffff) { s += 2 }
-//     if (code >= 0xDC00 && code <= 0xDFFF) i-- // trail surrogate
-//   }
-//   return s
-// }
 
 const progress = (client) => {
   if (!client.inProgress) {
@@ -41,8 +30,13 @@ const progress = (client) => {
             }
           }
           const raw = JSON.stringify(client.inProgress)
-          // console.log(size(raw))
-          client.socket.send(raw)
+          if (!sendLarge(raw, client)) {
+            if (client.blobInProgress) {
+              client.blobInProgress.push(raw)
+            } else {
+              client.socket.send(raw)
+            }
+          }
         }
         client.inProgress = false
       }
@@ -76,7 +70,7 @@ const send = (hub, client, struct, type, subs, tree) => {
 
 const serialize = (client, t, subs, struct, level, isRemoved) => {
   if (!struct) {
-    console.log('NO STRUCT FISHY!')
+    console.log('NO STRUCT FISHY IN SERVER SERIALIZE --- BUG')
     return
   }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
