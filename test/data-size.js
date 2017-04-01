@@ -1,9 +1,9 @@
 const hub = require('../')
 const test = require('tape')
 
-var server, client
+test('data size - from server', { timeout: 3000 }, t => {
+  var server, client
 
-test('data size', { timeout: 3000 }, t => {
   server = hub({
     key: 'server',
     _uid_: 'server',
@@ -57,12 +57,38 @@ test('data size', { timeout: 3000 }, t => {
 
   client.subscribe({ someData: true }, () => {
     t.ok(true, 'subscription fired')
+    client.set(null)
+    server.set(null) // should not send anything
     t.end()
   })
 })
 
-test('reset', t => {
-  client.set(null)
-  server.set(null) // should not send anything
-  t.end()
+test('data size - from client', { timeout: 3000 }, t => {
+  var server, client
+
+  server = hub({
+    key: 'server',
+    _uid_: 'server',
+    port: 6000
+  })
+
+  client = hub({
+    key: 'client',
+    _uid_: 'client',
+    url: 'ws://localhost:6000',
+    context: false
+  })
+
+  var someData = ''
+  var i = 1e7
+  while (i--) { someData += 10 }
+
+  client.set({ someData })
+
+  client.subscribe({ someData: true }, () => {
+    t.ok(true, 'subscription fired')
+    client.set(null)
+    server.set(null) // should not send anything
+    t.end()
+  })
 })
