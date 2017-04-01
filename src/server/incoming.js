@@ -65,7 +65,9 @@ const set = (meta, socket, t, payload) => {
 }
 
 const create = (hub, socket, meta, payload, client) => {
+  console.log('get it', meta.context)
   const t = meta.context ? hub.getContext(meta.context, socket) : hub
+  console.log('???')
   if (!t.inherits && t.then) {
     t.then((t) => {
       if (socket.external !== null) {
