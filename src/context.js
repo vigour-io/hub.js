@@ -5,7 +5,6 @@ export default {
       t.set({
         define: {
           getContext (key, socket) {
-            console.log('get it....', key)
             return fn(key, key => createContext(this, key), this, socket)
           }
         }
@@ -15,7 +14,7 @@ export default {
   getContext: (key, context) => context(key)
 }
 
-const createContext = (hub, val, fuck) => {
+const createContext = (hub, val) => {
   var result = find(hub, val)
   if (!result) {
     result = hub.create({ contextKey: val }, false)

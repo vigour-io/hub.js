@@ -42,6 +42,7 @@ test('refContext 1', { timeout: 3000 }, t => {
 
 test('refContext 2', { timeout: 2000 }, t => {
   const scraper = hub({
+    key: 'bla',
     _uid_: 'scraper',
     port: 6060,
     page: {}
@@ -53,23 +54,29 @@ test('refContext 2', { timeout: 2000 }, t => {
     url: 'ws://localhost:6060'
   })
 
-  setTimeout(() => scraper.set({
-    menu: {
-      items: [{
-        bla: 0,
-        val: ['@', 'root', 'page', 'a'] // this has to resolve to start...
-      }]
-    },
-    page: {
-      a: {
-        b: ['@', 'root', 'page', 'b']
+  setTimeout(() => {
+    // scraper._c = null
+    // scraper._cLevel = null
+    scraper.set({
+      menu: {
+        items: [{
+          bla: 0,
+          val: ['@', 'root', 'page', 'a'] // this has to resolve to start...
+        }]
       },
-      b: {
-        blur: 0,
-        val: ['@', 'root', 'page', 'c']
-      },
-      c: {}
-    }
+      page: {
+        a: {
+          b: ['@', 'root', 'page', 'b']
+        },
+        b: {
+          blur: 0,
+          val: ['@', 'root', 'page', 'c']
+        },
+        c: {}
+      }
+    })
 
-  }), 100)
+    // should not do shit here...
+    t.equal(scraper.instances[0].get(['page', 'c']), scraper.get(['page', 'c']))
+  }, 100)
 })

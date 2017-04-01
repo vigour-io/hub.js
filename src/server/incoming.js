@@ -65,9 +65,7 @@ const set = (meta, socket, t, payload) => {
 }
 
 const create = (hub, socket, meta, payload, client) => {
-  console.log('get it', meta.context)
   const t = meta.context ? hub.getContext(meta.context, socket) : hub
-  console.log('???')
   if (!t.inherits && t.then) {
     t.then((t) => {
       if (socket.external !== null) {
@@ -88,10 +86,7 @@ const create = (hub, socket, meta, payload, client) => {
 }
 
 const incomingSubscriptions = (hub, client, meta, id) => {
-  if (!client) {
-    console.log('no client bizarro')
-    return
-  }
+  if (!client) return // silent gaurd
   const update = (t, type, subs, tree) => send(hub, client, t, type, subs, tree)
   if (!client.upstreamSubscriptions) client.upstreamSubscriptions = {}
   for (let key in meta.subscriptions) {
