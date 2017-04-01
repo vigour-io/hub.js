@@ -7,4 +7,6 @@ require('./switch')
 require('./client')
 require('./types')
 require('./context')
+require('./resolveRefs')
+
 // missing auto remove of context
