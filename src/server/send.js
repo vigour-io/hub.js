@@ -17,9 +17,11 @@ const progress = (client) => {
       if (client.val !== null) {
         if (!isEmpty(client.inProgress)) {
           if (client.inProgress.types) {
+            // order hack!
             for (let i in client.inProgress) {
               // order is still important since setting types after the fact is still broken
               // this will be a big update
+              // test if it works now since switchinheritance update
               if (i === 'types') {
                 break
               } else {
@@ -130,8 +132,9 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
 }
 
 const deepSerialize = (keys, client, t, subs, struct, level) => {
-  if (struct.get('type') && struct.get('type').compute() !== 'hub') {
-    serialize(client, t, subs, struct.get('type'), level)
+  var type
+  if ((type = get(struct, 'type')) && type.compute() !== 'hub') {
+    serialize(client, t, subs, type, level)
   }
   if (keys) {
     for (let i = 0, len = keys.length; i < len; i++) {

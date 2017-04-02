@@ -55,10 +55,13 @@ test('refContext 2', { timeout: 2000 }, t => {
   })
 
   setTimeout(() => {
-    scraper._c = null
-    scraper._cLevel = null
-    scraper.page._c = null
-    scraper.page._cLevel = null
+    // scraper._c = null
+    // scraper._cLevel = null
+    // scraper.page._c = null
+    // scraper.page._cLevel = null
+
+    // console.log(scraper.menu._c)
+    console.log('\n\n\n\n--------------------------')
 
     scraper.set({
       menu: {
@@ -80,6 +83,10 @@ test('refContext 2', { timeout: 2000 }, t => {
     })
 
     // should not do shit here...
+    console.log('--------------------------')
     t.equal(scraper.instances[0].get(['page' ]), scraper.get(['page' ]))
+    client1.set(null)
+    scraper.set(null)
+    t.end()
   }, 100)
 })
