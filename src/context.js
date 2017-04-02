@@ -5,13 +5,13 @@ export default {
       t.set({
         define: {
           getContext (key, socket) {
-            return fn(key, (key) => createContext(this, key), this, socket)
+            return fn(key, key => createContext(this, key), this, socket)
           }
         }
       })
     }
   },
-  getContext: (key, context) => context()
+  getContext: (key, context) => context(key)
 }
 
 const createContext = (hub, val) => {

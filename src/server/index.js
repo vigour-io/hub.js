@@ -109,4 +109,3 @@ const props = {
 }
 
 export default { props, on }
-

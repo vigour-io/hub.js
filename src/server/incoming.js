@@ -86,10 +86,7 @@ const create = (hub, socket, meta, payload, client) => {
 }
 
 const incomingSubscriptions = (hub, client, meta, id) => {
-  if (!client) {
-    console.log('no client bizarro')
-    return
-  }
+  if (!client) return // silent gaurd
   const update = (t, type, subs, tree) => send(hub, client, t, type, subs, tree)
   if (!client.upstreamSubscriptions) client.upstreamSubscriptions = {}
   for (let key in meta.subscriptions) {
