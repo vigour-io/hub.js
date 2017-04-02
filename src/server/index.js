@@ -15,7 +15,6 @@ const createServer = (hub, port) => {
     // need to remove when done -- its the best thing todo (mem!!!)
     socket.on('message', (data) => {
       data = JSON.parse(data)
-      console.log('incoming msg...', data)
       if (data) incoming(hub, socket, data)
     })
 
