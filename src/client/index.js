@@ -65,7 +65,7 @@ const connect = (hub, url, reconnect) => {
 
     if (!hub.receiveOnly) {
       hub.receiveOnly = true
-      hub.set(JSON.parse(data), false)
+      hub.set(JSON.parse(data), bs.create())
       hub.receiveOnly = null
     } else {
       hub.set(JSON.parse(data), false)
