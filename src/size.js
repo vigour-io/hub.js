@@ -1,4 +1,4 @@
-const maxSize = 1e4
+const maxSize = 1e7
 
 const send = (client, payload, next) => {
   client.socket.send(payload)
