@@ -7,6 +7,7 @@
     "./dist/index.js": "./dist/index.browser.js",
     "./src/client/uid/index.js": "./src/client/uid/browser.js",
     "./src/server/index.js": "./src/server/browser.js",
+    "./src/size/index.js": "./src/size/browser.js",
     "./src/client/websocket/index.js": "./src/client/websocket/browser.js",
     "source-map-support": false
   },

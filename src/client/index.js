@@ -10,7 +10,6 @@ import { receiveLarge } from '../size'
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
   const client = hub.client || createClient(hub, {}, false)
-  var bufferArray = false
 
   hub.set({ client }, false)
 
@@ -50,19 +49,19 @@ const connect = (hub, url, reconnect) => {
 
     if (
       typeof data !== 'string' &&
-      typeof window === 'undefined' &&
-      data instanceof ArrayBuffer
+      (
+        data instanceof ArrayBuffer ||
+        (('Blob' in global) && data instanceof Blob) ||
+        (('WebkitBlob' in global) && data instanceof WebkitBlob)
+      )
     ) {
-      if (!bufferArray) bufferArray = []
-      const result = receiveLarge(data, bufferArray)
-      if (result) {
-        data = result
-        bufferArray = false
-      } else {
-        return
-      }
+      receiveLarge(data, setInHub)
+    } else {
+      setInHub(data)
     }
+  }
 
+  const setInHub = data => {
     if (!hub.receiveOnly) {
       hub.receiveOnly = true
       hub.set(JSON.parse(data), bs.create())
