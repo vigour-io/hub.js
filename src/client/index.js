@@ -64,11 +64,25 @@ const connect = (hub, url, reconnect) => {
     }
 
     if (!hub.receiveOnly) {
-      hub.receiveOnly = true
-      hub.set(JSON.parse(data), bs.create())
-      hub.receiveOnly = null
+      if (typeof window !== 'undefined') {
+        global.requestAnimationFrame(() => {
+          hub.receiveOnly = true
+          hub.set(JSON.parse(data), bs.create())
+          hub.receiveOnly = null
+        })
+      } else {
+        hub.receiveOnly = true
+        hub.set(JSON.parse(data), bs.create())
+        hub.receiveOnly = null
+      }
     } else {
-      hub.set(JSON.parse(data), false)
+      if (typeof window !== 'undefined') {
+        global.requestAnimationFrame(() => {
+          hub.set(JSON.parse(data), false)
+        })
+      } else {
+        hub.set(JSON.parse(data), false)
+      }
     }
     bs.close()
   }
