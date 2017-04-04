@@ -69,22 +69,25 @@ const connect = (hub, url, reconnect) => {
           hub.receiveOnly = true
           hub.set(JSON.parse(data), bs.create())
           hub.receiveOnly = null
+          bs.close()
         })
       } else {
         hub.receiveOnly = true
         hub.set(JSON.parse(data), bs.create())
         hub.receiveOnly = null
+        bs.close()
       }
     } else {
       if (typeof window !== 'undefined') {
         global.requestAnimationFrame(() => {
           hub.set(JSON.parse(data), false)
+          bs.close()
         })
       } else {
         hub.set(JSON.parse(data), false)
+        bs.close()
       }
     }
-    bs.close()
   }
 }
 
