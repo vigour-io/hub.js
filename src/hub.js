@@ -45,7 +45,6 @@ hub.set({
     }
   },
   props: {
-        // why nto call this client id -- thats what it is
     clients: (t, val, key, stamp) => {
       if (!t.clients) {
         const clients = getType(t, key)
