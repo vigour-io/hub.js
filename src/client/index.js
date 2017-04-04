@@ -78,6 +78,7 @@ const connect = (hub, url, reconnect) => {
         bs.close()
       }
     } else {
+      // maybe merge more
       if (typeof window !== 'undefined') {
         global.requestAnimationFrame(() => {
           hub.set(JSON.parse(data), false)
