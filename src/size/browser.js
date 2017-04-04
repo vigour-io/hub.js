@@ -10,6 +10,7 @@ const receiveLarge = (data, cb) => {
 
   if (data.size < maxSize) {
     let i = blobArray.length
+    let done = i
     let stringArray = []
 
     while (i--) {
@@ -19,7 +20,7 @@ const receiveLarge = (data, cb) => {
         reader.removeEventListener('loadend', onLoadEnd, false)
         if (!e.error) {
           stringArray[i] = reader.result
-          if (i === 0) cb(stringArray.join(''))
+          if (--done === 0) cb(stringArray.join(''))
         }
       }).bind(null, i)
 
