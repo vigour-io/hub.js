@@ -1,4 +1,4 @@
-const maxSize = 1e7
+const maxSize = 1e4
 
 const send = (client, payload, next) => {
   client.socket.send(payload)
@@ -18,7 +18,7 @@ const sendLarge = (raw, client) => {
 
     const drainInProgress = done => {
       if (client.blobInProgress.length > 0) {
-        send(client, client.blobInProgress.shift(), drainInProgress)
+        send(client, client.blobInProgress.shift(), () => drainInProgress(done))
       } else {
         done()
       }
