@@ -13,7 +13,7 @@ const receiveLarge = (data, cb) => {
     let stringArray = []
 
     while (i--) {
-      const reader = new FileReader()
+      const reader = new FileReader() // eslint-disable-line
       console.log(i)
 
       const onLoadEnd = ((i, e) => {

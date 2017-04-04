@@ -51,8 +51,8 @@ const connect = (hub, url, reconnect) => {
       typeof data !== 'string' &&
       (
         data instanceof ArrayBuffer ||
-        (('Blob' in global) && data instanceof Blob) ||
-        (('WebkitBlob' in global) && data instanceof WebkitBlob)
+        (('Blob' in global) && data instanceof Blob) || // eslint-disable-line
+        (('WebkitBlob' in global) && data instanceof WebkitBlob) // eslint-disable-line
       )
     ) {
       receiveLarge(data, setInHub)
