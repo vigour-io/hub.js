@@ -17,7 +17,7 @@ const sendLarge = (raw, client) => {
 
     const drainInProgress = done => {
       if (client.blobInProgress.length > 0) {
-        send(client, client.blobInProgress.shift(), drainInProgress)
+        send(client, client.blobInProgress.shift(), () => drainInProgress(done))
       } else {
         done()
       }
