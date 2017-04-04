@@ -14,7 +14,6 @@ const receiveLarge = (data, cb) => {
 
     while (i--) {
       const reader = new FileReader() // eslint-disable-line
-      console.log(i)
 
       const onLoadEnd = ((i, e) => {
         reader.removeEventListener('loadend', onLoadEnd, false)
