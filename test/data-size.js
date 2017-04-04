@@ -72,10 +72,10 @@ test('data size - from server', { timeout: 6000 }, t => {
 
   client.connected.once(true).then(() => {
     server.set({ someData })
-    setImmediate(() => {
+    setTimeout(() => {
       server.set({ yuz: true })
       server.set({ jaz: true })
-    })
+    }, 20)
   })
 })
 
