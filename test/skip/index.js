@@ -11,7 +11,7 @@ test('subscription - val + fields', t => {
   server.get('clients', {}).once().then(t => {
     server.set({
       heavy: function * () {
-        var i = 10
+        var i = 100
         while (i--) { yield i }
       }
     })
