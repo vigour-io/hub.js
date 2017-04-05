@@ -11,12 +11,11 @@ export default (hub, socket, data) => {
   const meta = data[1]
   var client = socket.client
   if (meta) {
-    let t
     if (client) {
-      t = client.parent(2)
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
         create(hub, socket, meta, payload, client)
       } else if (meta.s) {
+        const t = client.parent(2)
         if (payload) setPayload(t, payload, client)
         incomingSubscriptions(t, client, meta, client.key)
         bs.close()
