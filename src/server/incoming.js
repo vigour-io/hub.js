@@ -107,7 +107,6 @@ const incomingSubscriptions = (hub, client, meta, id) => {
     } else {
       const uid = key + '-' + id
       if (!client.upstreamSubscriptions[uid]) {
-        console.log('subscribe:', uid, hub.contextKey, hub._uid_)
         const subs = parse(parsed[key], hub, void 0, client)
         client.upstreamSubscriptions[uid] = subs
         subscribe(hub, subs, update)
@@ -116,13 +115,9 @@ const incomingSubscriptions = (hub, client, meta, id) => {
     }
   }
 
-  if (requestSubs) {
-    console.log('send subs down', JSON.stringify(requestSubs))
-    client.socket.send('#1' + JSON.stringify(requestSubs))
-  }
+  if (requestSubs) client.socket.send('#1' + JSON.stringify(requestSubs))
 }
 
 // this can become super efficient ofc -- replace client in very smart way -- blueprint $CLIENT -- this is the client id
 // could even do something like -- update._uid_ use this as a key
-
 // export parsed so we can reset in tests

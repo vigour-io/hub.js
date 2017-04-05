@@ -72,7 +72,6 @@ const connect = (hub, url, reconnect) => {
     ) {
       receiveLarge(data, set)
     } else if (data[0] === '#') {
-      console.log('handle subs', data)
       if (data[1] === '1') {
         sendSubscriptions(socket, JSON.parse(data.slice(2)), hub)
       }
