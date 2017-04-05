@@ -1,12 +1,13 @@
 {
   "name": "hub.js",
   "description": "Seamless realtime communcation",
-  "version": "0.0.26",
+  "version": "0.0.29",
   "main": "dist/index.js",
   "browser": {
     "./dist/index.js": "./dist/index.browser.js",
     "./src/client/uid/index.js": "./src/client/uid/browser.js",
     "./src/server/index.js": "./src/server/browser.js",
+    "./src/size/index.js": "./src/size/browser.js",
     "./src/client/websocket/index.js": "./src/client/websocket/browser.js",
     "source-map-support": false
   },

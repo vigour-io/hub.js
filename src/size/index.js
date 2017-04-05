@@ -1,4 +1,4 @@
-const maxSize = 1e7 // byteLength -- has to be like 10mb
+import maxSize from './maxSize'
 
 const send = (client, payload, next) => {
   client.socket.send(payload)
@@ -41,10 +41,15 @@ const sendLarge = (raw, client) => {
   }
 }
 
-const receiveLarge = (data, bufferArray) => {
-  // make sure new Buffer works on the browser...
+var bufferArray = false
+
+const receiveLarge = (data, cb) => {
+  if (!bufferArray) bufferArray = []
   bufferArray.push(new Buffer(data).toString('utf8'))
-  if (data.byteLength < maxSize) return bufferArray.join('')
+  if (data.byteLength < maxSize) {
+    cb(bufferArray.join(''))
+    bufferArray = false
+  }
 }
 
 export {
