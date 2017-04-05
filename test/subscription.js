@@ -53,7 +53,6 @@ test('subscription - reuse', t => {
     url: 'ws://localhost:6060'
   })
 
-
   client.subscribe({ a: true })
 
   client2.subscribe({ a: true })
@@ -68,5 +67,4 @@ test('subscription - reuse', t => {
     server.set(null)
     t.end()
   })
-
 })
