@@ -15,9 +15,9 @@ export default (hub, socket, data) => {
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
         create(hub, socket, meta, payload, client)
       } else if (meta.s) {
-        const t = client.parent(2)
-        if (payload) setPayload(t, payload, client)
-        incomingSubscriptions(t, client, meta, client.key)
+        hub = client.parent(2)
+        if (payload) setPayload(hub, payload, client)
+        incomingSubscriptions(hub, client, meta, client.key)
         bs.close()
       }
     } else {
