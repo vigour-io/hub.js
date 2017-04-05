@@ -61,9 +61,6 @@ const connect = (hub, url, reconnect) => {
 
   socket.onmessage = (data) => {
     data = data.data
-
-    console.log('incoming??', data)
-
     if (
       typeof data !== 'string' &&
       (data instanceof ArrayBuffer ||
@@ -75,7 +72,7 @@ const connect = (hub, url, reconnect) => {
     ) {
       receiveLarge(data, set)
     } else if (data[0] === '#') {
-      console.log(data)
+      console.log('handle subs', data)
       if (data[1] === '1') {
         sendSubscriptions(socket, JSON.parse(data.slice(2)), hub)
       }
