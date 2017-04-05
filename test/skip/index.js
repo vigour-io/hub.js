@@ -16,4 +16,11 @@ test('subscription - val + fields', t => {
       }
     })
   })
+
+  server.get('test', {}).once().then(() => {
+    t.ok(server.test.compute() < 50, 'received less then 50 events')
+    spawned.kill('SIGINT')
+    server.set(null)
+    t.end()
+  })
 })
