@@ -56,7 +56,9 @@ const meta = hub => {
       }
     }
     store[1].id = hub.client.key
-    store[1].s = Object.keys(hub.upstreamSubscriptions)
+    if (hub.upstreamSubscriptions) {
+      store[1].s = Object.keys(hub.upstreamSubscriptions)
+    }
   } else if (hub.upstreamSubscriptions) {
     let override
     for (let key in hub.upstreamSubscriptions) {
