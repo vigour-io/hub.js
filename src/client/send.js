@@ -2,7 +2,7 @@ import bs from 'stamp'
 
 const next = typeof window === 'undefined'
   ? process.nextTick
-  : bs.on
+  : global.requestAnimationFrame
 
 const serialize = (hub, t, struct, val, level) => {
   if (!struct.isHub || struct.key === 'clients' || (struct._p && struct._p.key === 'clients')) {

@@ -6,10 +6,16 @@ import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
 import { receiveLarge } from '../size'
+import merge from '../merge'
+
+const next = typeof window === 'undefined'
+  ? fn => setTimeout(fn, 18)
+  : global.requestAnimationFrame
 
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
   const client = hub.client || createClient(hub, {}, false)
+  var inProgress, queue
 
   hub.set({ client }, false)
 
@@ -62,32 +68,35 @@ const connect = (hub, url, reconnect) => {
   }
 
   const setInHub = data => {
-    if (!hub.receiveOnly) {
-      if (typeof window !== 'undefined') {
-        global.requestAnimationFrame(() => {
-          hub.receiveOnly = true
-          hub.set(JSON.parse(data), bs.create())
-          hub.receiveOnly = null
-          bs.close()
-        })
+    data = JSON.parse(data)
+    if (inProgress) {
+      if (!queue) {
+        queue = data
       } else {
-        hub.receiveOnly = true
-        hub.set(JSON.parse(data), bs.create())
-        hub.receiveOnly = null
-        bs.close()
+        merge(queue, data)
       }
     } else {
-      // maybe merge more
-      if (typeof window !== 'undefined') {
-        global.requestAnimationFrame(() => {
-          hub.set(JSON.parse(data), false)
-          bs.close()
-        })
-      } else {
-        hub.set(JSON.parse(data), false)
-        bs.close()
-      }
+      inProgress = true
+      next(() => {
+        if (queue) {
+          recieve(hub, queue, true)
+        }
+        inProgress = false
+      })
+      recieve(hub, data)
     }
+  }
+}
+
+const recieve = (hub, data) => {
+  if (!hub.receiveOnly) {
+    hub.receiveOnly = true
+    hub.set(data, bs.create())
+    hub.receiveOnly = null
+    bs.close()
+  } else {
+    hub.set(data, bs.create())
+    bs.close()
   }
 }
 
