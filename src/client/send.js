@@ -124,6 +124,8 @@ const out = t => {
 }
 
 const sendSubscriptions = (socket, subs, hub) => {
+  console.log(subs)
+
   let i = subs.length
   const m = {}
   while (i--) {
