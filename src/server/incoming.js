@@ -13,7 +13,7 @@ export default (hub, socket, data) => {
   if (meta) {
     let t
     if (client) {
-      t = client.parent().parent()
+      t = client.parent(2)
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
         create(hub, socket, meta, payload, client)
       } else if (meta.s) {
