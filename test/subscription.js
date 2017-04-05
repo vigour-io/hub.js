@@ -53,13 +53,17 @@ test('subscription - reuse', t => {
     url: 'ws://localhost:6060'
   })
 
-  client.subscribe({ a: true })
+  client.subscribe({ a: true }, (t) => {
+    console.log('yo', t)
+  })
 
-  client2.subscribe({ a: true })
+  client2.subscribe({ a: true }, (t) => {
+    console.log('yo', t)
+  })
 
   Promise.all([
-    client.get('a', {}).once(true),
-    client2.get('a', {}).once(true)
+    client.get('a', {}).once('hello'),
+    client2.get('a', {}).once('hello')
   ]).then(() => {
     t.pass('received correct payload (reuse)')
     client.set(null)
