@@ -56,6 +56,12 @@ test('subscription - reuse', t => {
   client.subscribe({ a: true })
   client2.subscribe({ a: true })
 
+  client.subscribe({ b: true })
+  client2.subscribe({ b: true })
+
+  client.subscribe({ c: true })
+  client2.subscribe({ c: true })
+
   Promise.all([
     client.get('a', {}).once('hello'),
     client2.get('a', {}).once('hello')

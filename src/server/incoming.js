@@ -6,8 +6,6 @@ import createClient from '../client/create'
 import { removeClient } from './remove'
 import { cache } from './cache'
 
-const parsed = {}
-
 export default (hub, socket, data) => {
   const payload = data[0]
   const meta = data[1]
@@ -15,7 +13,7 @@ export default (hub, socket, data) => {
   if (meta) {
     let t
     if (client) {
-      t = hub
+      t = client.parent().parent()
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
         create(hub, socket, meta, payload, client)
       } else if (meta.s) {
@@ -87,6 +85,8 @@ const create = (hub, socket, meta, payload, client) => {
   }
 }
 
+const parsed = {}
+
 const incomingSubscriptions = (hub, client, meta, id) => {
   if (!client) return // silent gaurd
 
@@ -108,6 +108,7 @@ const incomingSubscriptions = (hub, client, meta, id) => {
     } else {
       const uid = key + '-' + id
       if (!client.upstreamSubscriptions[uid]) {
+        console.log('subscribe:', uid, hub.contextKey, hub._uid_)
         const subs = parse(parsed[key], hub, void 0, client)
         client.upstreamSubscriptions[uid] = subs
         subscribe(hub, subs, update)
@@ -117,9 +118,12 @@ const incomingSubscriptions = (hub, client, meta, id) => {
   }
 
   if (requestSubs) {
+    console.log('send subs down', JSON.stringify(requestSubs))
     client.socket.send('#1' + JSON.stringify(requestSubs))
   }
 }
 
 // this can become super efficient ofc -- replace client in very smart way -- blueprint $CLIENT -- this is the client id
 // could even do something like -- update._uid_ use this as a key
+
+// export parsed so we can reset in tests
