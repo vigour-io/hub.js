@@ -35,13 +35,9 @@ const serialize = (hub, t, struct, val, level) => {
       }
       s.val = null
     } else if (struct.val && struct.val.inherits) {
-      // make a bit more secure...
-      // if (!s.val) {
       s.val = struct.val.path()
       s.val.unshift('@', 'root')
-      // if allrdy serialized stop it!
       serialize(hub, t, struct.val, val, level)
-      // }
     } else if (struct.val !== void 0) {
       s.val = struct.val
     }

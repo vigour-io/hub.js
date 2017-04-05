@@ -1,15 +1,7 @@
+import merge from '../merge'
+
 const isFn = /^\$fn\|/
 const dummy = () => false
-
-function merge (a, b) {
-  for (let i in b) {
-    if ((!a[i] || typeof a[i] !== 'object')) {
-      a[i] = b[i]
-    } else {
-      merge(a[i], b[i])
-    }
-  }
-}
 
 // this will all be done with an ast later!
 const replaceClient = /\.client[^a-z0-9]/g

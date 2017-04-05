@@ -6,10 +6,18 @@ import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
 import { receiveLarge } from '../size'
+import merge from '../merge'
+
+const isNode = typeof window === 'undefined'
+
+const next = isNode
+  ? fn => setTimeout(fn, 18)
+  : global.requestAnimationFrame
 
 const connect = (hub, url, reconnect) => {
   const socket = new WebSocket(url)
   const client = hub.client || createClient(hub, {}, false)
+  var inProgress, queue
 
   hub.set({ client }, false)
 
@@ -28,9 +36,7 @@ const connect = (hub, url, reconnect) => {
 
   socket.onclose = close
 
-  socket.onerror = typeof window === 'undefined'
-    ? close
-    : () => socket.close()
+  socket.onerror = isNode ? close : () => socket.close()
 
   socket.onopen = () => {
     const stamp = bs.create()
@@ -46,13 +52,13 @@ const connect = (hub, url, reconnect) => {
   // use outside function non anon since its slower (according to uws)
   socket.onmessage = (data) => {
     data = data.data
-
     if (
       typeof data !== 'string' &&
-      (
-        data instanceof ArrayBuffer ||
-        (('Blob' in global) && data instanceof Blob) || // eslint-disable-line
-        (('WebkitBlob' in global) && data instanceof WebkitBlob) // eslint-disable-line
+      (data instanceof ArrayBuffer ||
+        (!isNode &&
+          ((('Blob' in global) && data instanceof Blob) || // eslint-disable-line
+          (('WebkitBlob' in global) && data instanceof WebkitBlob)) // eslint-disable-line
+        )
       )
     ) {
       receiveLarge(data, setInHub)
@@ -62,13 +68,32 @@ const connect = (hub, url, reconnect) => {
   }
 
   const setInHub = data => {
-    if (!hub.receiveOnly) {
-      hub.receiveOnly = true
-      hub.set(JSON.parse(data), bs.create())
-      hub.receiveOnly = null
+    data = JSON.parse(data) // maybe add a try catch to be sure...
+    if (inProgress) {
+      if (!queue) {
+        queue = data
+      } else {
+        merge(queue, data)
+      }
     } else {
-      hub.set(JSON.parse(data), false)
+      inProgress = true
+      next(() => {
+        if (queue) recieve(hub, queue, true)
+        inProgress = false
+      })
+      recieve(hub, data)
     }
+  }
+}
+
+const recieve = (hub, data) => {
+  if (!hub.receiveOnly) {
+    hub.receiveOnly = true
+    hub.set(data, bs.create())
+    hub.receiveOnly = null
+    bs.close()
+  } else {
+    hub.set(data, bs.create())
     bs.close()
   }
 }
