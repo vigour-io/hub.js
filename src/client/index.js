@@ -1,5 +1,5 @@
 import bs from 'stamp'
-import { send, meta } from './send'
+import { send, meta, sendSubscriptions } from './send'
 import WebSocket from './websocket'
 import { create, parse, subscribe, struct, emitterProperty } from 'brisky-struct'
 import serialize from '../subscription/serialize'
@@ -15,6 +15,8 @@ const next = isNode
   : global.requestAnimationFrame
 
 const connect = (hub, url, reconnect) => {
+  // use outside function non anon since its slower (according to uws)
+
   const socket = new WebSocket(url)
   const client = hub.client || createClient(hub, {}, false)
   var inProgress, queue
@@ -49,7 +51,14 @@ const connect = (hub, url, reconnect) => {
     bs.close()
   }
 
-  // use outside function non anon since its slower (according to uws)
+  /*
+    MESSAGE CODES
+    1: send full subscription
+  */
+
+  // 2: error logging in
+  // need a way to add context switch
+
   socket.onmessage = (data) => {
     data = data.data
     if (
@@ -61,13 +70,18 @@ const connect = (hub, url, reconnect) => {
         )
       )
     ) {
-      receiveLarge(data, setInHub)
+      receiveLarge(data, set)
+    } else if (data[0] === '#') {
+      console.log('handle subs', data)
+      if (data[1] === '1') {
+        sendSubscriptions(socket, JSON.parse(data.slice(2)), hub)
+      }
     } else {
-      setInHub(data)
+      set(data)
     }
   }
 
-  const setInHub = data => {
+  const set = data => {
     data = JSON.parse(data) // maybe add a try catch to be sure...
     if (inProgress) {
       if (!queue) {

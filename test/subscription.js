@@ -33,3 +33,43 @@ test('subscription - val + fields', t => {
 
   client.subscribe({ a: true })
 })
+
+test('subscription - reuse', t => {
+  const server = hub({
+    _uid_: 'server',
+    port: 6060,
+    a: 'hello'
+  })
+
+  server.set({ nostamp: 'nostamp!' }, false)
+
+  const client = hub({
+    _uid_: 'client',
+    url: 'ws://localhost:6060'
+  })
+
+  const client2 = hub({
+    _uid_: 'client2',
+    url: 'ws://localhost:6060'
+  })
+
+  client.subscribe({ a: true })
+  client2.subscribe({ a: true })
+
+  client.subscribe({ b: true })
+  client2.subscribe({ b: true })
+
+  client.subscribe({ c: true })
+  client2.subscribe({ c: true })
+
+  Promise.all([
+    client.get('a', {}).once('hello'),
+    client2.get('a', {}).once('hello')
+  ]).then(() => {
+    t.pass('received correct payload (reuse)')
+    client.set(null)
+    client2.set(null)
+    server.set(null)
+    t.end()
+  })
+})
