@@ -1,4 +1,4 @@
-import WebSocket from 'uws'
+import WebSocket from 'uws-old'
 export default WebSocket
 
 // need to get this fixed on now!

@@ -1,4 +1,4 @@
-import uws from 'uws'
+import uws from 'uws-old'
 import incoming from './incoming'
 import { removeClient, removeSubscriptions } from './remove'
 import { create, struct } from 'brisky-struct'
