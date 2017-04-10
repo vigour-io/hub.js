@@ -56,7 +56,9 @@ const meta = hub => {
       }
     }
     store[1].id = hub.client.key
-    store[1].subscriptions = hub.upstreamSubscriptions
+    if (hub.upstreamSubscriptions) {
+      store[1].s = Object.keys(hub.upstreamSubscriptions)
+    }
   } else if (hub.upstreamSubscriptions) {
     let override
     for (let key in hub.upstreamSubscriptions) {
@@ -73,7 +75,7 @@ const meta = hub => {
       while (i--) {
         obj[override[i]] = hub.upstreamSubscriptions[override[i]]
       }
-      store[1].subscriptions = obj
+      store[1].s = Object.keys(obj)
     }
   }
 }
@@ -121,4 +123,16 @@ const out = t => {
   t.inProgress = false
 }
 
-export { meta, send }
+const sendSubscriptions = (socket, subs, hub) => {
+  let i = subs.length
+  const m = {}
+  while (i--) {
+    const key = subs[i]
+    m[key] = hub.upstreamSubscriptions[key]
+  }
+  const payload = []
+  payload[1] = { s: subs, m }
+  socket.send(JSON.stringify(payload))
+}
+
+export { meta, send, sendSubscriptions }

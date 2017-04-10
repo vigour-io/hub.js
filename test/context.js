@@ -144,3 +144,47 @@ test('context - getContext', { timeout: 2000 }, t => {
     t.end()
   })
 })
+
+test('context - basic', { timeout: 2000 }, t => {
+  const scraper = hub({
+    _uid_: 'scraper',
+    port: 6060,
+    somefield: 'somefield!'
+  })
+
+  const hybrid = hub({
+    _uid_: 'hybrid',
+    url: 'ws://localhost:6060',
+    port: 6061
+  })
+
+  hybrid.subscribe(true)
+
+  const client2 = hub({
+    _uid_: 'client2',
+    context: 'pavel',
+    url: 'ws://localhost:6061'
+  })
+
+  const client = hub({
+    _uid_: 'client1',
+    context: 'pavelx',
+    url: 'ws://localhost:6061'
+  })
+
+  client.subscribe({ x: true })
+  client2.subscribe({ x: true })
+
+  scraper.set({ x: 'x' })
+
+  Promise.all([
+    client.get('x', {}).once('x'),
+    client2.get('x', {}).once('x')
+  ]).then(() => {
+    scraper.set(null)
+    hybrid.set(null)
+    client.set(null)
+    client2.set(null)
+    t.end()
+  })
+})

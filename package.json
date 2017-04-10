@@ -1,7 +1,7 @@
 {
   "name": "hub.js",
   "description": "Seamless realtime communcation",
-  "version": "0.0.30",
+  "version": "0.1.1",
   "main": "dist/index.js",
   "browser": {
     "./dist/index.js": "./dist/index.browser.js",
@@ -14,6 +14,7 @@
   "scripts": {
     "build": "builder-boy src/index.js dist/index.js -r -t node -t browser",
     "watch": "builder-boy src/index.js dist/index.js -w -r -t node -t browser",
+    "watch-browser": "builder-boy test/browser/index.js test/browser/dist/index.js -w",
     "dev": "nodemon --watch dist --watch test --watch node_modules --exec 'node test/index.js'",
     "pretest": "npm run build",
     "preversion": "npm run precommit",
