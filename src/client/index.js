@@ -89,11 +89,11 @@ const connect = (hub, url, reconnect) => {
 const recieve = (hub, data) => {
   if (!hub.receiveOnly) {
     hub.receiveOnly = true
-    hub.set(data, bs.create())
+    hub.set(data, hub._incomingStamp = bs.create())
     hub.receiveOnly = null
     bs.close()
   } else {
-    hub.set(data, bs.create())
+    hub.set(data, hub._incomingStamp = bs.create())
     bs.close()
   }
 }
