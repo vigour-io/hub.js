@@ -98,7 +98,15 @@ test('circular references', t => {
     context: 'someContextKey',
   })
 
-  client.subscribe(true)
+  client.subscribe({
+    a: {
+      itemList: {
+        $any: {
+          val: true
+        }
+      }
+    }
+  })
 
   setTimeout(() => {
     client.get([ 'a', 'itemList', 'items', 'd', 'siblingC', 'otherData' ], {}).once('someText').then(() => {
