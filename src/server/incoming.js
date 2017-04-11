@@ -54,7 +54,6 @@ const set = (meta, socket, t, payload) => {
   const stamp = bs.create()
   const id = meta.id
   const context = meta.context
-  // const ip = socket._socket.remoteAddress
   const client = socket.client = createClient(
     t, { socket, context }, stamp, socket.useragent, id
   )

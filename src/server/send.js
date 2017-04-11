@@ -36,6 +36,8 @@ const progress = (client) => {
             if (client.blobInProgress) {
               client.blobInProgress.push(raw)
             } else {
+              console.log('go go go', JSON.stringify(client.inProgress, false, 2))
+
               client.socket.send(raw)
             }
           }
