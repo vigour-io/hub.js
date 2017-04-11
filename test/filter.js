@@ -8,7 +8,7 @@ test('subscription - any - multiple filter', t => {
   const show2 = { title: 'show2' }
 
   const s = hub({
-    key: 'server',
+    // key: 'server', // this is a problem for sure
     page: {
       movie1,
       movie2,
@@ -16,6 +16,9 @@ test('subscription - any - multiple filter', t => {
       show2,
       shows: {
         title: 'shows',
+        val: [ '@', 'root', 'page', 'shows2' ]
+      },
+      shows2: {
         items: [
           [ '@', 'root', 'page', 'show1' ],
           [ '@', 'root', 'page', 'show2' ]
@@ -39,12 +42,13 @@ test('subscription - any - multiple filter', t => {
         }
       }
     },
-    search: {},
+    search: { page: [ '@', 'root', 'page', 'search' ] },
     port: 6060
   })
 
   const client = hub({
-    url: 'ws://localhost:6060'
+    url: 'ws://localhost:6060',
+    context: 'derp'
   })
 
   const path = []
@@ -52,7 +56,10 @@ test('subscription - any - multiple filter', t => {
   client.subscribe({
     page: {
       current: {
+        val: 1,
         $any: {
+          val: 1,
+          title: true,
           items: {
             $any: {
               $keys: {
@@ -61,12 +68,13 @@ test('subscription - any - multiple filter', t => {
                 val: (keys, s) => keys.filter(key => {
                   const q = s.root().get([ 'search', 'query', 'compute' ])
                   if (q && (s.get([ key, 'title', 'compute' ]) || '').indexOf(q) !== -1) {
-                    console.log('im begin executed!', s.root().key)
+                    console.log('im begin executed!', s.root().contextKey)
                     return true
                   }
                 })
               },
-              val: true
+              val: 1,
+              title: { val: 'shallow' }
             }
           }
         }
@@ -74,18 +82,21 @@ test('subscription - any - multiple filter', t => {
     }
   }, (val, type) => {
     path.push(val.path())
-    console.log('???', val.path())
+    console.log('-----> LISTEN!', val.path())
   })
 
   client.set({
     page: {
-      current: [ '@', 'root', 'page', 'search' ]
+      current: [ '@', 'root', 'search', 'page' ]
     }
   })
 
-  client.set({
-    search: { query: 'show' }
-  })
+  setTimeout(() => {
+    console.log('-----------------------------------')
+    client.set({
+      search: { query: 'show' }
+    })
+  }, 1e3)
 
   console.log('ok')
 
