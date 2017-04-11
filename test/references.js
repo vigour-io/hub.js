@@ -50,18 +50,14 @@ test('circular references', t => {
 
   const client = hub({
     _uid_: 'client',
-    url: 'ws://localhost:6060'
+    url: 'ws://localhost:6060',
+    context: 'someContextKey'
   })
 
   client.subscribe(true)
 
-  // this get does not work since it does not know the refs yet -- now gets its own path
-  // client.get([ 'a', 'items', 'c', 'siblings', 'b' ], {}).once('valB').then(() => {
-
-  // })
-
   setTimeout(() => {
-    client.get([ 'a', 'items', 'c', 'siblings', 'b' ], {}).once('valB').then(() => {
+    client.get([ 'a', 'items', 'c' ], {}).once('valC').then(() => {
       t.pass('received circular reference')
       client.set(null)
       scraper.set(null)
