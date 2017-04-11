@@ -33,18 +33,54 @@ test('circular references', t => {
     _uid_: 'scraper',
     port: 6060,
     a: {
-      items: {
-        b: ['@', 'root', 'b'],
-        c: ['@', 'root', 'c']
+      itemList: {
+        type: 'List',
+        items: {
+          b: {
+            type: 'Item',
+            val: ['@', 'root', 'b']
+          },
+          c: {
+            type: 'Item',
+            val: ['@', 'root', 'c']
+          },
+          d: {
+            type: 'Item',
+            val: ['@', 'root', 'd']
+          }
+        }
       }
     },
     b: {
       val: 'valB',
-      siblings: ['@', 'root', 'a', 'items']
+      siblings: ['@', 'root', 'a', 'itemList'],
+      other: {
+        type: 'otherType',
+        val: ['@', 'parent', 'otherData']
+      },
+      otherData: 'someText'
     },
     c: {
       val: 'valC',
-      siblings: ['@', 'root', 'a', 'items']
+      siblings: ['@', 'root', 'a', 'itemList'],
+      other: {
+        type: 'otherType',
+        val: ['@', 'parent', 'otherData']
+      },
+      otherData: 'someText'
+    },
+    d: {
+      val: 'valD',
+      siblings: ['@', 'root', 'a', 'itemList'],
+      other: {
+        type: 'otherType',
+        val: ['@', 'parent', 'otherData']
+      },
+      otherData: 'someText',
+      siblingC: {
+        type: 'Sibling',
+        val: ['@', 'parent', 'siblings', 'items', 'c']
+      }
     }
   })
 
@@ -56,8 +92,9 @@ test('circular references', t => {
 
   client.subscribe(true)
 
+
   setTimeout(() => {
-    client.get([ 'a', 'items', 'c' ], {}).once('valC').then(() => {
+    client.get([ 'a', 'itemList', 'items', 'd', 'siblingC', 'otherData' ], {}).once('someText').then(() => {
       t.pass('received circular reference')
       client.set(null)
       scraper.set(null)
