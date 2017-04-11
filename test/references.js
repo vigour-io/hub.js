@@ -55,10 +55,17 @@ test('circular references', t => {
 
   client.subscribe(true)
 
-  client.get([ 'a', 'items', 'c', 'siblings', 'b' ], {}).once('valB').then(() => {
-    t.pass('received circular reference')
-    client.set(null)
-    scraper.set(null)
-    t.end()
-  })
+  // this get does not work since it does not know the refs yet -- now gets its own path
+  // client.get([ 'a', 'items', 'c', 'siblings', 'b' ], {}).once('valB').then(() => {
+
+  // })
+
+  setTimeout(() => {
+    client.get([ 'a', 'items', 'c', 'siblings', 'b' ], {}).once('valB').then(() => {
+      t.pass('received circular reference')
+      client.set(null)
+      scraper.set(null)
+      t.end()
+    })
+  }, 100)
 })

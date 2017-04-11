@@ -68,7 +68,6 @@ test('subscription - any - multiple filter', t => {
                 val: (keys, s) => keys.filter(key => {
                   const q = s.root().get([ 'search', 'query', 'compute' ])
                   if (q && (s.get([ key, 'title', 'compute' ]) || '').indexOf(q) !== -1) {
-                    console.log('im begin executed!', s.root().contextKey)
                     return true
                   }
                 })
@@ -82,7 +81,18 @@ test('subscription - any - multiple filter', t => {
     }
   }, (val, type) => {
     path.push(val.path())
-    console.log('-----> LISTEN!', val.path())
+    if (path.length === 5) {
+      t.same(path, [
+        [ 'page', 'current' ],
+        [ 'page', 'search', 'shows' ],
+        [ 'page', 'shows', 'title' ],
+        [ 'page', 'search', 'movies' ],
+        [ 'page', 'movies', 'title' ]
+      ])
+      client.set(null)
+      s.set(null)
+      t.end()
+    }
   })
 
   client.set({
@@ -92,20 +102,8 @@ test('subscription - any - multiple filter', t => {
   })
 
   setTimeout(() => {
-    console.log('-----------------------------------')
     client.set({
       search: { query: 'show' }
     })
-  }, 1e3)
-
-  console.log('ok')
-
-  // t.same(path, [
-  //   [ 'search', 'query' ],
-  //   [ 'page', 'shows', 'items', '0' ],
-  //   [ 'page', 'shows', 'items', '1' ],
-  //   [ 'search', 'query' ]
-  // ])
-
-  // t.end()
+  }, 100)
 })
