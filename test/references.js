@@ -84,14 +84,21 @@ test('circular references', t => {
     }
   })
 
+  const hybrid = hub({
+    _uid_: 'hybrid',
+    url: 'ws://localhost:6060',
+    port: 6161
+  })
+
+  hybrid.subscribe(true)
+
   const client = hub({
     _uid_: 'client',
-    url: 'ws://localhost:6060',
-    context: 'someContextKey'
+    url: 'ws://localhost:6161',
+    context: 'someContextKey',
   })
 
   client.subscribe(true)
-
 
   setTimeout(() => {
     client.get([ 'a', 'itemList', 'items', 'd', 'siblingC', 'otherData' ], {}).once('someText').then(() => {
