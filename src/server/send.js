@@ -130,8 +130,10 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
     }
   }
 
-  if (subs.val === true && !isRemoved) {
+  if (subs.val === true && !isRemoved && t.__tmp__ !== stamp) {
+    t.__tmp__ = stamp
     deepSerialize(getKeys(struct), client, t, subs, struct, level)
+    t.__tmp__ = null
   }
 }
 
