@@ -6,20 +6,20 @@ import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
 import { receiveLarge } from '../size'
-import merge from '../merge'
+// import merge from '../merge'
 
 const isNode = typeof window === 'undefined'
 
-const next = isNode
-  ? fn => setTimeout(fn, 18)
-  : global.requestAnimationFrame
+// const next = isNode
+//   ? fn => setTimeout(fn, 18)
+//   : global.requestAnimationFrame
 
 const connect = (hub, url, reconnect) => {
   // use outside function non anon since its slower (according to uws)
 
   const socket = new WebSocket(url)
   const client = hub.client || createClient(hub, {}, false)
-  var inProgress, queue
+  // var inProgress, queue
 
   hub.set({ client }, false)
 
@@ -82,20 +82,20 @@ const connect = (hub, url, reconnect) => {
 
   const set = data => {
     data = JSON.parse(data) // maybe add a try catch to be sure...
-    if (inProgress) {
-      if (!queue) {
-        queue = data
-      } else {
-        merge(queue, data)
-      }
-    } else {
-      inProgress = true
-      next(() => {
-        if (queue) recieve(hub, queue, true)
-        inProgress = false
-      })
-      recieve(hub, data)
-    }
+    // if (inProgress) {
+    //   if (!queue) {
+    //     queue = data
+    //   } else {
+    //     merge(queue, data)
+    //   }
+    // } else {
+    //   inProgress = true
+    //   next(() => {
+    //     if (queue) recieve(hub, queue, true)
+    //     inProgress = false
+    //   })
+    recieve(hub, data)
+    // }
   }
 }
 
