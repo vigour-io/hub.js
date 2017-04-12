@@ -43,10 +43,6 @@ test('circular references', t => {
           c: {
             type: 'Item',
             val: ['@', 'root', 'c']
-          },
-          d: {
-            type: 'Item',
-            val: ['@', 'root', 'd']
           }
         }
       }
@@ -55,32 +51,14 @@ test('circular references', t => {
       val: 'valB',
       siblings: ['@', 'root', 'a', 'itemList'],
       other: {
-        type: 'otherType',
+        type: 'other',
         val: ['@', 'parent', 'otherData']
       },
       otherData: 'someText'
     },
     c: {
       val: 'valC',
-      siblings: ['@', 'root', 'a', 'itemList'],
-      other: {
-        type: 'otherType',
-        val: ['@', 'parent', 'otherData']
-      },
-      otherData: 'someText'
-    },
-    d: {
-      val: 'valD',
-      siblings: ['@', 'root', 'a', 'itemList'],
-      other: {
-        type: 'otherType',
-        val: ['@', 'parent', 'otherData']
-      },
-      otherData: 'someText',
-      siblingC: {
-        type: 'Sibling',
-        val: ['@', 'parent', 'siblings', 'items', 'c']
-      }
+      siblings: ['@', 'root', 'a', 'itemList']
     }
   })
 
@@ -109,9 +87,10 @@ test('circular references', t => {
   })
 
   setTimeout(() => {
-    client.get([ 'a', 'itemList', 'items', 'd', 'siblingC', 'otherData' ], {}).once('someText').then(() => {
+    client.get([ 'a', 'itemList', 'items', 'c' ], {}).once('valC').then(() => {
       t.pass('received circular reference')
       client.set(null)
+      hybrid.set(null)
       scraper.set(null)
       t.end()
     })
