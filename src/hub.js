@@ -8,7 +8,17 @@ const types = struct.props.types
 const hub = create({
   type: 'hub',
   instances: false,
-  define: { isHub: true },
+  define: {
+    isHub: true,
+    listen (port) {
+      this.set({ port })
+      return this
+    },
+    connect (url) {
+      this.set({ url })
+      return this
+    }
+  },
   props: {
     default: 'self',
     _uid_: (t, val) => { t.set({ define: { _uid_: val } }) },
