@@ -54,7 +54,6 @@ const set = (meta, socket, t, payload) => {
   const stamp = bs.create()
   const id = meta.id
   const context = meta.context
-  // const ip = socket._socket.remoteAddress
   const client = socket.client = createClient(
     t, { socket, context }, stamp, socket.useragent, id
   )
@@ -64,7 +63,7 @@ const set = (meta, socket, t, payload) => {
 }
 
 const create = (hub, socket, meta, payload, client) => {
-  const t = meta.context ? hub.getContext(meta.context, socket) : hub
+  const t = meta.context ? hub.getContext(meta.context, socket, client) : hub
   if (!t.inherits && t.then) {
     t.then((t) => {
       if (socket.external !== null) {

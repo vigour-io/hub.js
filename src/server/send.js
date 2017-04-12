@@ -122,8 +122,12 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
       }
     }
   } else if (val && typeof val === 'object' && val.inherits) {
+    if (t.__tmp__ !== stamp) {
     // can send a bit too much data when val: true and overlapping keys
-    serialize(client, t, subs, val, level)
+      t.__tmp__ = stamp
+      serialize(client, t, subs, val, level, false)
+      t.__tmp__ = null
+    }
   }
 
   if (subs.val === true && !isRemoved) {
