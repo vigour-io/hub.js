@@ -28,7 +28,7 @@ test('references', t => {
   })
 })
 
-test.skip('circular references', t => {
+test('circular references', t => {
   const scraper = hub({
     _uid_: 'scraper',
     port: 6060,
