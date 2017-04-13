@@ -74,6 +74,8 @@ const connect = (hub, url, reconnect) => {
     } else if (data[0] === '#') {
       if (data[1] === '1') {
         sendSubscriptions(socket, JSON.parse(data.slice(2)), hub)
+      } else {
+        hub.emit('error', JSON.parse(data.slice(1)))
       }
     } else {
       set(data)
