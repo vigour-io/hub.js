@@ -8,6 +8,4 @@ const cache = (client, struct, stamp) => {
 const isCached = (client, struct, stamp) => client.cache &&
   client.cache[puid(struct)] === stamp
 
-// const isCached = () => false
-
 export { cache, isCached }

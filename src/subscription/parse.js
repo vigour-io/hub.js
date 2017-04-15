@@ -20,18 +20,17 @@ const clientContext = (val, client) => {
   return val
 }
 
-const parse = (obj, state, key, client, root) => {
+const parse = (obj, state, key, client) => {
   const result = {}
-  if (!root) root = result
   for (let i in obj) {
     let block
     if (i === 'client' && (!key || key === 'root' || key === 'parent')) {
       block = true
       // console.log('client subs parsing work in progress, missing parent and references')
       let id = client.key // wrong need to get client
-      if (!root.clients) { root.clients = {} }
-      if (!root.clients[id]) { root.clients[id] = {} }
-      merge(root.clients[id], parse(obj.client, i, key, client, root))
+      if (!result.clients) { result.clients = {} }
+      if (!result.clients[id]) { result.clients[id] = {} }
+      merge(result.clients[id], parse(obj.client, i, key, client))
     } else if (isFn.test(i)) {
       let val = obj[i]
       i = i.slice(4)
@@ -66,10 +65,14 @@ const parse = (obj, state, key, client, root) => {
       } else if (typeof obj[i] !== 'object') {
         result[i] = obj[i]
       } else {
-        result[i] = parse(obj[i], state, i, client, root)
+        result[i] = parse(obj[i], state, i, client)
       }
     }
   }
+
+  // console.log('-------')
+  // console.log(JSON.stringify(result, false, 2))
+
   return result
 }
 

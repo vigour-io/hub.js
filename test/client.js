@@ -42,7 +42,6 @@ test('context', { timeout: 2000 }, t => {
     client.get([ 'client', 'ha' ], {}).once(true),
     client.get([ 'clients', 'client2', 'blurf' ], {}).once('HA!')
   ]).then(() => {
-    console.log('ok rdy')
     client.set(null)
     client2.set(null)
     server.set(null)
