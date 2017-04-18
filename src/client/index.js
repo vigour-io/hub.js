@@ -220,7 +220,7 @@ const contextStruct = struct.create({
 const contextIsNotEqual = (val, context) => {
   if (val && typeof val === 'object') {
     for (let field in val) {
-      if (!context[field] || val[field] !== context[field].compute()) {
+      if (!context[field] || (context[field] && val[field] !== context[field].compute())) {
         return true
       }
     }
