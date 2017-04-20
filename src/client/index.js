@@ -9,8 +9,8 @@ import { receiveLarge } from '../size'
 // import merge from '../merge'
 
 var getStringMemorySize = function (_string) {
-  var codePoint,
-    accum = 0
+  var codePoint
+  var accum = 0
   for (var stringIndex = 0, endOfString = _string.length; stringIndex < endOfString; stringIndex++) {
     codePoint = _string.charCodeAt(stringIndex)
     if (codePoint < 0x100) {
