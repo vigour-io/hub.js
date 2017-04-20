@@ -4,17 +4,22 @@ const isFn = /^\$fn\|/
 const dummy = () => false
 
 // this will all be done with an ast later!
-const replaceClient = /\.client[^a-z0-9]/g
+const clientCheck = /(\.|\[\s*?['"])client[^a-z0-9]/
+// const replace
 // can also check for dangeorus stuff and maybe even allow some requires
 // needs hashing algo
 
 const clientContext = (val, client) => {
-  const matches = val.match(replaceClient)
-  for (let i = 0, len = matches.length; i < len; i++) {
-    if (/^function/.test(val)) {
-      val = val.replace(matches[i].slice(0, -1), `.get(['clients', '${client.key}'])`)
-    } else {
-      val = val.replace(matches[i].slice(0, -1), '.clients.' + client.key)
+  const arrMatches = val.match(/\[\s*?['"]client['"].*?\]/g)
+  if (arrMatches) {
+    for (let i = 0, len = arrMatches.length; i < len; i++) {
+      val = val.replace(/['"]client['"]/, '"clients", "' + client.key + '"')
+    }
+  }
+  const matches = val.match(/\.client[^a-z0-9]/g)
+  if (matches) {
+    for (let i = 0, len = matches.length; i < len; i++) {
+      val = val.replace(matches[i].slice(0, -1), '.clients["' + client.key + '"]')
     }
   }
   return val
@@ -26,7 +31,6 @@ const parse = (obj, state, key, client) => {
     let block
     if (i === 'client' && (!key || key === 'root' || key === 'parent')) {
       block = true
-      // console.log('client subs parsing work in progress, missing parent and references')
       let id = client.key // wrong need to get client
       if (!result.clients) { result.clients = {} }
       if (!result.clients[id]) { result.clients[id] = {} }
@@ -38,7 +42,7 @@ const parse = (obj, state, key, client) => {
       // runtime in a hub, and ast
       // let pass
       try {
-        if (replaceClient.test(val)) { // eslint-disable-line
+        if (clientCheck.test(val)) { // eslint-disable-line
           val = clientContext(val, client)
         }
         obj[i] = new Function('return ' + val)() // eslint-disable-line

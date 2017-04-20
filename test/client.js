@@ -1,7 +1,7 @@
 const hub = require('../')
 const test = require('tape')
 
-test('context', { timeout: 2000 }, t => {
+test('context - client', { timeout: 2000 }, t => {
   const server = hub({
     _uid_: 'server',
     port: 6060,
