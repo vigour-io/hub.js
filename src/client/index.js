@@ -104,15 +104,19 @@ const connect = (hub, url, reconnect) => {
     }
   }
 
-  const set = data => {
-    var d = Date.now()
-    console.log('incoming', getStringMemorySize(data) / 1024, 'kb')
+  const set = hub.DEBUG
+    ? data => {
+      var d = Date.now()
+      console.log('incoming', getStringMemorySize(data) / 1024, 'kb')
+      data = JSON.parse(data) // maybe add a try catch to be sure...
+      console.log('parsing json', Date.now() - d, 'ms')
+      d = Date.now()
+      recieve(hub, data)
+      console.log('handeling data (updating)', Date.now() - d, 'ms')
+    }
+  : data => {
     data = JSON.parse(data) // maybe add a try catch to be sure...
-    console.log('parsing json', Date.now() - d, 'ms')
-
-    d = Date.now()
     recieve(hub, data)
-    console.log('handeling data (updating)', Date.now() - d, 'ms')
   }
 }
 
