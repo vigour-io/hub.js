@@ -67,11 +67,11 @@ const create = (hub, socket, meta, payload, client) => {
   if (!t.inherits && t.then) {
     t.then((t) => {
       if (socket.external !== null) {
-        console.log('client connected and found informations')
         if (client) removeClient(client)
         set(meta, socket, t, payload)
       } else {
-        console.log('client discconected when logging in')
+        console.log('⚠️ client discconected when logging in')
+        // may need to handle something?
       }
     }).catch(err => {
       // maybe need to dc the client - at least send some information

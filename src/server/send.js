@@ -126,7 +126,7 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
     // can send a bit too much data when val: true and overlapping keys
       t.__tmp__ = stamp
       serialize(client, t, subs, val, level, false)
-      t.__tmp__ = null
+      delete t.__tmp__
     }
   }
 

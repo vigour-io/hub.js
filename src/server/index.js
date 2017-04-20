@@ -9,7 +9,6 @@ const Server = uws.Server
 const createServer = (hub, port) => {
   const server = new Server({ port })
   console.log(`💫 hub listening on ${port} 💫`)
-
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
     // need to remove when done -- its the best thing todo (mem!!!)
@@ -17,11 +16,9 @@ const createServer = (hub, port) => {
       data = JSON.parse(data)
       if (data) incoming(hub, socket, data)
     })
-
     const close = () => {
       if (socket.client) removeClient(socket.client)
     }
-
     socket.on('close', close)
     // socket.on('error', () => close()) // need to do something here as well no leaks!
   })
