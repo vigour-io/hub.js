@@ -34,14 +34,11 @@ test('circular references', t => {
     port: 6060,
     a: {
       itemList: {
-        type: 'List',
         items: {
           b: {
-            type: 'Item',
             val: ['@', 'root', 'b']
           },
           c: {
-            type: 'Item',
             val: ['@', 'root', 'c']
           }
         }
@@ -51,7 +48,6 @@ test('circular references', t => {
       val: 'valB',
       siblings: ['@', 'root', 'a', 'itemList'],
       other: {
-        type: 'other',
         val: ['@', 'parent', 'otherData']
       },
       otherData: 'someText'
