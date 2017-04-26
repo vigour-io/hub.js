@@ -9,7 +9,7 @@ const removeSubscriptions = (t, id) => {
   }
 }
 
-const removeClient = (client) => {
+const removeClient = client => {
   const id = client.key
   client.val = null
   if (client.socket) {
