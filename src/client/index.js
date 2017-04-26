@@ -6,29 +6,6 @@ import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
 import { receiveLarge } from '../size'
-// import merge from '../merge'
-
-var getStringMemorySize = function (_string) {
-  var codePoint
-  var accum = 0
-  for (var stringIndex = 0, endOfString = _string.length; stringIndex < endOfString; stringIndex++) {
-    codePoint = _string.charCodeAt(stringIndex)
-    if (codePoint < 0x100) {
-      accum += 1
-      continue
-    }
-    if (codePoint < 0x10000) {
-      accum += 2
-      continue
-    }
-    if (codePoint < 0x1000000) {
-      accum += 3
-    } else {
-      accum += 4
-    }
-  }
-  return accum * 2
-}
 
 const isNode = typeof window === 'undefined'
 
@@ -104,17 +81,7 @@ const connect = (hub, url, reconnect) => {
     }
   }
 
-  const set = hub.DEBUG
-    ? data => {
-      var d = Date.now()
-      console.log('incoming', getStringMemorySize(data) / 1024, 'kb')
-      data = JSON.parse(data) // maybe add a try catch to be sure...
-      console.log('parsing json', Date.now() - d, 'ms')
-      d = Date.now()
-      recieve(hub, data)
-      console.log('handeling data (updating)', Date.now() - d, 'ms')
-    }
-  : data => {
+  const set = data => {
     data = JSON.parse(data) // maybe add a try catch to be sure...
     recieve(hub, data)
   }
