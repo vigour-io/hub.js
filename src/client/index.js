@@ -1,7 +1,13 @@
 import bs from 'stamp'
 import { send, meta, sendSubscriptions } from './send'
 import WebSocket from './websocket'
-import { create, parse, subscribe, struct, emitterProperty } from 'brisky-struct'
+import {
+  create,
+  parse,
+  subscribe,
+  struct,
+  emitterProperty
+} from 'brisky-struct'
 import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
@@ -268,7 +274,9 @@ const define = {
 const enableIncomingListener = (socket, hub) => {
   if (!socket.incomingOverride) {
     socket.incomingOverride = true
-    const field = typeof window === 'undefined' ? 'internalOnMessage' : 'onmessage'
+    const field = typeof window === 'undefined'
+      ? 'internalOnMessage'
+      : 'onmessage'
     const msg = hub.socket[field]
     socket[field] = (data) => {
       hub.emit('incoming', data)
