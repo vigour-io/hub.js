@@ -12,22 +12,23 @@ const isEmpty = obj => {
 
 const progress = (client) => {
   if (!client.inProgress) {
-    client.inProgress = {}
+    client.inProgress = [ {}, { stamp: bs.create() } ]
     bs.on(() => {
       if (client.val !== null) {
-        if (!isEmpty(client.inProgress)) {
-          if (client.inProgress.types) {
+        const p = client.inProgress[0]
+        if (!isEmpty(p)) {
+          if (p.types) {
             // order hack!
-            for (let i in client.inProgress) {
+            for (let i in p) {
               // order is still important since setting types after the fact is still broken
               // this will be a big update
               // test if it works now since switchinheritance update
               if (i === 'types') {
                 break
               } else {
-                let tmp = client.inProgress[i]
-                delete client.inProgress[i]
-                client.inProgress[i] = tmp
+                let tmp = p[i]
+                delete p[i]
+                p[i] = tmp
               }
             }
           }
@@ -82,7 +83,7 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
     // val === null -- double chck if this is nessecary
     const path = struct.path()
     const len = path.length
-    let s = t
+    let s = t[0]
     for (let i = level; i < len; i++) {
       let tt = s[path[i]]
       if (!tt) {

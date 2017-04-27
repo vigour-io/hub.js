@@ -15,6 +15,7 @@ import { receiveLarge } from '../size'
 
 const isNode = typeof window === 'undefined'
 
+// want to use for upsteream
 // const next = isNode
 //   ? fn => setTimeout(fn, 18)
 //   : global.requestAnimationFrame
@@ -66,6 +67,7 @@ const connect = (hub, url, reconnect) => {
 
   socket.onmessage = (data) => {
     data = data.data
+
     if (
       typeof data !== 'string' &&
       (data instanceof ArrayBuffer ||
@@ -76,10 +78,16 @@ const connect = (hub, url, reconnect) => {
       )
     ) {
       receiveLarge(data, set)
+    // just use array! remove this nonsense
     } else if (data[0] === '#') {
       if (data[1] === '1') {
+        // same here
         sendSubscriptions(socket, JSON.parse(data.slice(2)), hub)
       } else {
+        // call it events -- emit {} etc
+        // need to fix this on send used in phoenix else it breaks
+        // [ 1 ] emit: { [type]: [], }
+        // [ 1 ] subscriptions: { [type]: [] }
         hub.emit('error', JSON.parse(data.slice(1)))
       }
     } else {
@@ -87,22 +95,20 @@ const connect = (hub, url, reconnect) => {
     }
   }
 
-  const set = data => {
-    data = JSON.parse(data) // maybe add a try catch to be sure...
-    recieve(hub, data)
-  }
+  const set = data => recieve(hub, JSON.parse(data)[0], JSON.parse(data)[1])
 }
 
-const recieve = (hub, data) => {
+const recieve = (hub, data, meta) => {
+  const stamp = hub._incomingStamp = bs.create()
+  bs.offset = (meta.stamp | 0) - ((stamp | 0) - bs.offset)
   if (!hub.receiveOnly) {
     hub.receiveOnly = true
-    hub.set(data, hub._incomingStamp = bs.create())
+    hub.set(data, stamp)
     hub.receiveOnly = null
-    bs.close()
   } else {
-    hub.set(data, hub._incomingStamp = bs.create())
-    bs.close()
+    hub.set(data, stamp)
   }
+  bs.close()
 }
 
 const removeUrl = hub => {
