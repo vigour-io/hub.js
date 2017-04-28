@@ -104,6 +104,18 @@ const send = (val, stamp, struct) => {
   }
 }
 
+// need to know if created by myself
+// else starts correcting wrong stamps
+const applyDifference = (val, diff) => {
+  for (let key in val) {
+    if (typeof val[key] === 'object') {
+      applyDifference(val[key], diff)
+    } else if (key === 'stamp') {
+      val[key] = val[key] + diff
+    }
+  }
+}
+
 const inProgress = (hub, tick) => {
   if (!hub.inProgress) {
     hub.inProgress = []
@@ -112,9 +124,10 @@ const inProgress = (hub, tick) => {
         out(hub)
       } else {
         var offset = bs.offset
-        // keep track of offset
         hub.connected.once(true, () => {
-          console.log(offset, bs.offset)
+          if (bs.offset && Math.abs(bs.offset - offset) > 1000) {
+            applyDifference(hub.inProgress[0], bs.offset - offset)
+          }
           out(hub)
         })
       }

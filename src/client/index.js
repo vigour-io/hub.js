@@ -16,9 +16,13 @@ import { receiveLarge } from '../size'
 const isNode = typeof window === 'undefined'
 
 // want to use for upsteream
-// const next = isNode
-//   ? fn => setTimeout(fn, 18)
-//   : global.requestAnimationFrame
+const next = isNode
+  ? fn => setTimeout(fn, 18)
+  : global.requestAnimationFrame
+
+// const cancel = isNode
+//   ? clearTimeout
+//   : global.cancelAnimationFrame
 
 const connect = (hub, url, reconnect) => {
   // use outside function non anon since its slower (according to uws)
@@ -54,7 +58,6 @@ const connect = (hub, url, reconnect) => {
   }
 
   socket.onmessage = (data) => {
-    console.log('MSG')
     data = data.data
 
     if (
@@ -87,23 +90,31 @@ const connect = (hub, url, reconnect) => {
   const set = data => recieve(hub, JSON.parse(data)[0], JSON.parse(data)[1])
 }
 
+// raf
 const recieve = (hub, data, info) => {
   const stamp = hub._incomingStamp = bs.create()
-  bs.offset = (info.stamp | 0) - ((stamp | 0) - bs.offset)
+  bs.setOffset((info.stamp | 0) - ((stamp | 0) - bs.offset))
 
-  if (info.connect) {
+  if (info && info.connect) {
+    hub.set({ connected: true }, bs.create())
     meta(hub)
-    hub.set({ connected: true }, stamp)
+    bs.close()
   }
-
-  if (!hub.receiveOnly) {
-    hub.receiveOnly = true
-    hub.set(data, stamp)
-    hub.receiveOnly = null
-  } else {
-    hub.set(data, stamp)
+  // hub._receiving =  handle this!
+  // this will help /w heavy computation on incoming
+  if (data) {
+    next(() => {
+      const stamp = bs.create()
+      if (!hub.receiveOnly) {
+        hub.receiveOnly = true
+        hub.set(data, stamp)
+        hub.receiveOnly = null
+      } else {
+        hub.set(data, stamp)
+      }
+      bs.close()
+    })
   }
-  bs.close()
 }
 
 const removeUrl = hub => {
