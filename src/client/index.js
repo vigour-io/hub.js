@@ -47,25 +47,14 @@ const connect = (hub, url, reconnect) => {
   socket.onerror = isNode ? close : () => socket.close()
 
   socket.onopen = () => {
-    const stamp = bs.create()
     hub.socket = socket
     if (hub.emitters && hub.emitters.incoming) {
       enableIncomingListener(socket, hub)
     }
-    meta(hub)
-    hub.set({ connected: true }, stamp)
-    bs.close()
   }
 
-  /*
-    MESSAGE CODES
-    1: send full subscription
-  */
-
-  // 2: error logging in
-  // need a way to add context switch
-
   socket.onmessage = (data) => {
+    console.log('MSG')
     data = data.data
 
     if (
@@ -98,9 +87,15 @@ const connect = (hub, url, reconnect) => {
   const set = data => recieve(hub, JSON.parse(data)[0], JSON.parse(data)[1])
 }
 
-const recieve = (hub, data, meta) => {
+const recieve = (hub, data, info) => {
   const stamp = hub._incomingStamp = bs.create()
-  bs.offset = (meta.stamp | 0) - ((stamp | 0) - bs.offset)
+  bs.offset = (info.stamp | 0) - ((stamp | 0) - bs.offset)
+
+  if (info.connect) {
+    meta(hub)
+    hub.set({ connected: true }, stamp)
+  }
+
   if (!hub.receiveOnly) {
     hub.receiveOnly = true
     hub.set(data, stamp)

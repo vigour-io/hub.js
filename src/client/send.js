@@ -111,7 +111,12 @@ const inProgress = (hub, tick) => {
       if (hub.connected.compute() === true) {
         out(hub)
       } else {
-        hub.connected.once(true, () => out(hub))
+        var offset = bs.offset
+        // keep track of offset
+        hub.connected.once(true, () => {
+          console.log(offset, bs.offset)
+          out(hub)
+        })
       }
     })
   }

@@ -3,6 +3,7 @@ import incoming from './incoming'
 import { removeClient, removeSubscriptions } from './remove'
 import { create, struct } from 'brisky-struct'
 import on from './on'
+import { create as createStamp } from 'stamp'
 
 const Server = uws.Server
 
@@ -12,6 +13,11 @@ const createServer = (hub, port) => {
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
     // need to remove when done -- its the best thing todo (mem!!!)
+    socket.send(JSON.stringify([void 0, {
+      stamp: createStamp(),
+      connect: true
+    }]))
+
     socket.on('message', (data) => {
       data = JSON.parse(data)
       if (data) incoming(hub, socket, data)

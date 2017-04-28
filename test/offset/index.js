@@ -10,15 +10,13 @@ const timeout = (i) => new Promise(resolve => {
 test('subscription - time offset', t => {
   const spawned = child.fork('./test/offset/client')
   process.on('exit', () => spawned.kill('SIGINT'))
-
   const server = hub({ _uid_: 'server', port: 6060 })
-
-  server.get('clients', {}).once().then(t => {
-    server.set({
-      heavy: function * () {
-        var i = 400
-        while (i--) { yield timeout(i) }
-      }
-    })
+  server.set({
+    lolcats: true
+  })
+  var cnt = 0
+  server.lolcats.on(() => {
+    console.log('lol cats')
+    cnt++
   })
 })
