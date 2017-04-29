@@ -20,10 +20,9 @@ Observable data structures, over the network
   There is firebase right?
   - better subscriptions, “observable deep queries”
   - conflict resolution
-  - flexbile
+  - flexible
   - completely open source — can be hosted on now or anywhere else
-      (deploy button on the readme)
-  - use as a hub for all your integrations — custom AND standard (segment io meets self managed)
+  - use as a hub for all your integrations — custom AND standard
 
 ### What does it do?
   - Create realtime branches of data
@@ -187,7 +186,7 @@ client.subscribe({
 
 #### Switch
 
-Switches are probably the most powerfull concept in supported in the subscirption model, allows you to branch subscriptions based on certain conditions
+Switches are probably the most powerful concept in supported in the subscription model, allowing you to branch subscriptions based on certain conditions
 ```javascript
 client.subscribe({
   $any: {
