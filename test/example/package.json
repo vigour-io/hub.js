@@ -1,0 +1,15 @@
+{
+  "name": "hub.js-example",
+  "version": "0.0.1",
+  "description": "Hub.js example",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "builder-boy index.js dist/index.js -w & builder-boy hub.js dist/hub.js -w"
+  },
+  "author": "",
+  "dependencies": {
+    "hub.js": "latest"
+  },
+  "license": "ISC"
+}
