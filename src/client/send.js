@@ -47,6 +47,27 @@ const serialize = (hub, t, struct, val, level) => {
 const meta = hub => {
   if (!hub.receiveOnly) {
     const store = inProgress(hub, bs.inProgress ? bs.on : next)
+
+    let keys = hub.client.keys()
+    if (keys) {
+      let i = keys.length
+      while (i--) {
+        hub.client.forEach((val, key) => {
+          if (
+            key !== 'device' &&
+            key !== 'ua' &&
+            key !== 'platform' &&
+            key !== 'browser' &&
+            key !== 'version' &&
+            key !== 'prefix' &&
+            key !== 'webview'
+          ) {
+            serialize(hub, store, val, void 0, hub.urlIndex)
+          }
+        })
+      }
+    }
+
     if (!store[1]) store[1] = {}
     if (hub.context) {
       if (hub.context.keys().length > 0) {

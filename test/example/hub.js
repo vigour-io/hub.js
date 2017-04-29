@@ -1,4 +1,4 @@
-import h from 'hub.js'
+import h from '../../'
 import fetch from 'node-fetch'
 
 const tumblrApiKey = 'wZE0T5dBvDf7Qm1mvRNUMHoKH4IPq2aJRzde1wz0WMHyW2rwLP'

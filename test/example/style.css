@@ -25,7 +25,7 @@ img {
 h1 {
   vertical-align: top;
   display: inline-block;
-  margin: 6px 8px -8px;
+  margin: 6px 8px 0;
 }
 
 span {
@@ -39,6 +39,7 @@ svg {
 }
 
 input {
+  margin-top: -8px;
   background-color: transparent;
   padding: 8px;
   font-size: 1em;
