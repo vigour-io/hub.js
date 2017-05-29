@@ -188,3 +188,51 @@ test('context - basic', { timeout: 2000 }, t => {
     t.end()
   })
 })
+
+test('context - fire subscriptions on switch context', { timeout: 2000 }, t => {
+  const server = hub({
+    _uid_: 'server',
+    port: 6060,
+    getContext: (user, retrieve) => new Promise(resolve => {
+      const r = retrieve(user)
+      r.set({ user: { id: user } })
+      resolve(r)
+    })
+  })
+
+  var context = 'user'
+  const client = hub({
+    _uid_: 'client',
+    context,
+    url: 'ws://localhost:6060'
+  })
+  const counts = {
+    anonymous: 0,
+    user: 0
+  }
+
+  client.subscribe({ user: { val: true } }, val => {
+    counts[val.get(['id', 'compute'])]++
+  })
+
+  var i = 0
+  const schedule = () => {
+    if (i < 5) {
+      setTimeout(() => {
+        context = context === 'user' ? 'anonymous' : 'user'
+        client.set({ context })
+        schedule()
+      }, 100)
+      i++
+    } else {
+      setTimeout(() => {
+        t.deepEquals(counts, { anonymous: 2, user: 3}, 'events fired enough')
+        server.set(null)
+        client.set(null)
+        t.end()
+      }, 100)
+    }
+  }
+
+  schedule()
+})
