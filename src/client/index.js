@@ -83,6 +83,7 @@ const connect = (hub, url, reconnect) => {
         hub.emit('error', JSON.parse(data.slice(1)))
       }
     } else {
+      // the result of a context switch
       set(data)
     }
   }
