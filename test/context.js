@@ -226,7 +226,7 @@ test('context - fire subscriptions on switch context', { timeout: 2000 }, t => {
       i++
     } else {
       setTimeout(() => {
-        t.deepEquals(counts, { anonymous: 2, user: 3 }, 'events fired enough')
+        t.deepEquals(counts, { anonymous: 3, user: 3 }, 'events fired enough')
         server.set(null)
         client.set(null)
         t.end()
