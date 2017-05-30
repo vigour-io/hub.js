@@ -8,7 +8,6 @@ test('subscription - any - multiple filter', t => {
   const show2 = { title: 'show2' }
 
   const s = hub({
-    // key: 'server', // this is a problem for sure
     page: {
       movie1,
       movie2,
