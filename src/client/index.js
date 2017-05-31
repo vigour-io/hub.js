@@ -88,11 +88,11 @@ const connect = (hub, url, reconnect) => {
     }
   }
 
-  const set = data => recieve(hub, JSON.parse(data)[0], JSON.parse(data)[1])
+  const set = data => receive(hub, JSON.parse(data)[0], JSON.parse(data)[1])
 }
 
 // raf
-const recieve = (hub, data, info) => {
+const receive = (hub, data, info) => {
   const stamp = hub._incomingStamp = bs.create()
   bs.setOffset((info.stamp | 0) - ((stamp | 0) - bs.offset))
 
