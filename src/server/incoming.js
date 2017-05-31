@@ -13,7 +13,8 @@ export default (hub, socket, data) => {
   if (meta) {
     if (client) {
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
-        create(hub, socket, meta, payload, client)
+        // this is a context switch
+        create(hub, socket, meta, payload, client, true)
       } else if (meta.s) {
         hub = client.parent(2)
         if (payload) setPayload(hub, payload, client)
@@ -50,25 +51,28 @@ const setPayload = (hub, payload, client) => {
   addToCache(client, hub, payload)
 }
 
-const set = (meta, socket, t, payload) => {
+const set = (meta, socket, t, payload, contextSwitched) => {
   const stamp = bs.create()
   const id = meta.id
   const context = meta.context
   const client = socket.client = createClient(
     t, { socket, context }, stamp, socket.useragent, id
   )
+  if (contextSwitched) {
+    client.contextSwitched = true
+  }
   if (payload) setPayload(t, payload, client)
   if (meta.s) incomingSubscriptions(t, client, meta, id)
   bs.close()
 }
 
-const create = (hub, socket, meta, payload, client) => {
+const create = (hub, socket, meta, payload, client, contextSwitched) => {
   const t = meta.context ? hub.getContext(meta.context, socket, client) : hub
   if (!t.inherits && t.then) {
     t.then((t) => {
       if (socket.external !== null) {
         if (client) removeClient(client)
-        set(meta, socket, t, payload)
+        set(meta, socket, t, payload, contextSwitched)
       } else {
         console.log('⚠️ client discconected when logging in')
         // may need to handle something?
@@ -79,7 +83,7 @@ const create = (hub, socket, meta, payload, client) => {
     })
   } else {
     if (client) removeClient(client)
-    set(meta, socket, t, payload)
+    set(meta, socket, t, payload, contextSwitched)
   }
 }
 

@@ -189,7 +189,7 @@ test('context - basic', { timeout: 2000 }, t => {
   })
 })
 
-test('context - fire subscriptions on switch context', { timeout: 2000 }, t => {
+test('context - fire subscriptions on context switch', { timeout: 2000 }, t => {
   const server = hub({
     _uid_: 'server',
     port: 6060,

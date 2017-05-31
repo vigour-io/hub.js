@@ -108,10 +108,10 @@ const receive = (hub, data, info) => {
       const stamp = bs.create()
       if (!hub.receiveOnly) {
         hub.receiveOnly = true
-        hub.set(data, stamp)
+        hub.set(data, stamp, info.reset)
         hub.receiveOnly = null
       } else {
-        hub.set(data, stamp)
+        hub.set(data, stamp, info.reset)
       }
       bs.close()
     })
@@ -195,8 +195,7 @@ const removeClients = (hub, stamp) => {
   }
 }
 
-const connected = {
-  type: 'struct',
+const connectedStruct = create({
   on: {
     data: {
       removeClients: (val, stamp, t) => {
@@ -205,6 +204,14 @@ const connected = {
         }
       }
     }
+  }
+})
+
+const connected = (hub, val, key, stamp) => {
+  if (!hub.connected) {
+    create(val, stamp, connectedStruct, hub, key)
+  } else {
+    hub.connected.set(val, stamp)
   }
 }
 

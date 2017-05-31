@@ -13,6 +13,10 @@ const isEmpty = obj => {
 const progress = (client) => {
   if (!client.inProgress) {
     client.inProgress = [ {}, { stamp: bs.create() } ]
+    if (client.contextSwitched) {
+      client.inProgress[1].reset = true
+      delete client.contextSwitched
+    }
     bs.on(() => {
       if (client.val !== null) {
         const p = client.inProgress[0]
