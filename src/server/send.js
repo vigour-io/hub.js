@@ -127,16 +127,18 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
       }
     }
   } else if (val && typeof val === 'object' && val.inherits) {
-    if (t.__tmp__ !== true) {
+    if (val.__tmp__ !== true) {
     // can send a bit too much data when val: true and overlapping keys
-      t.__tmp__ = true
+      val.__tmp__ = true
       serialize(client, t, subs, val, level, false)
-      delete t.__tmp__
+      delete val.__tmp__
     }
   }
 
-  if (subs.val === true && !isRemoved && t.__tmp__ !== stamp) {
+  if (subs.val === true && !isRemoved && !struct.__tmp__) {
+    struct.__tmp__ = true
     deepSerialize(getKeys(struct), client, t, subs, struct, level)
+    delete struct.__tmp__
   }
 }
 
