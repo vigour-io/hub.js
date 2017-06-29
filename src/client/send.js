@@ -103,9 +103,9 @@ const meta = hub => {
 
 const send = (val, stamp, struct) => {
   // also check for removal
-  if (stamp < 0 && struct.parent(t => {
+  if (stamp < 0 && val === null && struct.parent(t => {
     if (t.key === 'clients') {
-      console.log('🎋🎋🎋🎋', struct)
+      // console.log('🎋🎋🎋🎋', struct.val, val)
       return true
     }
   })) {
@@ -167,6 +167,9 @@ const inProgress = (hub, tick) => {
 }
 
 const out = t => {
+  // if (typeof window !== 'undefined') {
+    // console.log('SEND', JSON.stringify(t.inProgress, false, 2))
+  // }
   t.socket.send(JSON.stringify(t.inProgress))
   t.inProgress = false
 }
