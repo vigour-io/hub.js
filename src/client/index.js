@@ -13,8 +13,6 @@ import hash from 'string-hash'
 import createClient from './create'
 import { receiveLarge } from '../size'
 
-console.log('✨✨✨✨✨✨✨✨✨✨✨✨')
-
 const isNode = typeof window === 'undefined'
 
 // want to use for upsteream
@@ -40,7 +38,6 @@ const connect = (hub, url, reconnect) => {
   const close = () => {
     const stamp = bs.create()
     hub.socket = false
-    console.warn('DC')
     hub.set({ connected: false }, stamp)
     bs.close()
     if (!socket.blockReconnect && hub._url_) {

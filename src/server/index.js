@@ -23,7 +23,7 @@ const createServer = (hub, port) => {
       if (data) incoming(hub, socket, data)
     })
     const close = () => {
-      console.log('🍄 close connection')
+      // console.log('🍄 close connection')
       if (socket.client) {
         removeClient(socket.client)
       }
@@ -54,7 +54,6 @@ const closeConnections = hub => {
   if (clients) {
     clients.forEach(client => {
       if (client.socket && client.key !== id) {
-        console.log('🎍 closeConnections 1')
         client.val = null
         removeSubscriptions(hub, client.key)
         client.socket.close()
