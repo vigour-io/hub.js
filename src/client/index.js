@@ -200,7 +200,7 @@ const connectedStruct = create({
     data: {
       removeClients: (val, stamp, t) => {
         if (t.compute() === false) {
-          removeClients(t._p, stamp)
+          removeClients(t._p, -stamp)
         }
       }
     }

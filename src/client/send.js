@@ -102,6 +102,13 @@ const meta = hub => {
 }
 
 const send = (val, stamp, struct) => {
+  if (stamp < 0 && struct.parent(t => {
+    if (t.key === 'clients') {
+      return true
+    }
+  })) {
+    return
+  }
   let hub
   let p = struct
   while (p) {
