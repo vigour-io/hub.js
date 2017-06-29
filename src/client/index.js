@@ -105,6 +105,7 @@ const receive = (hub, data, info) => {
   // this will help /w heavy computation on incoming
   if (data) {
     next(() => {
+      // delete info.reset // tmp
       const stamp = bs.create()
       if (!hub.receiveOnly) {
         hub.receiveOnly = true
@@ -188,7 +189,7 @@ const removeClients = (hub, stamp) => {
         client.val !== null &&
         client !== hub.client
       ) {
-        client.set(null, stamp)
+        client.set(null, -stamp)
         delete clients[key]
       }
     })
