@@ -71,7 +71,9 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
   if (!t.inherits && t.then) {
     t.then((t) => {
       if (socket.external !== null) {
-        if (client) removeClient(client)
+        if (client) {
+          removeClient(client)
+        }
         set(meta, socket, t, payload, contextSwitched)
       } else {
         console.log('⚠️ client discconected when logging in')
@@ -82,7 +84,9 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
       hub.emit('error', err)
     })
   } else {
-    if (client) removeClient(client)
+    if (client) {
+      removeClient(client)
+    }
     set(meta, socket, t, payload, contextSwitched)
   }
 }

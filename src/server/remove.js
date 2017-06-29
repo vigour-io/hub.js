@@ -10,6 +10,7 @@ const removeSubscriptions = (t, id) => {
 }
 
 const removeClient = client => {
+  // console.log('🌵 remove client--- 🌵', client)
   const id = client.key
   client.val = null
   if (client.socket) {
