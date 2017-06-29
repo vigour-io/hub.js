@@ -1,16 +1,13 @@
 import { puid } from 'brisky-struct'
 
-// 0b100000000000000000000000000000000000000000000
-const contextBit = 17592186044416
-
-const cache = (client, struct, hub, stamp) => {
+const cache = (client, struct, stamp) => {
   if (!client.cache) client.cache = {}
-  client.cache[puid(struct)] = hub.contextKey === undefined ? stamp
-    : stamp | contextBit
+  client.cache[puid(struct)] = stamp
 }
 
-const isCached = (client, struct, hub, stamp) => client.cache &&
-  client.cache[puid(struct)] === hub.contextKey === undefined ? stamp
-    : stamp | contextBit
+const isCached = (client, struct, stamp) => client.cache &&
+  client.cache[puid(struct)] === stamp
+
+// const isCached = () => false
 
 export { cache, isCached }

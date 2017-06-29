@@ -102,8 +102,10 @@ const meta = hub => {
 }
 
 const send = (val, stamp, struct) => {
+  // also check for removal
   if (stamp < 0 && struct.parent(t => {
     if (t.key === 'clients') {
+      console.log('🎋🎋🎋🎋', struct)
       return true
     }
   })) {
