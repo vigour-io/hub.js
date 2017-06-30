@@ -23,7 +23,9 @@ const createServer = (hub, port) => {
       if (data) incoming(hub, socket, data)
     })
     const close = () => {
-      if (socket.client) removeClient(socket.client)
+      if (socket.client) {
+        removeClient(socket.client)
+      }
     }
     socket.on('close', close)
     // socket.on('error', () => close()) // need to do something here as well no leaks!
