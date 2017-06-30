@@ -57,7 +57,7 @@ test('context', { timeout: 2000 }, t => {
     client2.get('somefield', {}).once('hahaha')
   ]).then(() => {
     t.pass('client1 & client2 receive context updates')
-    client4.set({ smurf: true })
+    client4.set({ smurf: true }, -500)
   })
 
   Promise.all([
@@ -84,7 +84,7 @@ test('context', { timeout: 2000 }, t => {
     client3.set({ context: 'pavel' })
   })
 
-  client1.set({ blurf: 'hello' })
+  client1.set({ blurf: 'hello' }, -200)
 })
 
 test('context - getContext - error', { timeout: 2000 }, t => {
