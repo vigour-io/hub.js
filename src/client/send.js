@@ -105,7 +105,6 @@ const send = (val, stamp, struct) => {
   // also check for removal
   if (stamp < 0 && val === null && struct.parent(t => {
     if (t.key === 'clients') {
-      // console.log('🎋🎋🎋🎋', struct.val, val)
       return true
     }
   })) {
