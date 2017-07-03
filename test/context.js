@@ -1,5 +1,6 @@
 const hub = require('../')
 const test = require('tape')
+const bs = require('stamp')
 
 test('context', { timeout: 2000 }, t => {
   const scraper = hub({
@@ -57,7 +58,8 @@ test('context', { timeout: 2000 }, t => {
     client2.get('somefield', {}).once('hahaha')
   ]).then(() => {
     t.pass('client1 & client2 receive context updates')
-    client4.set({ smurf: true })
+    client4.set({ smurf: true }, -4e7)
+    bs.close()
   })
 
   Promise.all([
@@ -84,7 +86,7 @@ test('context', { timeout: 2000 }, t => {
     client3.set({ context: 'pavel' })
   })
 
-  client1.set({ blurf: 'hello' }, -200)
+  client1.set({ blurf: 'hello' }, -2e7)
 })
 
 test('context - getContext - error', { timeout: 2000 }, t => {
