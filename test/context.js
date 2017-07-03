@@ -84,7 +84,7 @@ test('context', { timeout: 2000 }, t => {
     client3.set({ context: 'pavel' })
   })
 
-  client1.set({ blurf: 'hello' })
+  client1.set({ blurf: 'hello' }, -200)
 })
 
 test('context - getContext - error', { timeout: 2000 }, t => {
