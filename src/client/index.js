@@ -97,6 +97,7 @@ const receive = (hub, data, info) => {
   bs.setOffset((info.stamp | 0) - ((stamp | 0) - bs.offset))
 
   if (info && info.connect) {
+    console.log('recieve some data!')
     hub.set({ connected: true }, bs.create())
     meta(hub)
     bs.close()

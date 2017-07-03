@@ -168,7 +168,7 @@ const inProgress = (hub, tick) => {
 
 const out = t => {
   // if (typeof window !== 'undefined') {
-    // console.log('SEND', JSON.stringify(t.inProgress, false, 2))
+  //   console.log('SEND', JSON.stringify(t.inProgress, false, 2))
   // }
   t.socket.send(JSON.stringify(t.inProgress))
   t.inProgress = false
