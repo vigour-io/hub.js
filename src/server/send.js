@@ -14,7 +14,7 @@ const progress = (client) => {
   if (!client.inProgress) {
     client.inProgress = [ {}, { stamp: bs.create() } ]
     if (client.contextSwitched) {
-      client.inProgress[1].reset = true
+      client.inProgress[1].remove = client.contextSwitched
       delete client.contextSwitched
     }
     bs.on(() => {

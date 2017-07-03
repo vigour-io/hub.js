@@ -1,25 +1,32 @@
 import { puid } from 'brisky-struct'
 
-const contextBit = 0b100000000000000000000000000000000000000000000
-const contextBitNegative = 0b1100000000000000000000000000000000000000000000
-const pathList = {}
-
 const cache = (client, struct, stamp) => {
-  if (!client.cache) client.cache = {}
-  const uid = puid(struct)
-  if (!pathList[uid]) {
-    pathList[uid] = struct.path()
+  if (!client.cache) client.cache = { master: {}, branch: {} }
+  if (struct._c) {
+    client.cache.master[puid(struct)] = stamp
+  } else {
+    client.cache.branch[puid(struct)] = stamp
   }
-  client.cache[uid] = struct._c ? stamp
-    : stamp < 0 ? -stamp | contextBitNegative
-    : stamp | contextBit
 }
 
-const isCached = (client, struct, stamp) => {
-  return client.cache &&
-    client.cache[puid(struct)] === (struct._c ? stamp
-      : stamp < 0 ? -stamp | contextBitNegative
-      : stamp | contextBit)
+const isCached = (client, struct, stamp) => client.cache &&
+  (struct._c ? client.cache.master[puid(struct)] === stamp
+    : client.cache.branch[puid(struct)] === stamp)
+
+const reuseCache = (client) => {
+  if (!client.cache) return void 0
+
+  for (let uid in client.cache.branch) {
+    client.cache.branch[uid] = true
+  }
+
+  return {
+    cache: {
+      master: client.cache.master,
+      branch: {}
+    },
+    remove: client.cache.branch
+  }
 }
 
-export { cache, isCached }
+export { cache, isCached, reuseCache }

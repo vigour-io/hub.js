@@ -87,6 +87,7 @@ test('context', { timeout: 2000 }, t => {
   })
 
   client1.set({ blurf: 'hello' }, -2e7)
+  bs.close()
 })
 
 test('context - getContext - error', { timeout: 2000 }, t => {
@@ -283,8 +284,14 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
       client2.set({ context: 'user1' })
 
       return Promise.all([
-        client1.get(['user', 'id'], {}).once('user2'),
-        client2.get(['user', 'id'], {}).once('user1')
+        new Promise(resolve => client1.subscribe(
+          { user: { id: true } },
+          val => val.compute() === 'user2' && resolve())
+        ),
+        new Promise(resolve => client2.subscribe(
+          { user: { id: true } },
+          val => val.compute() === 'user1' && resolve())
+        )
       ])
     })
     .then(() => {
