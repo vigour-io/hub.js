@@ -64,18 +64,18 @@ const send = (hub, client, struct, type, subs, tree) => {
         while (previous) {
           if (previous._p && previous._p[previous.key]) {
             // think of something fast for level...
-            serialize(client, progress(client), subs, prop, hub, get(hub, 'serverIndex'), true)
+            serialize(client, progress(client), subs, prop, get(hub, 'serverIndex'), true)
           }
           prop = previous
           previous = previous._p
         }
       }
     }
-    serialize(client, progress(client), subs, struct, hub, get(hub, 'serverIndex'), isRemoved)
+    serialize(client, progress(client), subs, struct, get(hub, 'serverIndex'), isRemoved)
   }
 }
 
-const serialize = (client, t, subs, struct, hub, level, isRemoved) => {
+const serialize = (client, t, subs, struct, level, isRemoved) => {
   if (!struct) {
     console.log('NO STRUCT FISHY IN SERVER SERIALIZE --- BUG')
     return
@@ -83,7 +83,7 @@ const serialize = (client, t, subs, struct, hub, level, isRemoved) => {
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
   const val = isRemoved ? null : getVal(struct)
 
-  if (val !== void 0 && stamp && !isCached(client, struct, hub, stamp)) {
+  if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
     // val === null -- double chck if this is nessecary
     const path = struct.path()
     const len = path.length
@@ -99,14 +99,14 @@ const serialize = (client, t, subs, struct, hub, level, isRemoved) => {
     }
 
     if (isRemoved) {
-      cache(client, struct, hub, stamp)
+      cache(client, struct, stamp)
       s.stamp = stamp
       s.val = val
     } else {
       if (subs.type) {
         const type = get(struct, 'type') // make getType (fast)
         if (getVal(type) !== 'hub') {
-          serialize(client, t, subs.type, type, hub, level)
+          serialize(client, t, subs.type, type, level)
         }
       }
 
@@ -114,14 +114,14 @@ const serialize = (client, t, subs, struct, hub, level, isRemoved) => {
       s.stamp = stamp
       if (struct.key === 'type') {
         if (val === 'hub') return
-        serialize(client, t, subs, getType(struct, val), hub, level)
+        serialize(client, t, subs, getType(struct, val), level)
       // allways need a stamp!
       }
 
       if (typeof val === 'object' && val !== null && val.inherits) {
         s.val = val.path()
         s.val.unshift('@', 'root')
-        serialize(client, t, subs, val, hub, level)
+        serialize(client, t, subs, val, level)
       } else if (val !== void 0) {
         s.val = val
       }
@@ -130,33 +130,33 @@ const serialize = (client, t, subs, struct, hub, level, isRemoved) => {
     if (val.__tmp__ !== true) {
     // can send a bit too much data when val: true and overlapping keys
       val.__tmp__ = true
-      serialize(client, t, subs, val, hub, level, false)
+      serialize(client, t, subs, val, level, false)
       delete val.__tmp__
     }
   }
 
   if (subs.val === true && !isRemoved && !struct.__tmp__) {
     struct.__tmp__ = true
-    deepSerialize(getKeys(struct), client, t, subs, struct, hub, level)
+    deepSerialize(getKeys(struct), client, t, subs, struct, level)
     delete struct.__tmp__
   }
 }
 
-const deepSerialize = (keys, client, t, subs, struct, hub, level) => {
+const deepSerialize = (keys, client, t, subs, struct, level) => {
   var type
   if ((type = get(struct, 'type')) && type.compute() !== 'hub') {
-    serialize(client, t, subs, type, hub, level)
+    serialize(client, t, subs, type, level)
   }
   if (keys) {
     for (let i = 0, len = keys.length; i < len; i++) {
       let prop = get(struct, keys[i])
-      if (prop && prop.isHub) serialize(client, t, subs, prop, hub, level)
+      if (prop && prop.isHub) serialize(client, t, subs, prop, level)
     }
   }
   if (struct._removed) {
     for (let i = 0, len = struct._removed.length; i < len; i++) {
       let prop = struct._removed[i]
-      serialize(client, t, subs, prop, hub, level, true)
+      serialize(client, t, subs, prop, level, true)
     }
   }
 }

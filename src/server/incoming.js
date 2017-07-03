@@ -41,7 +41,7 @@ const addToCache = (client, hub, payload) => {
       }
     }
     if (payload.val !== void 0 && payload.stamp) {
-      cache(client, hub, hub, payload.stamp)
+      cache(client, hub, payload.stamp)
     }
   }
 }
