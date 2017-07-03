@@ -15,9 +15,13 @@ const cache = (client, struct, hub, stamp) => {
     : stamp | contextBit
 }
 
+const isCached = () => false
+
+/*
 const isCached = (client, struct, hub, stamp) => client.cache &&
   client.cache[puid(struct)] === hub.contextKey === undefined ? stamp
     : stamp < 0 ? -stamp | contextBitNegative
     : stamp | contextBit
+*/
 
 export { cache, isCached }
