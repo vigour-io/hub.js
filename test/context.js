@@ -1,5 +1,6 @@
 const hub = require('../')
 const test = require('tape')
+const bs = require('stamp')
 
 test('context', { timeout: 2000 }, t => {
   const scraper = hub({
@@ -57,7 +58,8 @@ test('context', { timeout: 2000 }, t => {
     client2.get('somefield', {}).once('hahaha')
   ]).then(() => {
     t.pass('client1 & client2 receive context updates')
-    client4.set({ smurf: true })
+    client4.set({ smurf: true }, -4e7)
+    bs.close()
   })
 
   Promise.all([
@@ -84,7 +86,8 @@ test('context', { timeout: 2000 }, t => {
     client3.set({ context: 'pavel' })
   })
 
-  client1.set({ blurf: 'hello' })
+  client1.set({ blurf: 'hello' }, -2e7)
+  bs.close()
 })
 
 test('context - getContext - error', { timeout: 2000 }, t => {
@@ -235,4 +238,91 @@ test('context - fire subscriptions on context switch', { timeout: 2000 }, t => {
   }
 
   schedule()
+})
+
+test('context - switch context use cache', { timeout: 2000 }, t => {
+  const server = hub({
+    _uid_: 'server',
+    port: 6060,
+    getContext: (user, retrieve) => new Promise(resolve => {
+      const r = retrieve(user)
+      r.set({ user: { id: user } })
+      resolve(r)
+    }),
+    masterData: {
+      willNotChange: 'amongBranches'
+    }
+  })
+
+  const client1 = hub({
+    _uid_: 'client1',
+    context: 'user1',
+    url: 'ws://localhost:6060',
+    branchData: {
+      'specificTo': 'user1'
+    }
+  })
+
+  const client2 = hub({
+    _uid_: 'client2',
+    context: 'user2',
+    url: 'ws://localhost:6060',
+    branchData: {
+      'specificTo': 'user2'
+    }
+  })
+
+  client1.subscribe(true)
+  client2.subscribe(true)
+
+  Promise.all([
+    client1.get(['user', 'id'], {}).once('user1'),
+    client2.get(['user', 'id'], {}).once('user2')
+  ])
+    .then(() => {
+      client1.set({ context: 'user2' })
+      client2.set({ context: 'user1' })
+
+      return Promise.all([
+        new Promise(resolve => client1.subscribe(
+          { user: { id: true } },
+          val => val.compute() === 'user2' && resolve())
+        ),
+        new Promise(resolve => client2.subscribe(
+          { user: { id: true } },
+          val => val.compute() === 'user1' && resolve())
+        )
+      ])
+    })
+    .then(() => {
+      t.deepEquals(client1.serialize(), {
+        masterData: {
+          willNotChange: 'amongBranches'
+        },
+        user: {
+          id: 'user2'
+        },
+        branchData: {
+          'specificTo': 'user2'
+        }
+      }, 'client1 has data of user2')
+
+      t.deepEquals(client2.serialize(), {
+        masterData: {
+          willNotChange: 'amongBranches'
+        },
+        user: {
+          id: 'user1'
+        },
+        branchData: {
+          'specificTo': 'user1'
+        }
+      }, 'client2 has data of user1')
+
+      server.set(null)
+      client1.set(null)
+      client2.set(null)
+
+      t.end()
+    })
 })

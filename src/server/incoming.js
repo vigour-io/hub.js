@@ -4,7 +4,7 @@ import bs from 'stamp'
 import send from './send'
 import createClient from '../client/create'
 import { removeClient } from './remove'
-import { cache } from './cache'
+import { cache, reuseCache } from './cache'
 
 export default (hub, socket, data) => {
   const payload = data[0]
@@ -51,19 +51,31 @@ const setPayload = (hub, payload, client) => {
   addToCache(client, hub, payload)
 }
 
-const set = (meta, socket, t, payload, contextSwitched) => {
+const set = (meta, socket, t, payload, reuse) => {
   const stamp = bs.create()
   const id = meta.id
   const context = meta.context
   const client = socket.client = createClient(
     t, { socket, context }, stamp, socket.useragent, id
   )
-  if (contextSwitched) {
-    client.contextSwitched = true
+  if (reuse) {
+    client.cache = reuse.cache
+    client.contextSwitched = reuse.remove
   }
   if (payload) setPayload(t, payload, client)
   if (meta.s) incomingSubscriptions(t, client, meta, id)
   bs.close()
+}
+
+const clientSet = (client, meta, socket, t, payload, contextSwitched) => {
+  let reuse
+  if (client) {
+    if (contextSwitched) {
+      reuse = reuseCache(client)
+    }
+    removeClient(client)
+  }
+  set(meta, socket, t, payload, reuse)
 }
 
 const create = (hub, socket, meta, payload, client, contextSwitched) => {
@@ -71,8 +83,7 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
   if (!t.inherits && t.then) {
     t.then((t) => {
       if (socket.external !== null) {
-        if (client) removeClient(client)
-        set(meta, socket, t, payload, contextSwitched)
+        clientSet(client, meta, socket, t, payload, contextSwitched)
       } else {
         console.log('⚠️ client discconected when logging in')
         // may need to handle something?
@@ -82,8 +93,7 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
       hub.emit('error', err)
     })
   } else {
-    if (client) removeClient(client)
-    set(meta, socket, t, payload, contextSwitched)
+    clientSet(client, meta, socket, t, payload, contextSwitched)
   }
 }
 

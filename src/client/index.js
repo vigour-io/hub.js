@@ -6,7 +6,9 @@ import {
   parse,
   subscribe,
   struct,
-  emitterProperty
+  emitterProperty,
+  puid,
+  getKeys
 } from 'brisky-struct'
 import serialize from '../subscription/serialize'
 import hash from 'string-hash'
@@ -91,10 +93,25 @@ const connect = (hub, url, reconnect) => {
   const set = data => receive(hub, JSON.parse(data)[0], JSON.parse(data)[1])
 }
 
+const removePaths = (hub, struct, list, stamp) => {
+  if (struct.val) {
+    if (list[puid(struct)]) {
+      struct.set(null, stamp)
+    }
+  } else {
+    const keys = getKeys(struct)
+    if (keys) {
+      let i = keys.length
+      while (i--) {
+        removePaths(hub, struct.get(keys[i]), list, stamp)
+      }
+    }
+  }
+}
+
 // raf
 const receive = (hub, data, info) => {
-  const stamp = hub._incomingStamp = bs.create()
-  bs.setOffset((info.stamp | 0) - ((stamp | 0) - bs.offset))
+  bs.setOffset((info.stamp | 0) - ((bs.create() | 0) - bs.offset))
 
   if (info && info.connect) {
     hub.set({ connected: true }, bs.create())
@@ -105,14 +122,18 @@ const receive = (hub, data, info) => {
   // this will help /w heavy computation on incoming
   if (data) {
     next(() => {
-      // delete info.reset // tmp
       const stamp = bs.create()
+      if (info.remove) {
+        hub.receiveOnly = true
+        removePaths(hub, hub, info.remove, stamp)
+        hub.receiveOnly = null
+      }
       if (!hub.receiveOnly) {
         hub.receiveOnly = true
-        hub.set(data, stamp, info.reset)
+        hub.set(data, stamp)
         hub.receiveOnly = null
       } else {
-        hub.set(data, stamp, info.reset)
+        hub.set(data, stamp)
       }
       bs.close()
     })
