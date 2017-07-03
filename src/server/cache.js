@@ -10,18 +10,15 @@ const cache = (client, struct, hub, stamp) => {
   if (!pathList[uid]) {
     pathList[uid] = struct.path()
   }
-  client.cache[uid] = hub.contextKey === undefined ? stamp
+  client.cache[uid] = stamp
+  client.cache[uid] = struct._c ? stamp
     : stamp < 0 ? -stamp | contextBitNegative
     : stamp | contextBit
 }
 
-const isCached = () => false
-
-/*
 const isCached = (client, struct, hub, stamp) => client.cache &&
-  client.cache[puid(struct)] === hub.contextKey === undefined ? stamp
+  client.cache[puid(struct)] === (struct._c ? stamp
     : stamp < 0 ? -stamp | contextBitNegative
-    : stamp | contextBit
-*/
+    : stamp | contextBit)
 
 export { cache, isCached }
