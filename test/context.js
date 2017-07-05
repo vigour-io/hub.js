@@ -275,6 +275,9 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
   client1.subscribe(true)
   client2.subscribe(true)
 
+  client1.set({ branchKey1: { subKey1: { deepKey1: true } } })
+  client2.set({ branchKey2: { subKey2: { deepKey2: true } } })
+
   Promise.all([
     client1.get(['user', 'id'], {}).once('user1'),
     client2.get(['user', 'id'], {}).once('user2')
@@ -298,6 +301,11 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
         },
         branchData: {
           'specificTo': 'user2'
+        },
+        branchKey2: {
+          subKey2: {
+            deepKey2: true
+          }
         }
       }, 'client1 has data of user2')
 
@@ -310,6 +318,11 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
         },
         branchData: {
           'specificTo': 'user1'
+        },
+        branchKey1: {
+          subKey1: {
+            deepKey1: true
+          }
         }
       }, 'client2 has data of user1')
 

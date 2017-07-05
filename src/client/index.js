@@ -96,6 +96,14 @@ const connect = (hub, url, reconnect) => {
 
 const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
 
+const removeParent = (struct, stamp) => {
+  const parent = struct.parent()
+  if (parent && parent.val === void 0 && !getKeys(parent).length && !ownListeners(parent)) {
+    parent.set(null, stamp)
+    removeParent(parent, stamp)
+  }
+}
+
 const removePaths = (struct, list, stamp) => {
   if (struct.val) {
     if (list[puid(struct)]) {
@@ -104,6 +112,7 @@ const removePaths = (struct, list, stamp) => {
         struct.stamp = 0
       } else {
         struct.set(null, stamp)
+        removeParent(struct, stamp)
       }
     }
   } else {
