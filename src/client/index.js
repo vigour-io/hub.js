@@ -96,7 +96,7 @@ const connect = (hub, url, reconnect) => {
 
 const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
 
-const removePaths = (hub, struct, list, stamp) => {
+const removePaths = (struct, list, stamp) => {
   if (struct.val) {
     if (list[puid(struct)]) {
       if (ownListeners(struct)) {
@@ -111,7 +111,7 @@ const removePaths = (hub, struct, list, stamp) => {
     if (keys) {
       let i = keys.length
       while (i--) {
-        removePaths(hub, struct.get(keys[i]), list, stamp)
+        removePaths(struct.get(keys[i]), list, stamp)
       }
     }
   }
@@ -134,7 +134,7 @@ const receive = (hub, data, info) => {
       if (!hub.receiveOnly) {
         hub.receiveOnly = true
         if (info.remove) {
-          removePaths(hub, hub, info.remove, stamp)
+          removePaths(hub, info.remove, stamp)
         }
         hub.set(data, stamp)
         hub.receiveOnly = null
