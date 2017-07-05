@@ -284,14 +284,8 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
       client2.set({ context: 'user1' })
 
       return Promise.all([
-        new Promise(resolve => client1.subscribe(
-          { user: { id: true } },
-          val => val.compute() === 'user2' && resolve())
-        ),
-        new Promise(resolve => client2.subscribe(
-          { user: { id: true } },
-          val => val.compute() === 'user1' && resolve())
-        )
+        client1.get(['user', 'id'], {}).once('user2'),
+        client2.get(['user', 'id'], {}).once('user1')
       ])
     })
     .then(() => {

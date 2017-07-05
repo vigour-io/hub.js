@@ -14,6 +14,7 @@ import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
 import { receiveLarge } from '../size'
+import hub from '../hub'
 
 const isNode = typeof window === 'undefined'
 
@@ -93,10 +94,17 @@ const connect = (hub, url, reconnect) => {
   const set = data => receive(hub, JSON.parse(data)[0], JSON.parse(data)[1])
 }
 
+const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
+
 const removePaths = (hub, struct, list, stamp) => {
   if (struct.val) {
     if (list[puid(struct)]) {
-      struct.set(null, stamp)
+      if (ownListeners(struct)) {
+        struct.val = void 0
+        struct.stamp = 0
+      } else {
+        struct.set(null, stamp)
+      }
     }
   } else {
     const keys = getKeys(struct)
@@ -123,16 +131,17 @@ const receive = (hub, data, info) => {
   if (data) {
     next(() => {
       const stamp = bs.create()
-      if (info.remove) {
-        hub.receiveOnly = true
-        removePaths(hub, hub, info.remove, stamp)
-        hub.receiveOnly = null
-      }
       if (!hub.receiveOnly) {
         hub.receiveOnly = true
+        if (info.remove) {
+          removePaths(hub, hub, info.remove, stamp)
+        }
         hub.set(data, stamp)
         hub.receiveOnly = null
       } else {
+        if (info.remove) {
+          removePaths(hub, hub, info.remove, stamp)
+        }
         hub.set(data, stamp)
       }
       bs.close()
