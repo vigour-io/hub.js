@@ -1,17 +1,25 @@
 import { puid } from 'brisky-struct'
 
+// Get local root
+const getRoot = t => {
+  while (t._p) {
+    t = t._p
+  }
+  return t
+}
+
 const cache = (client, struct, stamp) => {
   if (!client.cache) client.cache = { master: {}, branch: {} }
-  if (struct._c) {
-    client.cache.master[puid(struct)] = stamp
-  } else {
+  if (getRoot(struct).contextKey) {
     client.cache.branch[puid(struct)] = stamp
+  } else {
+    client.cache.master[puid(struct)] = stamp
   }
 }
 
 const isCached = (client, struct, stamp) => client.cache &&
-  (struct._c ? client.cache.master[puid(struct)] === stamp
-    : client.cache.branch[puid(struct)] === stamp)
+  (getRoot(struct).contextKey ? client.cache.branch[puid(struct)] === stamp
+    : client.cache.master[puid(struct)] === stamp)
 
 const reuseCache = (client) => {
   if (!client.cache) return void 0
