@@ -115,7 +115,7 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
       if (struct.key === 'type') {
         if (val === 'hub') return
         serialize(client, t, subs, getType(struct, val), level)
-      // allways need a stamp!
+        // allways need a stamp!
       }
 
       if (typeof val === 'object' && val !== null && val.inherits) {
