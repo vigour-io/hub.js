@@ -149,7 +149,7 @@ const receive = (hub, data, info) => {
         hub.receiveOnly = null
       } else {
         if (info.remove) {
-          removePaths(hub, hub, info.remove, stamp)
+          removePaths(hub, info.remove, stamp)
         }
         hub.set(data, stamp)
       }
