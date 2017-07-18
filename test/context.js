@@ -270,7 +270,7 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
     url: 'ws://localhost:6060',
     branchData: {
       'specificTo': 'user2'
-    },
+    }
   })
 
   client1.subscribe(true)
