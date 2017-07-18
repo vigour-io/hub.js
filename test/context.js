@@ -251,7 +251,8 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
     }),
     masterData: {
       willNotChange: 'amongBranches'
-    }
+    },
+    masterRef: ['@', 'root', 'masterData']
   })
 
   const client1 = hub({
@@ -260,6 +261,12 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
     url: 'ws://localhost:6060',
     branchData: {
       'specificTo': 'user1'
+    },
+    masterRef: {
+      refExtra: 1
+    },
+    masterData: {
+      origExtra: 1
     }
   })
 
@@ -269,6 +276,12 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
     url: 'ws://localhost:6060',
     branchData: {
       'specificTo': 'user2'
+    },
+    masterRef: {
+      refExtra: 2
+    },
+    masterData: {
+      origExtra: 2
     }
   })
 
@@ -292,39 +305,46 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
       ])
     })
     .then(() => {
-      t.deepEquals(client1.serialize(), {
-        masterData: {
-          willNotChange: 'amongBranches'
-        },
-        user: {
-          id: 'user2'
-        },
-        branchData: {
-          'specificTo': 'user2'
-        },
-        branchKey2: {
-          subKey2: {
-            deepKey2: true
-          }
-        }
-      }, 'client1 has data of user2')
-
-      t.deepEquals(client2.serialize(), {
-        masterData: {
-          willNotChange: 'amongBranches'
-        },
-        user: {
-          id: 'user1'
-        },
-        branchData: {
-          'specificTo': 'user1'
-        },
-        branchKey1: {
-          subKey1: {
-            deepKey1: true
-          }
-        }
-      }, 'client2 has data of user1')
+      t.equals(
+        client1.get(['masterData', 'willNotChange', 'compute']), 'amongBranches',
+        'master data is available in client1'
+      )
+      t.equals(
+        client1.get(['masterData', 'willNotChange', 'compute']), 'amongBranches',
+        'master data is available in client2'
+      )
+      t.ok(
+        client1.get(['branchKey2', 'subKey2', 'deepKey2', 'compute']),
+        'branch2 data is available in client1'
+      )
+      t.notOk(
+        client1.get(['branchKey1', 'subKey1', 'deepKey1', 'compute']),
+        'branch1 data is not available in client1'
+      )
+      t.ok(
+        client2.get(['branchKey1', 'subKey1', 'deepKey1', 'compute']),
+        'branch1 data is available in client2'
+      )
+      t.notOk(
+        client2.get(['branchKey2', 'subKey2', 'deepKey2', 'compute']),
+        'branch2 data is not available in client2'
+      )
+      t.equals(
+        client1.get(['masterRef', 'refExtra', 'compute']), 2,
+        'branch2 master ref override is available in client1'
+      )
+      t.equals(
+        client1.get(['masterRef', 'origExtra', 'compute']), 2,
+        'branch2 master override is available in client1'
+      )
+      t.equals(
+        client2.get(['masterRef', 'refExtra', 'compute']), 1,
+        'branch1 master ref override is available in client2'
+      )
+      t.equals(
+        client2.get(['masterRef', 'origExtra', 'compute']), 1,
+        'branch1 master override is available in client2'
+      )
 
       server.set(null)
       client1.set(null)
