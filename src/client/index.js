@@ -128,7 +128,7 @@ const removePaths = (struct, list, stamp) => {
 
 // raf
 const receive = (hub, data, info) => {
-  bs.setOffset((info.stamp | 0) - ((bs.create() | 0) - bs.offset))
+  bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
 
   if (info && info.connect) {
     hub.set({ connected: true }, bs.create())
