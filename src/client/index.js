@@ -108,7 +108,7 @@ const removePaths = (struct, list, stamp) => {
   if (struct.val) {
     if (list[puid(struct)]) {
       if (ownListeners(struct)) {
-        struct.val = void 0
+        delete struct.val
         struct.stamp = 0
       } else {
         struct.set(null, stamp)
