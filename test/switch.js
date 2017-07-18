@@ -6,8 +6,8 @@ test('switch', { timeout: 1e3 }, t => {
 
   const server = hub({
     _uid_: 'server',
-    key: 'server',
     port: 6061,
+    key: 'server',
     pageA: {
       fixedA: 'dataA'
     },
@@ -22,7 +22,8 @@ test('switch', { timeout: 1e3 }, t => {
 
   const client = hub({
     url: 'ws://localhost:6061',
-    _uid_: 'client1'
+    _uid_: 'client',
+    context: 'first'
   })
 
   client.subscribe({
@@ -49,7 +50,11 @@ test('switch', { timeout: 1e3 }, t => {
 
   client.get([ 'pageA', 'fixedA' ], {}).once('dataA')
     .then(() => {
-      client.set({ ref: [ '@', 'parent', 'pageB' ] })
+      client.set({ context: 'second' })
+
+      setTimeout(() => {
+        client.set({ ref: [ '@', 'parent', 'pageB' ] })
+      }, 50)
 
       return client.get([ 'pageB', 'fixedB' ], {}).once('dataB')
     })
