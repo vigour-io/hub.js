@@ -10,10 +10,13 @@ const getRoot = t => {
 
 const cache = (client, struct, stamp) => {
   if (!client.cache) client.cache = { master: {}, branch: {} }
+  const uid = puid(struct)
   if (getRoot(struct).contextKey) {
-    client.cache.branch[puid(struct)] = stamp
+    delete client.cache.master[uid]
+    client.cache.branch[uid] = stamp
   } else {
-    client.cache.master[puid(struct)] = stamp
+    delete client.cache.branch[uid]
+    client.cache.master[uid] = stamp
   }
 }
 
