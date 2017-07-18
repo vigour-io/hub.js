@@ -261,12 +261,6 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
     url: 'ws://localhost:6060',
     branchData: {
       'specificTo': 'user1'
-    },
-    masterRef: {
-      refExtra: 1
-    },
-    masterData: {
-      origExtra: 1
     }
   })
 
@@ -277,6 +271,31 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
     branchData: {
       'specificTo': 'user2'
     },
+  })
+
+  client1.subscribe(true)
+  client2.subscribe(true)
+
+  client1.set({
+    branchKey1: {
+      subKey1: {
+        deepKey1: true
+      }
+    },
+    masterRef: {
+      refExtra: 1
+    },
+    masterData: {
+      origExtra: 1
+    }
+  })
+
+  client2.set({
+    branchKey2: {
+      subKey2: {
+        deepKey2: true
+      }
+    },
     masterRef: {
       refExtra: 2
     },
@@ -284,12 +303,6 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
       origExtra: 2
     }
   })
-
-  client1.subscribe(true)
-  client2.subscribe(true)
-
-  client1.set({ branchKey1: { subKey1: { deepKey1: true } } })
-  client2.set({ branchKey2: { subKey2: { deepKey2: true } } })
 
   Promise.all([
     client1.get(['user', 'id'], {}).once('user1'),
