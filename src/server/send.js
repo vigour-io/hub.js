@@ -20,7 +20,7 @@ const progress = (client) => {
     bs.on(() => {
       if (client.val !== null) {
         const p = client.inProgress[0]
-        if (!isEmpty(p)) {
+        if (client.inProgress[1].remove || !isEmpty(p)) {
           if (p.types) {
             // order hack!
             for (let i in p) {
@@ -161,4 +161,4 @@ const deepSerialize = (keys, client, t, subs, struct, level) => {
   }
 }
 
-export default send
+export { progress, send }

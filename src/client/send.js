@@ -169,7 +169,11 @@ const out = t => {
   // if (typeof window !== 'undefined') {
     // console.log('SEND', JSON.stringify(t.inProgress, false, 2))
   // }
-  t.socket.send(JSON.stringify(t.inProgress))
+  if (!t.socket.send) {
+    t.set({ connected: false })
+  } else {
+    t.socket.send(JSON.stringify(t.inProgress))
+  }
   t.inProgress = false
 }
 
