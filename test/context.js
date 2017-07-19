@@ -326,6 +326,7 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
         client1.get(['masterData', 'willNotChange', 'compute']), 'amongBranches',
         'master data is available in client2'
       )
+
       t.ok(
         client1.get(['branchKey2', 'subKey2', 'deepKey2', 'compute']),
         'branch2 data is available in client1'
@@ -342,6 +343,7 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
         client2.get(['branchKey2', 'subKey2', 'deepKey2', 'compute']),
         'branch2 data is not available in client2'
       )
+
       t.equals(
         client1.get(['masterRef', 'refExtra', 'compute']), 2,
         'branch2 master ref override is available in client1'

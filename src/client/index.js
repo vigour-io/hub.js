@@ -104,15 +104,24 @@ const removeParent = (struct, stamp) => {
   }
 }
 
-const removePaths = (struct, list, stamp) => {
+const removePaths = (struct, list, stamp, data) => {
   if (struct.val) {
     if (list[puid(struct)]) {
-      if (ownListeners(struct)) {
-        delete struct.val
-        struct.stamp = 0
+      if (data && data.val) {
+        if (data.stamp) {
+          data.stamp = stamp
+          console.log('resetting', struct.path())
+        }
+        return true
       } else {
-        struct.set(null, stamp)
-        removeParent(struct, stamp)
+        console.log('removing', struct.path())
+        if (ownListeners(struct)) {
+          delete struct.val
+          struct.stamp = 0
+        } else {
+          struct.set(null, stamp)
+          removeParent(struct, stamp)
+        }
       }
     }
   } else {
@@ -120,7 +129,9 @@ const removePaths = (struct, list, stamp) => {
     if (keys) {
       let i = keys.length
       while (i--) {
-        removePaths(struct.get(keys[i]), list, stamp)
+        if (removePaths(struct.get(keys[i]), list, stamp, data && data[keys[i]])) {
+          data.stamp = stamp
+        }
       }
     }
   }
@@ -143,13 +154,13 @@ const receive = (hub, data, info) => {
       if (!hub.receiveOnly) {
         hub.receiveOnly = true
         if (info.remove) {
-          removePaths(hub, info.remove, stamp)
+          removePaths(hub, info.remove, stamp, data)
         }
         hub.set(data, stamp)
         hub.receiveOnly = null
       } else {
         if (info.remove) {
-          removePaths(hub, info.remove, stamp)
+          removePaths(hub, info.remove, stamp, data)
         }
         hub.set(data, stamp)
       }
