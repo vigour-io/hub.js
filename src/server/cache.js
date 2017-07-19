@@ -9,6 +9,10 @@ const getRoot = t => {
 }
 
 const cache = (client, struct, stamp) => {
+  if (client.contextSwitched) {
+    return
+  }
+
   if (!client.cache) client.cache = { master: {}, branch: {} }
   const uid = puid(struct)
   if (getRoot(struct).contextKey) {

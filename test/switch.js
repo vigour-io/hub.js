@@ -1,7 +1,7 @@
 const hub = require('../')
 const test = require('tape')
 
-test('switch', { timeout: 5e3 }, t => {
+test('switch', { timeout: 500 }, t => {
   t.plan(6)
 
   const server = hub({
@@ -44,6 +44,7 @@ test('switch', { timeout: 5e3 }, t => {
         `subscription fired correctly for ${val.parent().key}`
       )
     }
+    console.log(val, type)
   })
 
   client.set({ ref: [ '@', 'parent', 'pageA' ] })
@@ -53,6 +54,7 @@ test('switch', { timeout: 5e3 }, t => {
       t.pass('switched to A')
       client.set({ context: 'second' })
 
+      // TODO: fix subscriptions to avoid this timeout
       setTimeout(() => {
         client.set({ ref: [ '@', 'parent', 'pageB' ] })
       }, 50)
