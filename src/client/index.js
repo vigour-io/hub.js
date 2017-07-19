@@ -105,13 +105,13 @@ const removePaths = (struct, list, stamp, data) => {
     keep = i
     while (i--) {
       ret = removePaths(struct.get(keys[i]), list, stamp, data && data[keys[i]])
-      if (ret === 1) {
+      if (ret === true) {
         if (data.stamp) {
           data.stamp = stamp
         }
-      } else if (ret === 2) {
+      } else if (ret === false) {
         keep--
-        ret = void 0
+        ret = null
       }
     }
   }
@@ -121,21 +121,22 @@ const removePaths = (struct, list, stamp, data) => {
         if (data.stamp) {
           data.stamp = stamp
         }
-        ret = 1
+        return true
       } else if (ownListeners(struct)) {
         delete struct.val
         struct.stamp = 0
         struct.emit('data', null, stamp)
       } else {
         struct.set(null, stamp)
-        ret = 2
+        return false
       }
     }
   } else if (!keep && !ownListeners(struct)) {
     struct.set(null, stamp)
-    ret = 2
+    return false
+  } else {
+    return ret
   }
-  return ret
 }
 
 // raf
