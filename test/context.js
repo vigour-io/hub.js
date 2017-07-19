@@ -241,6 +241,8 @@ test('context - fire subscriptions on context switch', { timeout: 2000 }, t => {
 })
 
 test('context - switch context use cache', { timeout: 2000 }, t => {
+  t.plan(13)
+
   const server = hub({
     _uid_: 'server',
     port: 6060,
@@ -273,10 +275,33 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
     }
   })
 
-  client1.subscribe(true)
-  client2.subscribe(true)
+  const sub = {
+    user: { val: true },
+    masterRef: { val: true },
+    branchKey1: { val: true },
+    branchKey2: { val: true }
+  }
+
+  client1.subscribe(sub)
+  client2.subscribe(sub)
 
   client1.set({
+    props: {
+      masterRef: {
+        cExtra: 1
+      },
+      branchKey1: {
+        subKey1: {
+          deepKey1: {
+            on (val) {
+              if (val === null) {
+                t.pass('soft removal fired event')
+              }
+            }
+          }
+        }
+      }
+    },
     branchKey1: {
       subKey1: {
         deepKey1: true
@@ -291,6 +316,11 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
   })
 
   client2.set({
+    props: {
+      masterRef: {
+        cExtra: 2
+      }
+    },
     branchKey2: {
       subKey2: {
         deepKey2: true
@@ -361,10 +391,17 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
         'branch1 master override is available in client2'
       )
 
+      t.equals(
+        client1.get(['masterRef', 'cExtra', 'compute']), 1,
+        'client1 specific ref data is intact'
+      )
+      t.equals(
+        client2.get(['masterRef', 'cExtra', 'compute']), 2,
+        'client2 specific ref data is intact'
+      )
+
       server.set(null)
       client1.set(null)
       client2.set(null)
-
-      t.end()
     })
 })
