@@ -96,45 +96,46 @@ const connect = (hub, url, reconnect) => {
 
 const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
 
-const removeParent = (struct, stamp) => {
-  const parent = struct.parent()
-  if (parent && parent.val === void 0 && !getKeys(parent).length && !ownListeners(parent)) {
-    parent.set(null, stamp)
-    removeParent(parent, stamp)
-  }
-}
-
 const removePaths = (struct, list, stamp, data) => {
+  const keys = getKeys(struct)
+  var ret
+  var keep = true
+  if (keys) {
+    let i = keys.length
+    keep = i
+    while (i--) {
+      ret = removePaths(struct.get(keys[i]), list, stamp, data && data[keys[i]])
+      if (ret === 1) {
+        if (data.stamp) {
+          data.stamp = stamp
+        }
+      } else if (ret === 2) {
+        keep--
+        ret = void 0
+      }
+    }
+  }
   if (struct.val) {
     if (list[puid(struct)]) {
       if (data && data.val) {
         if (data.stamp) {
           data.stamp = stamp
-          console.log('resetting', struct.path())
         }
-        return true
+        ret = 1
+      } else if (ownListeners(struct)) {
+        delete struct.val
+        struct.stamp = 0
+        struct.emit('data', null, stamp)
       } else {
-        console.log('removing', struct.path())
-        if (ownListeners(struct)) {
-          delete struct.val
-          struct.stamp = 0
-        } else {
-          struct.set(null, stamp)
-          removeParent(struct, stamp)
-        }
+        struct.set(null, stamp)
+        ret = 2
       }
     }
-  } else {
-    const keys = getKeys(struct)
-    if (keys) {
-      let i = keys.length
-      while (i--) {
-        if (removePaths(struct.get(keys[i]), list, stamp, data && data[keys[i]])) {
-          data.stamp = stamp
-        }
-      }
-    }
+  } else if (!keep && !ownListeners(struct)) {
+    struct.set(null, stamp)
+    ret = 2
   }
+  return ret
 }
 
 // raf
