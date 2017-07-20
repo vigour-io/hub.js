@@ -103,11 +103,14 @@ const meta = hub => {
 
 const send = (val, stamp, struct) => {
   // also check for removal
-  if (stamp < 0 && val === null && struct.parent(t => {
-    if (t.key === 'clients') {
-      return true
-    }
-  })) {
+  if (
+    (typeof val === 'object' && val && !val[0] && !val.val) ||
+    (stamp < 0 && val === null && struct.parent(t => {
+      if (t.key === 'clients') {
+        return true
+      }
+    }))
+  ) {
     return
   }
   let hub
