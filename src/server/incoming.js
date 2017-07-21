@@ -66,6 +66,7 @@ const set = (meta, socket, t, payload, reuse) => {
   const client = socket.client = createClient(
     t, { socket, context }, stamp, socket.useragent, id
   )
+  if (payload) setPayload(t, payload, client)
   if (reuse) {
     client.cache = reuse.cache
     if (!isEmpty(reuse.remove)) {
@@ -73,7 +74,6 @@ const set = (meta, socket, t, payload, reuse) => {
       progress(client)
     }
   }
-  if (payload) setPayload(t, payload, client)
   if (meta.s) incomingSubscriptions(t, client, meta, id)
   bs.close()
 }
