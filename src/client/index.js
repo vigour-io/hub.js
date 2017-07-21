@@ -115,7 +115,7 @@ const removePaths = (struct, list, stamp, data) => {
       }
     }
   }
-  if (struct.val) {
+  if (struct.val !== void 0) {
     if (list[puid(struct)]) {
       if (data && data.val) {
         if (data.stamp) {
