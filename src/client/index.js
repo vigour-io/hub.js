@@ -109,7 +109,7 @@ const removePaths = (struct, list, stamp, data) => {
     }
   }
   if (struct.val !== void 0) {
-    if (list[puid(struct)] && (!data || data.val == void 0)) {
+    if (list[puid(struct)] && (!data || data.val === void 0)) {
       if (ownListeners(struct)) {
         // console.log('soft removing', struct.path())
         delete struct.val
