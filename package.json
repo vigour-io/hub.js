@@ -44,7 +44,7 @@
     "realtime"
   ],
   "dependencies": {
-    "brisky-struct": "1.7.5",
+    "brisky-struct": "1.8.0",
     "stamp": "^4.0.2",
     "string-hash": "^1.1.3",
     "uws": "0.14.1",

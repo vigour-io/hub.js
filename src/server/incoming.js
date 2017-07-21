@@ -54,6 +54,7 @@ const addToCache = (client, hub, payload) => {
 }
 
 const setPayload = (hub, payload, client) => {
+  // console.log('SERVER RECEIVE: %j', payload)
   hub.set(payload, false)
   addToCache(client, hub, payload)
 }

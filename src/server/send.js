@@ -36,6 +36,7 @@ const progress = (client) => {
               }
             }
           }
+          // console.log('SERVER SEND: %j', p)
           const raw = JSON.stringify(client.inProgress)
           if (!sendLarge(raw, client)) {
             if (client.blobInProgress) {

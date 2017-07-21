@@ -97,45 +97,34 @@ const connect = (hub, url, reconnect) => {
 const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
 
 const removePaths = (struct, list, stamp, data) => {
-  const keys = getKeys(struct)
-  var ret
   var keep = true
+  const keys = getKeys(struct)
   if (keys) {
     let i = keys.length
     keep = i
     while (i--) {
-      ret = removePaths(struct.get(keys[i]), list, stamp, data && data[keys[i]])
-      if (ret === true) {
-        if (data.stamp) {
-          data.stamp = stamp
-        }
-      } else if (ret === false) {
+      if (removePaths(struct.get(keys[i]), list, stamp, data && data[keys[i]])) {
         keep--
-        ret = null
       }
     }
   }
   if (struct.val !== void 0) {
-    if (list[puid(struct)]) {
-      if (data && data.val) {
-        if (data.stamp) {
-          data.stamp = stamp
-        }
-        return true
-      } else if (ownListeners(struct)) {
+    if (list[puid(struct)] && (!data || data.val == void 0)) {
+      if (ownListeners(struct)) {
+        // console.log('soft removing', struct.path())
         delete struct.val
         struct.stamp = 0
         struct.emit('data', null, stamp)
       } else {
+        // console.log('hard removing', struct.path())
         struct.set(null, stamp)
-        return false
+        return true
       }
     }
   } else if (!keep && !ownListeners(struct)) {
+    // console.log('hard removing', struct.path())
     struct.set(null, stamp)
-    return false
-  } else {
-    return ret
+    return true
   }
 }
 
@@ -158,13 +147,13 @@ const receive = (hub, data, info) => {
         if (info.remove) {
           removePaths(hub, info.remove, stamp, data)
         }
-        hub.set(data, stamp)
+        hub.set(data, stamp, void 0, !!info.remove)
         hub.receiveOnly = null
       } else {
         if (info.remove) {
           removePaths(hub, info.remove, stamp, data)
         }
-        hub.set(data, stamp)
+        hub.set(data, stamp, void 0, !!info.remove)
       }
       bs.close()
     })
