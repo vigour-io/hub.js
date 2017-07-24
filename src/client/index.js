@@ -97,6 +97,7 @@ const connect = (hub, url, reconnect) => {
 const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
 
 const removePaths = (struct, list, stamp, data) => {
+  delete struct.stamp
   var keep = true
   const keys = getKeys(struct)
   if (keys) {

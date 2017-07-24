@@ -151,15 +151,9 @@ test('reference field merge', { timeout: 1e3 }, t => {
     }
   })
 
-  client.subscribe({
-    list: {
-      $any: {
-        items: {
-          val: true
-        }
-      }
-    }
-  })
+  client.subscribe({ ref: { $switch: () => ({ items: { val: true } }) } })
+
+  client.set({ ref: ['@', 'root', 'list', 'i1'] })
 
   client.get(['list', 'i3', 'items', 'sub', 'tf'], {}).once('tv')
     .then(() => {
@@ -170,7 +164,13 @@ test('reference field merge', { timeout: 1e3 }, t => {
       } })
 
       client.set({ context: 'second' })
-      return client.get(['list', 'i1', 'pf']).once('pv')
+
+      return new Promise(resolve => setTimeout(resolve, 50))
+    })
+    .then(() => {
+      client.set({ ref: ['@', 'root', 'list', 'i1'] })
+
+      return new Promise(resolve => setTimeout(resolve, 50))
     })
     .then(() => {
       client.set({ list: {
@@ -181,7 +181,13 @@ test('reference field merge', { timeout: 1e3 }, t => {
       } })
 
       client.set({ context: 'first' })
-      return client.get(['list', 'i2', 'other']).once('master')
+
+      return new Promise(resolve => setTimeout(resolve, 50))
+    })
+    .then(() => {
+      client.set({ ref: ['@', 'root', 'list', 'i1'] })
+
+      return client.get(['list', 'i2', 'other'], {}).once('master')
     })
     .then(() => {
       t.equals(
@@ -191,7 +197,7 @@ test('reference field merge', { timeout: 1e3 }, t => {
       // i1 pf override won't get synced back
       // because it's out of subscription range
       t.equals(
-        client.get(['list', 'i1', 'pf', 'compute']), 'pv',
+        client.get(['list', 'i1', 'pf', 'compute']), undefined,
         'i1 props field override is not there'
       )
       t.equals(
@@ -202,7 +208,13 @@ test('reference field merge', { timeout: 1e3 }, t => {
         client.get(['list', 'i4', 'sub', 'bf', 'compute']), true,
         'i4 sub branch field is correct'
       )
+
       client.set({ context: 'second' })
+      return new Promise(resolve => setTimeout(resolve, 50))
+    })
+    .then(() => {
+      client.set({ ref: ['@', 'root', 'list', 'i1'] })
+
       return client.get(['list', 'i4', 'f1']).once(true)
     })
     .then(() => {
