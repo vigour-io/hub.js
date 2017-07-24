@@ -94,7 +94,7 @@ test('circular references', t => {
 })
 
 test('reference field merge', { timeout: 1e3 }, t => {
-  t.plan(9)
+  t.plan(10)
 
   const server = hub({
     _uid_: 'server',
@@ -165,12 +165,11 @@ test('reference field merge', { timeout: 1e3 }, t => {
 
       client.set({ context: 'second' })
 
-      return client.get(['list', 'i4', 'sub']).once(null)
-    })
-    .then(() => {
-      client.set({ ref: ['@', 'root', 'list', 'i1'] })
+      setTimeout(() => {
+        client.set({ ref: ['@', 'root', 'list', 'i1'] })
+      }, 50)
 
-      return new Promise(resolve => setTimeout(resolve, 50))
+      return client.get(['list', 'i4', 'sub', 'bf']).once(null)
     })
     .then(() => {
       client.set({ list: {
@@ -184,7 +183,7 @@ test('reference field merge', { timeout: 1e3 }, t => {
 
       setTimeout(() => {
         client.set({ ref: ['@', 'root', 'list', 'i1'] })
-      })
+      }, 50)
 
       return client.get(['list', 'i1', 'items', 'sub1', 'bf'], {}).once(false)
     })
@@ -233,13 +232,10 @@ test('reference field merge', { timeout: 1e3 }, t => {
         client.get(['list', 'i3', 'items', 'sub', 'bf', 'compute']), false,
         'i3 sub branch field is correct'
       )
-      /*
-      this must be fixed
       t.equals(
         client.get(['list', 'i3', 'items', 'sub', 'tf', 'compute']), 'tv',
         'i3 sub type field is correct'
       )
-      */
       t.equals(
         client.get(['list', 'i3', 'pf', 'compute']), false,
         'i3 props field override is correct'
