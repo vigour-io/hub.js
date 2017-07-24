@@ -97,6 +97,7 @@ const connect = (hub, url, reconnect) => {
 const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
 
 const removePaths = (struct, list, stamp, data) => {
+  const oldStamp = struct.stamp
   delete struct.stamp
   var keep = true
   const keys = getKeys(struct)
@@ -109,8 +110,12 @@ const removePaths = (struct, list, stamp, data) => {
       }
     }
   }
+  const listStamp = list[puid(struct)]
   if (struct.val !== void 0) {
-    if (list[puid(struct)] && (!data || data.val === void 0)) {
+    if (listStamp < oldStamp) {
+      return
+    }
+    if (listStamp && (!data || data.val === void 0)) {
         // console.log('soft removing', struct.path())
       if ((keys && keep) || ownListeners(struct)) {
         delete struct.val
@@ -124,6 +129,7 @@ const removePaths = (struct, list, stamp, data) => {
     }
   } else if (!keep && !ownListeners(struct)) {
     // console.log('hard removing', struct.path())
+    // if (oldStamp )
     struct.set(null, stamp)
     return true
   }
@@ -132,6 +138,8 @@ const removePaths = (struct, list, stamp, data) => {
 // raf
 const receive = (hub, data, info) => {
   bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
+
+  console.log('INCCOMING ON CLIENT 🦄🦄🦄🦄🦄🦄🦄🦄', data, info)
 
   if (info && info.connect) {
     console.log('recieve some data!')

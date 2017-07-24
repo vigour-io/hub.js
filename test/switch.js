@@ -1,5 +1,6 @@
 const hub = require('../')
 const test = require('tape')
+const { puid } = require('brisky-struct')
 
 test('switch - basic', { timeout: 1e3 }, t => {
   console.log('wtf!')
@@ -34,6 +35,7 @@ test('switch - basic', { timeout: 1e3 }, t => {
   client.subscribe({
     ref: {
       $switch: t => {
+        console.log('\n\n\n🦋🦋🦋🦋🦋🦋🦋', t.root()._uid_)
         return t.origin().key === 'itemsA' ? { a: { val: true } }
         : { b: { val: true } }
       }
@@ -53,10 +55,21 @@ test('switch - basic', { timeout: 1e3 }, t => {
         })
 
         setTimeout(() => {
-          console.log('GO AND SWITCH CONTEXT GO GO GO')
+          console.log('\n\n🌈🌈🌈🌈🌈GO AND SWITCH CONTEXT GO GO GO')
+
+          console.log(client.ref, puid(client.ref))
+
           client.set({
-            context: 'blabla'
+            context: 'blabla',
+            ref: [ '@', 'root', 'flapflap' ],
+            jurbs: true
           })
+
+          setTimeout(() => {
+            console.log('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥', client.ref)
+            // client.set({ ref: [ '@', 'root', 'itemsA' ] })
+          }, 100)
+
         }, 100)
 
       })

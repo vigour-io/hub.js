@@ -179,6 +179,7 @@ const out = t => {
   if (!t.socket.send) {
     t.set({ connected: false })
   } else {
+    console.log('\n\n🍔🍔🍔🍔🍔🍔 SEND SEND SEND FROM THE CLIENT', JSON.stringify(t.inProgress, false, 2))
     t.socket.send(JSON.stringify(t.inProgress))
   }
   t.inProgress = false
