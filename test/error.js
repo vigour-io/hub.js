@@ -8,10 +8,10 @@ test('error', { timeout: 1000 }, t => {
     ha: true,
     getContext: (context, retrieve, hub, socket) => new Promise((resolve, reject) => {
       if (context === 'flurpy') {
-        socket.send(JSON.stringify([, {
+        socket.send(JSON.stringify([void 0, {
           emit: {
             error: {
-              message: 'hello some shit for you'
+              hahha: 'hello some shit for you'
             }
           }
         }]))
@@ -31,7 +31,9 @@ test('error', { timeout: 1000 }, t => {
   client.subscribe(true)
 
   client.on('error', err => {
+    console.log('| --->', err)
     if (err.hahha) {
+      console.log('go go go')
       client.set({
         context: 'blurf'
       })

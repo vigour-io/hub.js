@@ -136,7 +136,10 @@ const incomingSubscriptions = (hub, client, meta, id) => {
     }
   }
 
-  if (requestSubs) client.socket.send('#1' + JSON.stringify(requestSubs))
+  if (requestSubs) {
+    console.log('send those subs')
+    client.socket.send(JSON.stringify([ void 0, { requestSubs } ]))
+  }
 }
 
 // this can become super efficient ofc -- replace client in very smart way -- blueprint $CLIENT -- this is the client id

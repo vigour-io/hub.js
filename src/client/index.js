@@ -48,7 +48,6 @@ const connect = (hub, url, reconnect) => {
 
   socket.onerror = isNode ? close : () => socket.close()
 
-  // onopen and onclose need to get virtualized on top of a stupid hearthbeat
   socket.onopen = () => {
     hub.socket = socket
     if (hub.emitters && hub.emitters.incoming) {
@@ -68,13 +67,15 @@ const connect = (hub, url, reconnect) => {
         )
       )
     ) {
-      receiveLarge(data, set)
+      receiveLarge(data, data => {
+        data = JSON.parse(data)
+        receive(hub, data[0], data[1])
+      })
     } else {
-      set(data)
+      data = JSON.parse(data)
+      receive(hub, data[0], data[1])
     }
   }
-
-  const set = data => receive(hub, JSON.parse(data)[0], JSON.parse(data)[1])
 }
 
 const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
@@ -112,14 +113,24 @@ const removePaths = (struct, list, stamp, data) => {
 const receive = (hub, data, info) => {
   bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
 
-  if (info && info.connect) {
-    console.log('recieve some data!')
-    hub.set({ connected: true }, bs.create())
-    meta(hub)
-    bs.close()
+  if (info) {
+    if (info.connect) {
+      hub.set({ connected: true }, bs.create())
+      meta(hub)
+      bs.close()
+    }
+    if (info.requestSubs) {
+      sendSubscriptions(hub.socket, info.requestSubs, hub)
+    }
+    if (info.emit) {
+      const stamp = bs.create()
+      for (let event in info.emit) {
+        hub.emit(event, info.emit[event], stamp)
+      }
+      bs.close()
+    }
   }
-  // hub._receiving =  handle this!
-  // this will help /w heavy computation on incoming
+
   if (data) {
     next(() => {
       const stamp = bs.create()
