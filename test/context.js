@@ -241,7 +241,7 @@ test('context - fire subscriptions on context switch', { timeout: 2000 }, t => {
 })
 
 test('context - switch context use cache', { timeout: 2000 }, t => {
-  t.plan(13)
+  t.plan(12)
 
   const server = hub({
     _uid_: 'server',
