@@ -1,5 +1,7 @@
+require('./switch')
 // require('./context')
 // require('./data-size')
+// require('./switch')
 // require('./client')
 // require('./types')
 // require('./resolveRefs')
@@ -10,4 +12,3 @@
 // require('./references')
 // require('./offset')
 // require('./heartbeat')
-require('./switch')

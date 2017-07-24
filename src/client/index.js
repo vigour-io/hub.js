@@ -18,14 +18,9 @@ import hub from '../hub'
 
 const isNode = typeof window === 'undefined'
 
-// want to use for upsteream
 const next = isNode
   ? fn => setTimeout(fn, 18)
   : global.requestAnimationFrame
-
-// const cancel = isNode
-//   ? clearTimeout
-//   : global.cancelAnimationFrame
 
 const connect = (hub, url, reconnect) => {
   // use outside function non anon since its slower (according to uws)
@@ -72,26 +67,15 @@ const connect = (hub, url, reconnect) => {
         )
       )
     ) {
-      receiveLarge(data, set)
-    // just use array! remove this nonsense
-    } else if (data[0] === '#') {
-      if (data[1] === '1') {
-        // same here
-        sendSubscriptions(socket, JSON.parse(data.slice(2)), hub)
-      } else {
-        // call it events -- emit {} etc
-        // need to fix this on send used in phoenix else it breaks
-        // [ 1 ] emit: { [type]: [], }
-        // [ 1 ] subscriptions: { [type]: [] }
-        hub.emit('error', JSON.parse(data.slice(1)))
-      }
+      receiveLarge(data, data => {
+        data = JSON.parse(data)
+        receive(hub, data[0], data[1])
+      })
     } else {
-      // the result of a context switch
-      set(data)
+      data = JSON.parse(data)
+      receive(hub, data[0], data[1])
     }
   }
-
-  const set = data => receive(hub, JSON.parse(data)[0], JSON.parse(data)[1])
 }
 
 const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
@@ -116,20 +100,16 @@ const removePaths = (struct, list, stamp, data) => {
       return
     }
     if (listStamp && (!data || data.val === void 0)) {
-        // console.log('soft removing', struct.path())
       if ((keys && keep) || ownListeners(struct)) {
         delete struct.val
         struct.emit('data', null, stamp)
         delete struct.stamp
       } else {
-        // console.log('hard removing', struct.path())
         struct.set(null, stamp)
         return true
       }
     }
   } else if (!keep && !ownListeners(struct)) {
-    // console.log('hard removing', struct.path())
-    // if (oldStamp )
     struct.set(null, stamp)
     return true
   }
@@ -141,14 +121,24 @@ const receive = (hub, data, info) => {
 
   console.log('INCCOMING ON CLIENT 🦄🦄🦄🦄🦄🦄🦄🦄', data, info)
 
-  if (info && info.connect) {
-    console.log('recieve some data!')
-    hub.set({ connected: true }, bs.create())
-    meta(hub)
-    bs.close()
+  if (info) {
+    if (info.connect) {
+      hub.set({ connected: true }, bs.create())
+      meta(hub)
+      bs.close()
+    }
+    if (info.requestSubs) {
+      sendSubscriptions(hub.socket, info.requestSubs, hub)
+    }
+    if (info.emit) {
+      const stamp = bs.create()
+      for (let event in info.emit) {
+        hub.emit(event, info.emit[event], stamp)
+      }
+      bs.close()
+    }
   }
-  // hub._receiving =  handle this!
-  // this will help /w heavy computation on incoming
+
   if (data) {
     next(() => {
       const stamp = bs.create()
