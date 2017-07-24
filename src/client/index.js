@@ -73,20 +73,7 @@ const connect = (hub, url, reconnect) => {
       )
     ) {
       receiveLarge(data, set)
-    // just use array! remove this nonsense
-    } else if (data[0] === '#') {
-      if (data[1] === '1') {
-        // same here
-        sendSubscriptions(socket, JSON.parse(data.slice(2)), hub)
-      } else {
-        // call it events -- emit {} etc
-        // need to fix this on send used in phoenix else it breaks
-        // [ 1 ] emit: { [type]: [], }
-        // [ 1 ] subscriptions: { [type]: [] }
-        hub.emit('error', JSON.parse(data.slice(1)))
-      }
     } else {
-      // the result of a context switch
       set(data)
     }
   }
@@ -111,18 +98,15 @@ const removePaths = (struct, list, stamp, data) => {
   if (struct.val !== void 0) {
     if (list[puid(struct)] && (!data || data.val === void 0)) {
       if (ownListeners(struct)) {
-        // console.log('soft removing', struct.path())
         delete struct.val
         struct.stamp = 0
         struct.emit('data', null, stamp)
       } else {
-        // console.log('hard removing', struct.path())
         struct.set(null, stamp)
         return true
       }
     }
   } else if (!keep && !ownListeners(struct)) {
-    // console.log('hard removing', struct.path())
     struct.set(null, stamp)
     return true
   }

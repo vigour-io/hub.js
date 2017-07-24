@@ -54,7 +54,6 @@ const addToCache = (client, hub, payload) => {
 }
 
 const setPayload = (hub, payload, client) => {
-  // console.log('SERVER RECEIVE: %j', payload)
   hub.set(payload, false)
   addToCache(client, hub, payload)
 }
@@ -97,10 +96,8 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
         clientSet(client, meta, socket, t, payload, contextSwitched)
       } else {
         console.log('⚠️ client discconected when logging in')
-        // may need to handle something?
       }
     }).catch(err => {
-      // maybe need to dc the client - at least send some information
       hub.emit('error', err)
     })
   } else {
