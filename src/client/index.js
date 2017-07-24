@@ -118,7 +118,7 @@ const removePaths = (struct, list, stamp, data) => {
         delete struct.stamp
       } else {
         // console.log('hard removing', struct.path())
-        struct.set(null, stamp)
+        struct.set(null, stamp, void 0, true)
         return true
       }
     } else {
@@ -126,7 +126,7 @@ const removePaths = (struct, list, stamp, data) => {
     }
   } else if (!keep && !ownListeners(struct)) {
     // console.log('hard removing', struct.path())
-    struct.set(null, stamp)
+    struct.set(null, stamp, void 0, true)
     return true
   } else {
     delete struct.stamp
