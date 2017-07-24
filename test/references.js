@@ -94,7 +94,7 @@ test('circular references', t => {
 })
 
 test('reference field merge', { timeout: 1e3 }, t => {
-  t.plan(8)
+  t.plan(9)
 
   const server = hub({
     _uid_: 'server',
@@ -165,7 +165,7 @@ test('reference field merge', { timeout: 1e3 }, t => {
 
       client.set({ context: 'second' })
 
-      return new Promise(resolve => setTimeout(resolve, 50))
+      return client.get(['list', 'i4', 'sub']).once(null)
     })
     .then(() => {
       client.set({ ref: ['@', 'root', 'list', 'i1'] })
@@ -182,17 +182,20 @@ test('reference field merge', { timeout: 1e3 }, t => {
 
       client.set({ context: 'first' })
 
-      return new Promise(resolve => setTimeout(resolve, 50))
-    })
-    .then(() => {
-      client.set({ ref: ['@', 'root', 'list', 'i1'] })
+      setTimeout(() => {
+        client.set({ ref: ['@', 'root', 'list', 'i1'] })
+      })
 
-      return client.get(['list', 'i2', 'other'], {}).once('master')
+      return client.get(['list', 'i1', 'items', 'sub1', 'bf'], {}).once(false)
     })
     .then(() => {
       t.equals(
         client.get(['list', 'i1', 'items', 'sub1', 'bf', 'compute']), false,
         'i1 sub1 branch field is correct'
+      )
+      t.equals(
+        client.get(['list', 'i1', 'items', 'sub2', 'tf', 'compute']), 'tv',
+        'i1 sub1 type field is correct'
       )
       // i1 pf override won't get synced back
       // because it's out of subscription range
@@ -210,12 +213,12 @@ test('reference field merge', { timeout: 1e3 }, t => {
       )
 
       client.set({ context: 'second' })
-      return new Promise(resolve => setTimeout(resolve, 50))
-    })
-    .then(() => {
-      client.set({ ref: ['@', 'root', 'list', 'i1'] })
 
-      return client.get(['list', 'i4', 'f1']).once(true)
+      setTimeout(() => {
+        client.set({ ref: ['@', 'root', 'list', 'i1'] })
+      }, 50)
+
+      return client.get(['list', 'i4', 'f1'], {}).once(true)
     })
     .then(() => {
       t.equals(
@@ -230,6 +233,13 @@ test('reference field merge', { timeout: 1e3 }, t => {
         client.get(['list', 'i3', 'items', 'sub', 'bf', 'compute']), false,
         'i3 sub branch field is correct'
       )
+      /*
+      this must be fixed
+      t.equals(
+        client.get(['list', 'i3', 'items', 'sub', 'tf', 'compute']), 'tv',
+        'i3 sub type field is correct'
+      )
+      */
       t.equals(
         client.get(['list', 'i3', 'pf', 'compute']), false,
         'i3 props field override is correct'
