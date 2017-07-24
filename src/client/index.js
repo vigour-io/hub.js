@@ -97,7 +97,6 @@ const connect = (hub, url, reconnect) => {
 const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
 
 const removePaths = (struct, list, stamp, data) => {
-  delete struct.stamp
   var keep = true
   const keys = getKeys(struct)
   if (keys) {
@@ -110,9 +109,10 @@ const removePaths = (struct, list, stamp, data) => {
     }
   }
   if (struct.val !== void 0) {
-    if (list[puid(struct)] && (!data || data.val === void 0)) {
-        // console.log('soft removing', struct.path())
+    const removeStamp = list[puid(struct)]
+    if (removeStamp && removeStamp >= struct.stamp && (!data || data.val === void 0)) {
       if ((keys && keep) || ownListeners(struct)) {
+        // console.log('soft removing', struct.path())
         delete struct.val
         struct.emit('data', null, stamp)
         delete struct.stamp
@@ -121,11 +121,15 @@ const removePaths = (struct, list, stamp, data) => {
         struct.set(null, stamp)
         return true
       }
+    } else {
+      delete struct.stamp
     }
   } else if (!keep && !ownListeners(struct)) {
     // console.log('hard removing', struct.path())
     struct.set(null, stamp)
     return true
+  } else {
+    delete struct.stamp
   }
 }
 
