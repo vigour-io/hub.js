@@ -18,14 +18,9 @@ import hub from '../hub'
 
 const isNode = typeof window === 'undefined'
 
-// want to use for upsteream
 const next = isNode
   ? fn => setTimeout(fn, 18)
   : global.requestAnimationFrame
-
-// const cancel = isNode
-//   ? clearTimeout
-//   : global.cancelAnimationFrame
 
 const connect = (hub, url, reconnect) => {
   // use outside function non anon since its slower (according to uws)
@@ -53,6 +48,7 @@ const connect = (hub, url, reconnect) => {
 
   socket.onerror = isNode ? close : () => socket.close()
 
+  // onopen and onclose need to get virtualized on top of a stupid hearthbeat
   socket.onopen = () => {
     hub.socket = socket
     if (hub.emitters && hub.emitters.incoming) {

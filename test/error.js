@@ -8,10 +8,15 @@ test('error', { timeout: 1000 }, t => {
     ha: true,
     getContext: (context, retrieve, hub, socket) => new Promise((resolve, reject) => {
       if (context === 'flurpy') {
-        // socket.send('#' + JSON.stringify({
-        //   hahha: true
-        // }))
+        socket.send(JSON.stringify([, {
+          emit: {
+            error: {
+              message: 'hello some shit for you'
+            }
+          }
+        }]))
         // reject(new Error('ha!'))
+        // so this will become error handler for real --- fix it fix it
       } else {
         resolve(retrieve(context))
       }
