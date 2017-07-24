@@ -1,10 +1,17 @@
 import parse from '../subscription/parse'
 import { subscribe } from 'brisky-struct'
 import bs from 'stamp'
-import send from './send'
+import { progress, send } from './send'
 import createClient from '../client/create'
 import { removeClient } from './remove'
 import { cache, reuseCache } from './cache'
+
+const isEmpty = obj => {
+  for (let i in obj) { //eslint-disable-line
+    return false
+  }
+  return true
+}
 
 export default (hub, socket, data) => {
   const payload = data[0]
@@ -47,6 +54,7 @@ const addToCache = (client, hub, payload) => {
 }
 
 const setPayload = (hub, payload, client) => {
+  // console.log('SERVER RECEIVE: %j', payload)
   hub.set(payload, false)
   addToCache(client, hub, payload)
 }
@@ -58,11 +66,14 @@ const set = (meta, socket, t, payload, reuse) => {
   const client = socket.client = createClient(
     t, { socket, context }, stamp, socket.useragent, id
   )
+  if (payload) setPayload(t, payload, client)
   if (reuse) {
     client.cache = reuse.cache
-    client.contextSwitched = reuse.remove
+    if (!isEmpty(reuse.remove)) {
+      client.contextSwitched = reuse.remove
+      progress(client)
+    }
   }
-  if (payload) setPayload(t, payload, client)
   if (meta.s) incomingSubscriptions(t, client, meta, id)
   bs.close()
 }

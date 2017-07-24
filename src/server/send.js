@@ -20,7 +20,7 @@ const progress = (client) => {
     bs.on(() => {
       if (client.val !== null) {
         const p = client.inProgress[0]
-        if (!isEmpty(p)) {
+        if (client.inProgress[1].remove || !isEmpty(p)) {
           if (p.types) {
             // order hack!
             for (let i in p) {
@@ -36,6 +36,7 @@ const progress = (client) => {
               }
             }
           }
+          // console.log('SERVER SEND: %j', p)
           const raw = JSON.stringify(client.inProgress)
           if (!sendLarge(raw, client)) {
             if (client.blobInProgress) {
@@ -115,7 +116,7 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
       if (struct.key === 'type') {
         if (val === 'hub') return
         serialize(client, t, subs, getType(struct, val), level)
-      // allways need a stamp!
+        // allways need a stamp!
       }
 
       if (typeof val === 'object' && val !== null && val.inherits) {
@@ -161,4 +162,4 @@ const deepSerialize = (keys, client, t, subs, struct, level) => {
   }
 }
 
-export default send
+export { progress, send }

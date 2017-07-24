@@ -14,6 +14,7 @@ import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
 import { receiveLarge } from '../size'
+import hub from '../hub'
 
 const isNode = typeof window === 'undefined'
 
@@ -93,25 +94,43 @@ const connect = (hub, url, reconnect) => {
   const set = data => receive(hub, JSON.parse(data)[0], JSON.parse(data)[1])
 }
 
-const removePaths = (hub, struct, list, stamp) => {
-  if (struct.val) {
-    if (list[puid(struct)]) {
-      struct.set(null, stamp)
-    }
-  } else {
-    const keys = getKeys(struct)
-    if (keys) {
-      let i = keys.length
-      while (i--) {
-        removePaths(hub, struct.get(keys[i]), list, stamp)
+const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
+
+const removePaths = (struct, list, stamp, data) => {
+  var keep = true
+  const keys = getKeys(struct)
+  if (keys) {
+    let i = keys.length
+    keep = i
+    while (i--) {
+      if (removePaths(struct.get(keys[i]), list, stamp, data && data[keys[i]])) {
+        keep--
       }
     }
+  }
+  if (struct.val !== void 0) {
+    if (list[puid(struct)] && (!data || data.val === void 0)) {
+      if (ownListeners(struct)) {
+        // console.log('soft removing', struct.path())
+        delete struct.val
+        struct.stamp = 0
+        struct.emit('data', null, stamp)
+      } else {
+        // console.log('hard removing', struct.path())
+        struct.set(null, stamp)
+        return true
+      }
+    }
+  } else if (!keep && !ownListeners(struct)) {
+    // console.log('hard removing', struct.path())
+    struct.set(null, stamp)
+    return true
   }
 }
 
 // raf
 const receive = (hub, data, info) => {
-  bs.setOffset((info.stamp | 0) - ((bs.create() | 0) - bs.offset))
+  bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
 
   if (info && info.connect) {
     console.log('recieve some data!')
@@ -124,17 +143,18 @@ const receive = (hub, data, info) => {
   if (data) {
     next(() => {
       const stamp = bs.create()
-      if (info.remove) {
-        hub.receiveOnly = true
-        removePaths(hub, hub, info.remove, stamp)
-        hub.receiveOnly = null
-      }
       if (!hub.receiveOnly) {
         hub.receiveOnly = true
-        hub.set(data, stamp)
+        if (info.remove) {
+          removePaths(hub, info.remove, stamp, data)
+        }
+        hub.set(data, stamp, void 0, !!info.remove)
         hub.receiveOnly = null
       } else {
-        hub.set(data, stamp)
+        if (info.remove) {
+          removePaths(hub, info.remove, stamp, data)
+        }
+        hub.set(data, stamp, void 0, !!info.remove)
       }
       bs.close()
     })

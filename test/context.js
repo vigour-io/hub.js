@@ -241,6 +241,8 @@ test('context - fire subscriptions on context switch', { timeout: 2000 }, t => {
 })
 
 test('context - switch context use cache', { timeout: 2000 }, t => {
+  t.plan(13)
+
   const server = hub({
     _uid_: 'server',
     port: 6060,
@@ -251,7 +253,8 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
     }),
     masterData: {
       willNotChange: 'amongBranches'
-    }
+    },
+    masterRef: ['@', 'root', 'masterData']
   })
 
   const client1 = hub({
@@ -272,8 +275,64 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
     }
   })
 
-  client1.subscribe(true)
-  client2.subscribe(true)
+  const sub = {
+    user: { val: true },
+    masterRef: { val: true },
+    branchKey1: { val: true },
+    branchKey2: { val: true }
+  }
+
+  client1.subscribe(sub)
+  client2.subscribe(sub)
+
+  client1.set({
+    props: {
+      masterRef: {
+        cExtra: 1
+      },
+      branchKey1: {
+        subKey1: {
+          deepKey1: {
+            on (val) {
+              if (val === null) {
+                t.pass('soft removal fired event')
+              }
+            }
+          }
+        }
+      }
+    },
+    branchKey1: {
+      subKey1: {
+        deepKey1: true
+      }
+    },
+    masterRef: {
+      refExtra: 1
+    },
+    masterData: {
+      origExtra: 1
+    }
+  })
+
+  client2.set({
+    props: {
+      masterRef: {
+        cExtra: 2
+      }
+    },
+    branchKey2: {
+      subKey2: {
+        deepKey2: true
+      }
+    },
+    masterRef: {
+      refExtra: 2
+    },
+    masterData: {
+      origExtra: 2
+    }
+  })
 
   Promise.all([
     client1.get(['user', 'id'], {}).once('user1'),
@@ -284,45 +343,65 @@ test('context - switch context use cache', { timeout: 2000 }, t => {
       client2.set({ context: 'user1' })
 
       return Promise.all([
-        new Promise(resolve => client1.subscribe(
-          { user: { id: true } },
-          val => val.compute() === 'user2' && resolve())
-        ),
-        new Promise(resolve => client2.subscribe(
-          { user: { id: true } },
-          val => val.compute() === 'user1' && resolve())
-        )
+        client1.get(['user', 'id'], {}).once('user2'),
+        client2.get(['user', 'id'], {}).once('user1')
       ])
     })
     .then(() => {
-      t.deepEquals(client1.serialize(), {
-        masterData: {
-          willNotChange: 'amongBranches'
-        },
-        user: {
-          id: 'user2'
-        },
-        branchData: {
-          'specificTo': 'user2'
-        }
-      }, 'client1 has data of user2')
+      t.equals(
+        client1.get(['masterData', 'willNotChange', 'compute']), 'amongBranches',
+        'master data is available in client1'
+      )
+      t.equals(
+        client1.get(['masterData', 'willNotChange', 'compute']), 'amongBranches',
+        'master data is available in client2'
+      )
 
-      t.deepEquals(client2.serialize(), {
-        masterData: {
-          willNotChange: 'amongBranches'
-        },
-        user: {
-          id: 'user1'
-        },
-        branchData: {
-          'specificTo': 'user1'
-        }
-      }, 'client2 has data of user1')
+      t.ok(
+        client1.get(['branchKey2', 'subKey2', 'deepKey2', 'compute']),
+        'branch2 data is available in client1'
+      )
+      t.notOk(
+        client1.get(['branchKey1', 'subKey1', 'deepKey1', 'compute']),
+        'branch1 data is not available in client1'
+      )
+      t.ok(
+        client2.get(['branchKey1', 'subKey1', 'deepKey1', 'compute']),
+        'branch1 data is available in client2'
+      )
+      t.notOk(
+        client2.get(['branchKey2', 'subKey2', 'deepKey2', 'compute']),
+        'branch2 data is not available in client2'
+      )
+
+      t.equals(
+        client1.get(['masterRef', 'refExtra', 'compute']), 2,
+        'branch2 master ref override is available in client1'
+      )
+      t.equals(
+        client1.get(['masterRef', 'origExtra', 'compute']), 2,
+        'branch2 master override is available in client1'
+      )
+      t.equals(
+        client2.get(['masterRef', 'refExtra', 'compute']), 1,
+        'branch1 master ref override is available in client2'
+      )
+      t.equals(
+        client2.get(['masterRef', 'origExtra', 'compute']), 1,
+        'branch1 master override is available in client2'
+      )
+
+      t.equals(
+        client1.get(['masterRef', 'cExtra', 'compute']), 1,
+        'client1 specific ref data is intact'
+      )
+      t.equals(
+        client2.get(['masterRef', 'cExtra', 'compute']), 2,
+        'client2 specific ref data is intact'
+      )
 
       server.set(null)
       client1.set(null)
       client2.set(null)
-
-      t.end()
     })
 })
