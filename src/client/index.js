@@ -185,9 +185,11 @@ const url = (hub, val, key, stamp) => {
       removeSocket(hub)
     }
   }, 'url$')
-
+  if (val === void 0) {
+    throw Error('setting hub.url to "undefined", are you missing an environment variable?')
+  }
   if (!val) val = null
-  if ((!hub.url && val) || (hub.url.compute() !== val)) {
+  if ((!hub.url && val) || ((hub.url && hub.url.compute()) !== val)) {
     removeSocket(hub)
     if (!val) {
       hub.set({ connected: false }, stamp)
