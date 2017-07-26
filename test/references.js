@@ -226,14 +226,14 @@ test('reference field merge', { timeout: 1e3 }, t => {
       // return client.get(['list', 'i1', 'items', 'sub2', 'bf']).once(true)
     })
     .then(() => {
-      // t.equals(
-      //   client.get(['list', 'i1', 'items', 'sub2', 'bf', 'compute']), true,
-      //   'i1 sub2 branch field is correct'
-      // )
-      // t.equals(
-      //   client.get(['list', 'i2', 'other', 'compute']), 'second',
-      //   'i2 branch field is correct'
-      // )
+      t.equals(
+        client.get(['list', 'i1', 'items', 'sub2', 'bf', 'compute']), true,
+        'i1 sub2 branch field is correct'
+      )
+      t.equals(
+        client.get(['list', 'i2', 'other', 'compute']), 'second',
+        'i2 branch field is correct'
+      )
       t.equals(
         client.get(['list', 'i3', 'items', 'sub', 'bf', 'compute']), false,
         'i3 sub branch field is correct'
