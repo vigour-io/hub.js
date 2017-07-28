@@ -108,7 +108,9 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
 const parsed = {}
 
 const incomingSubscriptions = (hub, client, meta, id) => {
-  if (!client) return // silent gaurd
+  if (!client) {
+    return // silent gaurd
+  }
 
   const update = (t, type, subs, tree) => send(hub, client, t, type, subs, tree)
 

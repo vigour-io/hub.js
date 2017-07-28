@@ -134,11 +134,12 @@ const heartbeat = hub => {
 
 // raf
 const receive = (hub, data, info) => {
-  bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
-
   if (info) {
+    if (info.stamp) {
+      bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
+    }
+
     if (info.requestSubs) {
-      console.log('WANT SUBS')
       sendSubscriptions(hub.socket, info.requestSubs, hub)
     }
     if (info.connect) {
