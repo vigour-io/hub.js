@@ -18,7 +18,7 @@ import hub from '../hub'
 
 const isNode = typeof window === 'undefined'
 
-const heartbeatTimeout = 100
+const heartbeatTimeout = 3e3
 
 const next = isNode
   ? fn => setTimeout(fn, 18)

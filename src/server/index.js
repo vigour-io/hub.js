@@ -8,18 +8,20 @@ import ua from 'vigour-ua'
 
 const Server = uws.Server
 
-const heartbeatTimeout = 200
+const heartbeatTimeout = 8e3
 
 const createServer = (hub, port) => {
   const server = new Server({ port })
+  const forceHeartbeat = hub._forceHeartbeat_ // for testing
   console.log(`💫 hub listening on ${port} 💫`)
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
-    // need to remove when done -- its the best thing todo (mem!!!)
-    var isHeartbeat = ua(socket.useragent).platform === 'node.js'
-    isHeartbeat = false
-    // here analyze the ua and do heartbeat
+
+    // reuse this parse for client creation
+    var isHeartbeat = ua(socket.useragent).platform === 'ios' || forceHeartbeat
+
     if (isHeartbeat) {
+      console.log('use heartbeat for events 💔')
       socket.send(JSON.stringify([void 0, {
         stamp: createStamp(),
         connect: true,
@@ -31,7 +33,6 @@ const createServer = (hub, port) => {
           if (data[1] && data[1].heartbeat) {
             clearTimeout(socket.isInvalid)
             socket.isInvalid = setTimeout(() => {
-              console.log(`did not receive a heartbeat for ${heartbeatTimeout}ms DISCONNECT`)
               if (socket.client) removeClient(socket.client)
               socket.isInvalid = null
             }, heartbeatTimeout)
