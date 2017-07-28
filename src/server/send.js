@@ -1,5 +1,5 @@
 import bs from 'stamp'
-import { get, getKeys, getType, getVal } from 'brisky-struct'
+import { get, getOrigin, getRefVal, getKeys, getType, getVal } from 'brisky-struct'
 import { cache, isCached } from './cache'
 import { sendLarge } from '../size'
 
@@ -82,7 +82,7 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
     return
   }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
-  const val = isRemoved ? null : getVal(struct)
+  const val = isRemoved ? null : getRefVal(struct)
 
   if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
     // val === null -- double chck if this is nessecary
@@ -150,7 +150,7 @@ const deepSerialize = (keys, client, t, subs, struct, level) => {
   }
   if (keys) {
     for (let i = 0, len = keys.length; i < len; i++) {
-      let prop = get(struct, keys[i])
+      let prop = getOrigin(struct, keys[i])
       if (prop && prop.isHub) serialize(client, t, subs, prop, level)
     }
   }
