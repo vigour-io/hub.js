@@ -103,11 +103,12 @@ const meta = hub => {
 
 const send = (val, stamp, struct) => {
   // also check for removal
+
   if (
-    (
-      typeof val === 'object' && val &&
-      val[0] === void 0 && val.val === void 0
-    ) ||
+    // (
+    //   typeof val === 'object' && val &&
+    //   val[0] === void 0 && val.val === void 0
+    // ) ||
     (stamp < 0 && val === null && struct.parent(t => {
       if (t.key === 'clients') {
         return true
@@ -173,11 +174,12 @@ const inProgress = (hub, tick) => {
 
 const out = t => {
   // if (typeof window !== 'undefined') {
-    // console.log('SEND', JSON.stringify(t.inProgress, false, 2))
+  //   console.log('SEND', JSON.stringify(t.inProgress, false, 2))
   // }
   if (!t.socket.send) {
     t.set({ connected: false })
   } else {
+    console.log('\n\n🍔🍔🍔🍔🍔🍔 SEND SEND SEND FROM THE CLIENT', JSON.stringify(t.inProgress, false, 2))
     t.socket.send(JSON.stringify(t.inProgress))
   }
   t.inProgress = false

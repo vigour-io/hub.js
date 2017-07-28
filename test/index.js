@@ -1,3 +1,4 @@
+// require('./switch')
 // require('./context')
 // require('./data-size')
 // require('./switch')
