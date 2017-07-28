@@ -186,7 +186,7 @@ const url = (hub, val, key, stamp) => {
     }
   }, 'url$')
   if (val === void 0) {
-    throw Error('setting hub.url to "undefined", are you missing an environment variable?')
+    throw Error('setting hub.url to "undefined", are you missing an environment variable?\n' + JSON.stringify(process.env, false, 2))
   }
   if (!val) val = null
   if ((!hub.url && val) || ((hub.url && hub.url.compute()) !== val)) {
