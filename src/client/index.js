@@ -137,14 +137,15 @@ const receive = (hub, data, info) => {
   bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
 
   if (info) {
+    if (info.requestSubs) {
+      // console.log('INFO REQUESTSUBS', info.requestSubs)
+      sendSubscriptions(hub.socket, info.requestSubs, hub)
+    }
     if (info.connect) {
       hub.set({ connected: true }, bs.create())
       meta(hub)
       if (info.heartbeat) heartbeat(hub)
       bs.close()
-    }
-    if (info.requestSubs) {
-      sendSubscriptions(hub.socket, info.requestSubs, hub)
     }
     if (info.emit) {
       const stamp = bs.create()

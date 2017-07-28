@@ -26,7 +26,7 @@ const progress = (client) => {
             for (let i in p) {
               // order is still important since setting types after the fact is still broken
               // this will be a big update
-              // test if it works now since switchinheritance update
+              // test if it works now since switch-inheritance update
               if (i === 'types') {
                 break
               } else {
