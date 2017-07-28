@@ -19,13 +19,21 @@ const createServer = (hub, port) => {
     }]))
 
     socket.on('message', (data) => {
+      if (socket.client && socket.client.heartbeat) {
+        console.log('got dat client')
+      }
+      // maybe try catch to be sure -- does cost some speed
       data = JSON.parse(data)
       if (data) incoming(hub, socket, data)
     })
-    const close = () => {
+
+    socket.on('close', () => {
+      if (socket.client && !socket.client.heartbeat) removeClient(socket.client)
+    })
+
+    socket.on('heartbeatFail', () => {
       if (socket.client) removeClient(socket.client)
-    }
-    socket.on('close', close)
+    })
     // socket.on('error', () => close()) // need to do something here as well no leaks!
   })
 

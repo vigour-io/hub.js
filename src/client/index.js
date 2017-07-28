@@ -58,6 +58,7 @@ const connect = (hub, url, reconnect) => {
   }
 
   socket.onmessage = (data) => {
+    console.log('got a msg', data)
     data = data.data
 
     if (
