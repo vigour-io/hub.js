@@ -34,6 +34,7 @@ const createServer = (hub, port) => {
     socket.on('heartbeatFail', () => {
       if (socket.client) removeClient(socket.client)
     })
+
     // socket.on('error', () => close()) // need to do something here as well no leaks!
   })
 

@@ -122,7 +122,7 @@ hub.set({
 
 A simple subscription
 ```javascript
-client.subscribe(true), (target, type) => {
+client.subscribe(true, (target, type) => {
   // fires updates for any update in the hub
   console.log('update!', target, type)
 })
@@ -136,7 +136,7 @@ server.set('hello!')
 
 A shallow subscription
 ```javascript
-client.subscribe('shallow'), (target, type) => {
+client.subscribe('shallow', (target, type) => {
   // fires updates for any update on the value of the hub, but not nested fields
   console.log('update!', target, type)
 })

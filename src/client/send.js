@@ -102,6 +102,20 @@ const meta = hub => {
 }
 
 const send = (val, stamp, struct) => {
+  // also check for removal
+  if (
+    (
+      typeof val === 'object' && val &&
+      val[0] === void 0 && val.val === void 0
+    ) ||
+    (stamp < 0 && val === null && struct.parent(t => {
+      if (t.key === 'clients') {
+        return true
+      }
+    }))
+  ) {
+    return
+  }
   let hub
   let p = struct
   while (p) {
@@ -158,7 +172,14 @@ const inProgress = (hub, tick) => {
 }
 
 const out = t => {
-  t.socket.send(JSON.stringify(t.inProgress))
+  // if (typeof window !== 'undefined') {
+    // console.log('SEND', JSON.stringify(t.inProgress, false, 2))
+  // }
+  if (!t.socket.send) {
+    t.set({ connected: false })
+  } else {
+    t.socket.send(JSON.stringify(t.inProgress))
+  }
   t.inProgress = false
 }
 

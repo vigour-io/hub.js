@@ -6,12 +6,15 @@ import {
   parse,
   subscribe,
   struct,
-  emitterProperty
+  emitterProperty,
+  puid,
+  getKeys
 } from 'brisky-struct'
 import serialize from '../subscription/serialize'
 import hash from 'string-hash'
 import createClient from './create'
 import { receiveLarge } from '../size'
+import hub from '../hub'
 
 const isNode = typeof window === 'undefined'
 
@@ -92,10 +95,43 @@ const connect = (hub, url, reconnect) => {
   const set = data => receive(hub, JSON.parse(data)[0], JSON.parse(data)[1])
 }
 
+const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
+
+const removePaths = (struct, list, stamp, data) => {
+  var keep = true
+  const keys = getKeys(struct)
+  if (keys) {
+    let i = keys.length
+    keep = i
+    while (i--) {
+      if (removePaths(struct.get(keys[i]), list, stamp, data && data[keys[i]])) {
+        keep--
+      }
+    }
+  }
+  if (struct.val !== void 0) {
+    if (list[puid(struct)] && (!data || data.val === void 0)) {
+      if (ownListeners(struct)) {
+        // console.log('soft removing', struct.path())
+        delete struct.val
+        struct.stamp = 0
+        struct.emit('data', null, stamp)
+      } else {
+        // console.log('hard removing', struct.path())
+        struct.set(null, stamp)
+        return true
+      }
+    }
+  } else if (!keep && !ownListeners(struct)) {
+    // console.log('hard removing', struct.path())
+    struct.set(null, stamp)
+    return true
+  }
+}
+
 // raf
 const receive = (hub, data, info) => {
-  const stamp = hub._incomingStamp = bs.create()
-  bs.setOffset((info.stamp | 0) - ((stamp | 0) - bs.offset))
+  bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
 
   if (info && info.connect) {
     hub.set({ connected: true }, bs.create())
@@ -109,10 +145,16 @@ const receive = (hub, data, info) => {
       const stamp = bs.create()
       if (!hub.receiveOnly) {
         hub.receiveOnly = true
-        hub.set(data, stamp, info.reset)
+        if (info.remove) {
+          removePaths(hub, info.remove, stamp, data)
+        }
+        hub.set(data, stamp, void 0, !!info.remove)
         hub.receiveOnly = null
       } else {
-        hub.set(data, stamp, info.reset)
+        if (info.remove) {
+          removePaths(hub, info.remove, stamp, data)
+        }
+        hub.set(data, stamp, void 0, !!info.remove)
       }
       bs.close()
     })
@@ -144,9 +186,11 @@ const url = (hub, val, key, stamp) => {
       removeSocket(hub)
     }
   }, 'url$')
-
+  if (val === void 0) {
+    throw Error('setting hub.url to "undefined", are you missing an environment variable?\n' + JSON.stringify(process.env, false, 2))
+  }
   if (!val) val = null
-  if ((!hub.url && val) || (hub.url.compute() !== val)) {
+  if ((!hub.url && val) || ((hub.url && hub.url.compute()) !== val)) {
     removeSocket(hub)
     if (!val) {
       hub.set({ connected: false }, stamp)
@@ -189,7 +233,7 @@ const removeClients = (hub, stamp) => {
         client.val !== null &&
         client !== hub.client
       ) {
-        client.set(null, stamp)
+        client.set(null, -stamp)
         delete clients[key]
       }
     })
