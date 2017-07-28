@@ -45,7 +45,7 @@ test('switch', { timeout: 1e3 }, t => {
     ref: {
       $switch: t => {
         return t.origin().key === 'pageA' ? { itemsA: { val: true } }
-        : { itemsB: { val: true } }
+          : { itemsB: { val: true } }
       }
     }
   }, (val, type) => {

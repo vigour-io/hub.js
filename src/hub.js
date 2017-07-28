@@ -22,6 +22,7 @@ const hub = create({
   props: {
     default: 'self',
     _uid_: (t, val) => { t.set({ define: { _uid_: val } }) },
+    _forceHeartbeat_: true,
     types: types.bind(), // to not interfere with struct type
     type: struct.props.type.bind(),
     client: true
