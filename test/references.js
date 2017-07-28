@@ -215,7 +215,7 @@ test('reference field merge', { timeout: 1e3 }, t => {
 
       client.set({
         context: 'second',
-        ref: ['@', 'root', 'list', 'i2']
+        ref: ['@', 'root', 'list', 'i3']
       })
 
       setTimeout(() => {
