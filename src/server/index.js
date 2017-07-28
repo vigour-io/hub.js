@@ -44,6 +44,7 @@ const createServer = (hub, port) => {
     } else {
       socket.on('message', (data) => {
         data = JSON.parse(data)
+        // console.log('ok incoming', data && JSON.stringify(data[1], false, 2))
         if (data) incoming(hub, socket, data)
       })
       socket.send(JSON.stringify([void 0, {

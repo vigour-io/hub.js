@@ -20,6 +20,7 @@ test('switch', { timeout: 1e3 }, t => {
   })
 
   const client = hub({
+    context: 'a',
     url: 'ws://localhost:6061',
     _uid_: 'client1'
     // context: 'a'
@@ -28,6 +29,7 @@ test('switch', { timeout: 1e3 }, t => {
   client.subscribe({
     ref: {
       $switch: t => {
+        console.log(t.origin().key, t.root()._uid_)
         return t.origin().key === 'blurf' ? {
           b: { val: true }
         } : {
@@ -37,7 +39,7 @@ test('switch', { timeout: 1e3 }, t => {
     }
   })
 
-  client.set({ ref: [ '@', 'parent', 'blurf' ] })
+  client.set({ ref: [ '@', 'root', 'blurf' ] })
 
   client.get([ 'blurf', 'b' ], {}).once('hello').then(() => {
     t.pass('received blurf.b')
