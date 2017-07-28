@@ -82,10 +82,11 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
     return
   }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
+  struct._rc = struct._c
   const val = isRemoved ? null : getRefVal(struct)
 
   if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
-    // val === null -- double chck if this is nessecary
+    // val === null -- double check if this is necessary
     const path = struct.path()
     const len = path.length
     let s = t[0]
