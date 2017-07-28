@@ -35,8 +35,8 @@ test('switch', { timeout: 1e3 }, t => {
   })
 
   const client = hub({
-    url: 'ws://localhost:6061',
     _uid_: 'client',
+    url: 'ws://localhost:6061',
     context: 'first',
     ref: ['@', 'parent', 'pageA']
   })
@@ -44,7 +44,8 @@ test('switch', { timeout: 1e3 }, t => {
   client.subscribe({
     ref: {
       $switch: t => {
-        return t.origin().key === 'pageA' ? { itemsA: { val: true } }
+        return t.origin().key === 'pageA'
+          ? { itemsA: { val: true } }
           : { itemsB: { val: true } }
       }
     }

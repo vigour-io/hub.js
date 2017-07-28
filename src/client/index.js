@@ -138,7 +138,7 @@ const receive = (hub, data, info) => {
 
   if (info) {
     if (info.requestSubs) {
-      // console.log('INFO REQUESTSUBS', info.requestSubs)
+      console.log('WANT SUBS')
       sendSubscriptions(hub.socket, info.requestSubs, hub)
     }
     if (info.connect) {
@@ -205,7 +205,7 @@ const url = (hub, val, key, stamp) => {
   if (val === void 0) {
     throw Error('setting hub.url to "undefined", are you missing an environment variable?\n' + JSON.stringify(process.env, false, 2))
   }
-  // if (!val) val = null -- dont know if this is good but you want to be able to set a url on for example false...
+  // if (!val) val = null// -- dont know if this is good but you want to be able to set a url on for example false...
   if ((!hub.url && val) || ((hub.url && hub.url.compute()) !== val)) {
     removeSocket(hub)
     if (!val) {
