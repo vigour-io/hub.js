@@ -2,84 +2,84 @@ const hub = require('../')
 const test = require('tape')
 const { puid } = require('brisky-struct')
 
-test('switch - basic', { timeout: 1e3 }, t => {
-  console.log('wtf!')
-  t.plan(1)
+// test('switch - basic', { timeout: 1e3 }, t => {
+//   console.log('wtf!')
+//   t.plan(1)
 
-  const server = hub({
-    _uid_: 'server',
-    port: 6061,
-    items: {
-      bla: {
-        vvvvv: 'bla!'
-      },
-      blax: 'hello'
-    },
-    itemsA: {
-      a: {
-        title: { val: [ '@', 'root', 'items', 'bla' ], GGGGG: 'xxx' },
-        hello: [ '@', 'root', 'items', 'blax' ]
-      }
-    }
-  })
+//   const server = hub({
+//     _uid_: 'server',
+//     port: 6061,
+//     items: {
+//       bla: {
+//         vvvvv: 'bla!'
+//       },
+//       blax: 'hello'
+//     },
+//     itemsA: {
+//       a: {
+//         title: { val: [ '@', 'root', 'items', 'bla' ], GGGGG: 'xxx' },
+//         hello: [ '@', 'root', 'items', 'blax' ]
+//       }
+//     }
+//   })
 
-  const client = hub({
-    url: 'ws://localhost:6061',
-    _uid_: 'client',
-    context: 'hello',
-    ref: [ '@', 'root', 'itemsA' ]
-  })
+//   const client = hub({
+//     url: 'ws://localhost:6061',
+//     _uid_: 'client',
+//     context: 'hello',
+//     ref: [ '@', 'root', 'itemsA' ]
+//   })
 
-  var first = false
+//   var first = false
 
-  client.subscribe({
-    ref: {
-      $switch: t => {
-        console.log('\n\n\n🦋🦋🦋🦋🦋🦋🦋', t.root()._uid_)
-        return t.origin().key === 'itemsA' ? { a: { val: true } }
-        : { b: { val: true } }
-      }
-    }
-  }, (s) => {
-    console.log('gurrrr ---- 👙', s.path(), JSON.stringify(client.serialize(), false, 2))
-    if (!first) {
-      first = true
-      setImmediate(() => {
-        console.log('were setting something comeon! 👢👢👢👢👢')
-        client.set({
-          items: {
-            bla: {
-              vvvvv: '!!!!!'
-            }
-          }
-        })
+//   client.subscribe({
+//     ref: {
+//       $switch: t => {
+//         console.log('\n\n\n🦋🦋🦋🦋🦋🦋🦋', t.root()._uid_)
+//         return t.origin().key === 'itemsA' ? { a: { val: true } }
+//         : { b: { val: true } }
+//       }
+//     }
+//   }, (s) => {
+//     console.log('gurrrr ---- 👙', s.path(), JSON.stringify(client.serialize(), false, 2))
+//     if (!first) {
+//       first = true
+//       setImmediate(() => {
+//         console.log('were setting something comeon! 👢👢👢👢👢')
+//         client.set({
+//           items: {
+//             bla: {
+//               vvvvv: '!!!!!'
+//             }
+//           }
+//         })
 
-        setTimeout(() => {
-          console.log('\n\n🌈🌈🌈🌈🌈GO AND SWITCH CONTEXT GO GO GO')
+//         setTimeout(() => {
+//           console.log('\n\n🌈🌈🌈🌈🌈GO AND SWITCH CONTEXT GO GO GO')
 
-          console.log(client.ref, puid(client.ref))
+//           console.log(client.ref, puid(client.ref))
 
-          client.set({
-            context: 'blabla',
-            ref: [ '@', 'root', 'flapflap' ],
-            jurbs: true
-          })
+//           client.set({
+//             context: 'blabla',
+//             ref: [ '@', 'root', 'flapflap' ],
+//             jurbs: true
+//           })
 
-          setTimeout(() => {
-            console.log('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥', client.ref)
-            // client.set({ ref: [ '@', 'root', 'itemsA' ] })
-          }, 100)
+//           setTimeout(() => {
+//             console.log('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥', client.ref)
+//             // client.set({ ref: [ '@', 'root', 'itemsA' ] })
+//           }, 100)
 
-        }, 100)
+//         }, 100)
 
-      })
-    }
-  })
+//       })
+//     }
+//   })
 
-  client.connected.once(true).then(() => {
-    console.log('👖')
-  })
-})
+//   client.connected.once(true).then(() => {
+//     console.log('👖')
+//   })
+// })
 
 // test('switch', { timeout: 1e3 }, t => {
 //   t.plan(11)

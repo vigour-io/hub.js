@@ -4,8 +4,11 @@ import { removeClient, removeSubscriptions } from './remove'
 import { create, struct } from 'brisky-struct'
 import on from './on'
 import { create as createStamp } from 'stamp'
+import ua from 'vigour-ua'
 
 const Server = uws.Server
+
+const heartbeatTimeout = 200
 
 const createServer = (hub, port) => {
   const server = new Server({ port })
@@ -13,27 +16,43 @@ const createServer = (hub, port) => {
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
     // need to remove when done -- its the best thing todo (mem!!!)
-    socket.send(JSON.stringify([void 0, {
-      stamp: createStamp(),
-      connect: true
-    }]))
-
-    socket.on('message', (data) => {
-      if (socket.client && socket.client.heartbeat) {
-        console.log('got dat client')
-      }
-      // maybe try catch to be sure -- does cost some speed
-      data = JSON.parse(data)
-      if (data) incoming(hub, socket, data)
-    })
-
-    socket.on('close', () => {
-      if (socket.client && !socket.client.heartbeat) removeClient(socket.client)
-    })
-
-    socket.on('heartbeatFail', () => {
-      if (socket.client) removeClient(socket.client)
-    })
+    var isHeartbeat = ua(socket.useragent).platform === 'node.js'
+    isHeartbeat = false
+    // here analyze the ua and do heartbeat
+    if (isHeartbeat) {
+      socket.send(JSON.stringify([void 0, {
+        stamp: createStamp(),
+        connect: true,
+        heartbeat: true
+      }]))
+      socket.on('message', (data) => {
+        data = JSON.parse(data)
+        if (data) {
+          if (data[1] && data[1].heartbeat) {
+            clearTimeout(socket.isInvalid)
+            socket.isInvalid = setTimeout(() => {
+              console.log(`did not receive a heartbeat for ${heartbeatTimeout}ms DISCONNECT`)
+              if (socket.client) removeClient(socket.client)
+              socket.isInvalid = null
+            }, heartbeatTimeout)
+          } else {
+            incoming(hub, socket, data)
+          }
+        }
+      })
+    } else {
+      socket.on('message', (data) => {
+        data = JSON.parse(data)
+        if (data) incoming(hub, socket, data)
+      })
+      socket.send(JSON.stringify([void 0, {
+        stamp: createStamp(),
+        connect: true
+      }]))
+      socket.on('close', () => {
+        if (socket.client && !socket.client.heartbeat) removeClient(socket.client)
+      })
+    }
 
     // socket.on('error', () => close()) // need to do something here as well no leaks!
   })

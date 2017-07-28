@@ -137,7 +137,6 @@ const incomingSubscriptions = (hub, client, meta, id) => {
   }
 
   if (requestSubs) {
-    console.log('send those subs')
     client.socket.send(JSON.stringify([ void 0, { requestSubs } ]))
   }
 }

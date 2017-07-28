@@ -15,4 +15,9 @@ test('heartbeat', t => {
   const client = hub({
     url: 'ws://localhost:6060'
   })
+
+  setTimeout(() => {
+    console.log('💔 Kill connection!!!')
+    client.set({ url: false })
+  }, 5e3)
 })

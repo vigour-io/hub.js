@@ -18,23 +18,26 @@ import hub from '../hub'
 
 const isNode = typeof window === 'undefined'
 
+const heartbeatTimeout = 100
+
 const next = isNode
   ? fn => setTimeout(fn, 18)
   : global.requestAnimationFrame
 
 const connect = (hub, url, reconnect) => {
   // use outside function non anon since its slower (according to uws)
-
   const socket = new WebSocket(url)
   const client = hub.client || createClient(hub, {}, false)
   // var inProgress, queue
-
   hub.set({ client }, false)
-
   hub.reconnect = null
 
   const close = () => {
     const stamp = bs.create()
+    if (hub.socket.heartbeat) {
+      clearTimeout(hub.socket.heartbeat)
+      hub.socket.heartbeat = null
+    }
     hub.socket = false
     hub.set({ connected: false }, stamp)
     bs.close()
@@ -56,9 +59,7 @@ const connect = (hub, url, reconnect) => {
   }
 
   socket.onmessage = (data) => {
-    console.log('got a msg', data)
     data = data.data
-
     if (
       typeof data !== 'string' &&
       (data instanceof ArrayBuffer ||
@@ -116,16 +117,28 @@ const removePaths = (struct, list, stamp, data) => {
   }
 }
 
+const heartbeat = hub => {
+  const socket = hub.socket
+  if (socket) {
+    if (socket.heartbeat) {
+      clearTimeout(socket.heartbeat)
+      socket.heartbeat = null
+    }
+    // console.log('heartbeat ❤️')
+    socket.send(JSON.stringify([void 0, { heartbeat: true }]))
+    socket.heartbeat = setTimeout(() => heartbeat(hub), heartbeatTimeout)
+  }
+}
+
 // raf
 const receive = (hub, data, info) => {
   bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
-
-  console.log('INCCOMING ON CLIENT 🦄🦄🦄🦄🦄🦄🦄🦄', data, info)
 
   if (info) {
     if (info.connect) {
       hub.set({ connected: true }, bs.create())
       meta(hub)
+      if (info.heartbeat) heartbeat(hub)
       bs.close()
     }
     if (info.requestSubs) {
@@ -189,13 +202,13 @@ const url = (hub, val, key, stamp) => {
   if (val === void 0) {
     throw Error('setting hub.url to "undefined", are you missing an environment variable?\n' + JSON.stringify(process.env, false, 2))
   }
-  if (!val) val = null
+  // if (!val) val = null -- dont know if this is good but you want to be able to set a url on for example false...
   if ((!hub.url && val) || ((hub.url && hub.url.compute()) !== val)) {
     removeSocket(hub)
     if (!val) {
       hub.set({ connected: false }, stamp)
       hub._url_ = null
-      if (hub.url) hub.url.set(null, stamp)
+      if (hub.url) hub.url.set(val, stamp)
     } else {
       if (!hub.url) {
         create({
