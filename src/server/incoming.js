@@ -54,7 +54,6 @@ const addToCache = (client, hub, payload) => {
 }
 
 const setPayload = (hub, payload, client) => {
-  // console.log('SERVER RECEIVE: %j', payload)
   hub.set(payload, false)
   addToCache(client, hub, payload)
 }
@@ -97,10 +96,8 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
         clientSet(client, meta, socket, t, payload, contextSwitched)
       } else {
         console.log('⚠️ client discconected when logging in')
-        // may need to handle something?
       }
     }).catch(err => {
-      // maybe need to dc the client - at least send some information
       hub.emit('error', err)
     })
   } else {
@@ -139,7 +136,9 @@ const incomingSubscriptions = (hub, client, meta, id) => {
     }
   }
 
-  if (requestSubs) client.socket.send('#1' + JSON.stringify(requestSubs))
+  if (requestSubs) {
+    client.socket.send(JSON.stringify([ void 0, { requestSubs } ]))
+  }
 }
 
 // this can become super efficient ofc -- replace client in very smart way -- blueprint $CLIENT -- this is the client id

@@ -29,10 +29,6 @@ const isCached = (client, struct, stamp) => client.cache &&
 const reuseCache = (client) => {
   if (!client.cache) return void 0
 
-  for (let uid in client.cache.branch) {
-    client.cache.branch[uid] = true
-  }
-
   return {
     cache: {
       master: client.cache.master,
