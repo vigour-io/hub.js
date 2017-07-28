@@ -94,7 +94,7 @@ test('circular references', t => {
 })
 
 test('reference field merge', { timeout: 1e3 }, t => {
-  t.plan(9)
+  t.plan(11)
 
   const server = hub({
     _uid_: 'server',
@@ -222,8 +222,7 @@ test('reference field merge', { timeout: 1e3 }, t => {
         client.set({ ref: ['@', 'root', 'list', 'i1'] })
       }, 50)
 
-      return new Promise(resolve => setTimeout(resolve, 50))
-      // return client.get(['list', 'i1', 'items', 'sub2', 'bf']).once(true)
+      return client.get(['list', 'i1', 'items', 'sub2', 'bf'], {}).once(true)
     })
     .then(() => {
       t.equals(
