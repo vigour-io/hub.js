@@ -8,7 +8,8 @@ import {
   struct,
   emitterProperty,
   puid,
-  getKeys
+  getKeys,
+  emit
 } from 'brisky-struct'
 import serialize from '../subscription/serialize'
 import hash from 'string-hash'
@@ -138,7 +139,6 @@ const receive = (hub, data, info) => {
     if (info.stamp) {
       bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
     }
-
     if (info.requestSubs) {
       sendSubscriptions(hub.socket, info.requestSubs, hub)
     }
@@ -149,10 +149,22 @@ const receive = (hub, data, info) => {
       bs.close()
     }
     if (info.emit) {
+      // emit
       const stamp = bs.create()
       for (let event in info.emit) {
-        hub.emit(event, info.emit[event], stamp)
+        if (event === 'broadcast') {
+
+        } else {
+          // hub.emit(event, info.emit[event], stamp)
+          // need to choose
+          // serialize struct if possible
+          if (hub.client) {
+            // emit(hub.client, info.emit[event], stamp)
+            hub.client.emit(event, info.emit[event], stamp, true)
+          }
+        }
       }
+
       bs.close()
     }
   }

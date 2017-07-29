@@ -22,11 +22,40 @@ export default (hub, socket, data) => {
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
         // this is a context switch
         create(hub, socket, meta, payload, client, true)
-      } else if (meta.s) {
-        hub = client.parent(2)
-        if (payload) setPayload(hub, payload, client)
-        incomingSubscriptions(hub, client, meta, client.key)
-        bs.close()
+      } else {
+        if (meta.s) {
+          hub = client.parent(2)
+          if (payload) setPayload(hub, payload, client)
+          incomingSubscriptions(hub, client, meta, client.key)
+          bs.close()
+        }
+        if (meta.emit) {
+          console.log('SERVER-EMIT:', meta)
+          const stamp = bs.create()
+          for (let key in meta.emit) {
+            hub = client.parent(2)
+            if (key === 'broadcast') {
+              if (hub.clients) {
+                // if hub client === root.client
+                for (let id in meta.emit.broadcast) {
+                  if (id === '*') {
+                    // handle to all
+                  } else {
+                    if (hub.clients[id]) {
+                      for (let type in meta.emit.broadcast[id]) {
+                        hub.clients[id].emit(type, meta.emit.broadcast[id][type], stamp)
+                      }
+                    }
+                  }
+                }
+              }
+            } else {
+              // straight emit on server
+              // server.client (if its there)
+            }
+            bs.close()
+          }
+        }
       }
     } else {
       create(hub, socket, meta, payload)
