@@ -16,6 +16,8 @@ import createClient from './create'
 import { receiveLarge } from '../size'
 import hub from '../hub'
 
+// client maybe a confusing name
+
 const isNode = typeof window === 'undefined'
 
 const heartbeatTimeout = 3e3
@@ -83,8 +85,6 @@ const connect = (hub, url, reconnect) => {
 const ownListeners = struct => struct !== hub && (struct.emitters || (ownListeners(struct.inherits)))
 
 const removePaths = (struct, list, stamp, data) => {
-  const oldStamp = struct.stamp
-  delete struct.stamp
   var keep = true
   const keys = getKeys(struct)
   if (keys) {
@@ -96,24 +96,28 @@ const removePaths = (struct, list, stamp, data) => {
       }
     }
   }
-  const listStamp = list[puid(struct)]
   if (struct.val !== void 0) {
-    if (listStamp < oldStamp) {
-      return
-    }
-    if (listStamp && (!data || data.val === void 0)) {
+    const removeStamp = list[puid(struct)]
+    if (removeStamp && removeStamp >= struct.stamp && (!data || data.val === void 0)) {
       if ((keys && keep) || ownListeners(struct)) {
+        // console.log('soft removing', struct.path())
         delete struct.val
         struct.emit('data', null, stamp)
-        delete struct.stamp
+        struct.stamp = 0
       } else {
-        struct.set(null, stamp)
+        // console.log('hard removing', struct.path())
+        struct.set(null, stamp, void 0, true)
         return true
       }
+    } else {
+      struct.stamp = 0
     }
   } else if (!keep && !ownListeners(struct)) {
-    struct.set(null, stamp)
+    // console.log('hard removing', struct.path())
+    struct.set(null, stamp, void 0, true)
     return true
+  } else {
+    struct.stamp = 0
   }
 }
 
@@ -132,11 +136,11 @@ const heartbeat = hub => {
 
 // raf
 const receive = (hub, data, info) => {
-  bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
-
   if (info) {
+    if (info.stamp) {
+      bs.setOffset(bs.offset + (info.stamp | 0) - (bs.create() | 0))
+    }
     if (info.requestSubs) {
-      // console.log('INFO REQUESTSUBS', info.requestSubs)
       sendSubscriptions(hub.socket, info.requestSubs, hub)
     }
     if (info.connect) {
@@ -146,10 +150,21 @@ const receive = (hub, data, info) => {
       bs.close()
     }
     if (info.emit) {
+      // emit
       const stamp = bs.create()
       for (let event in info.emit) {
-        hub.emit(event, info.emit[event], stamp)
+        if (event === 'broadcast') {
+
+        } else {
+          // hub.emit(event, info.emit[event], stamp)
+          // need to choose
+          // serialize struct if possible
+          if (hub.client) {
+            hub.client.emit(event, info.emit[event], stamp, true)
+          }
+        }
       }
+
       bs.close()
     }
   }
@@ -203,7 +218,7 @@ const url = (hub, val, key, stamp) => {
   if (val === void 0) {
     throw Error('setting hub.url to "undefined", are you missing an environment variable?\n' + JSON.stringify(process.env, false, 2))
   }
-  // if (!val) val = null -- dont know if this is good but you want to be able to set a url on for example false...
+  if (!val) val = null// -- dont know if this is good but you want to be able to set a url on for example false...
   if ((!hub.url && val) || ((hub.url && hub.url.compute()) !== val)) {
     removeSocket(hub)
     if (!val) {

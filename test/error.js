@@ -11,7 +11,7 @@ test('error', { timeout: 1000 }, t => {
         socket.send(JSON.stringify([void 0, {
           emit: {
             error: {
-              hahha: 'hello some shit for you'
+              hahha: 'hello some error for you'
             }
           }
         }]))

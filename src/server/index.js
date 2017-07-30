@@ -16,10 +16,8 @@ const createServer = (hub, port) => {
   console.log(`💫 hub listening on ${port} 💫`)
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
-
     // reuse this parse for client creation
     var isHeartbeat = ua(socket.useragent).platform === 'ios' || forceHeartbeat
-
     if (isHeartbeat) {
       console.log('use heartbeat for events 💔')
       socket.send(JSON.stringify([void 0, {
@@ -44,7 +42,6 @@ const createServer = (hub, port) => {
     } else {
       socket.on('message', (data) => {
         data = JSON.parse(data)
-        // console.log('ok incoming', data && JSON.stringify(data[1], false, 2))
         if (data) incoming(hub, socket, data)
       })
       socket.send(JSON.stringify([void 0, {

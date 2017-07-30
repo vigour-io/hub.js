@@ -7,7 +7,7 @@ import { removeClient } from './remove'
 import { cache, reuseCache } from './cache'
 
 const isEmpty = obj => {
-  for (let i in obj) { //eslint-disable-line
+  for (let i in obj) { // eslint-disable-line
     return false
   }
   return true
@@ -17,16 +17,44 @@ export default (hub, socket, data) => {
   const payload = data[0]
   const meta = data[1]
   var client = socket.client
+
   if (meta) {
     if (client) {
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
         // this is a context switch
         create(hub, socket, meta, payload, client, true)
-      } else if (meta.s) {
-        hub = client.parent(2)
-        if (payload) setPayload(hub, payload, client)
-        incomingSubscriptions(hub, client, meta, client.key)
-        bs.close()
+      } else {
+        if (meta.s) {
+          hub = client.parent(2)
+          if (payload) setPayload(hub, payload, client)
+          incomingSubscriptions(hub, client, meta, client.key)
+          bs.close()
+        }
+        if (meta.emit) {
+          const stamp = bs.create()
+          for (let key in meta.emit) {
+            hub = client.parent(2)
+            if (key === 'broadcast') {
+              if (hub.clients) {
+                for (let id in meta.emit.broadcast) {
+                  if (id === '*') {
+                    // handle to all / broadcast to all
+                  } else {
+                    if (hub.clients[id]) {
+                      for (let type in meta.emit.broadcast[id]) {
+                        hub.clients[id].emit(type, meta.emit.broadcast[id][type], stamp)
+                      }
+                    }
+                  }
+                }
+              }
+            } else {
+              // straight emit on server
+              // server.client (if its there)
+            }
+            bs.close()
+          }
+        }
       }
     } else {
       create(hub, socket, meta, payload)
@@ -65,7 +93,6 @@ const set = (meta, socket, t, payload, reuse) => {
   const client = socket.client = createClient(
     t, { socket, context }, stamp, socket.useragent, id
   )
-  if (payload) setPayload(t, payload, client)
   if (reuse) {
     client.cache = reuse.cache
     if (!isEmpty(reuse.remove)) {
@@ -73,6 +100,7 @@ const set = (meta, socket, t, payload, reuse) => {
       progress(client)
     }
   }
+  if (payload) setPayload(t, payload, client)
   if (meta.s) incomingSubscriptions(t, client, meta, id)
   bs.close()
 }
@@ -89,6 +117,7 @@ const clientSet = (client, meta, socket, t, payload, contextSwitched) => {
 }
 
 const create = (hub, socket, meta, payload, client, contextSwitched) => {
+  // if hub.clients.props proxy [id] || default
   const t = meta.context ? hub.getContext(meta.context, socket, client) : hub
   if (!t.inherits && t.then) {
     t.then((t) => {
@@ -108,7 +137,9 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
 const parsed = {}
 
 const incomingSubscriptions = (hub, client, meta, id) => {
-  if (!client) return // silent gaurd
+  if (!client) {
+    return // silent gaurd
+  }
 
   const update = (t, type, subs, tree) => send(hub, client, t, type, subs, tree)
 

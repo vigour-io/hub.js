@@ -1,7 +1,8 @@
-import { set, create, struct, getType } from 'brisky-struct'
+import { create, struct } from 'brisky-struct'
 import * as client from './client'
 import context from './context'
 import server from './server'
+import clients from './clients'
 
 const types = struct.props.types
 
@@ -35,37 +36,10 @@ hub.props.types.struct = hub.create({
 
 hub.props.types.struct.props.default.struct = hub.props.type.struct = hub
 
+// make a clients folder (client is pretty un clear now...)
 hub.set({
-  types: {
-    hub: 'self',
-    clients: {
-      type: 'struct',
-      instances: false,
-      props: {
-        default: hub.create({
-          instances: false,
-          props: {
-            cache: true,
-            upstreamSubscriptions: true,
-            resolve: true,
-            socket: true,
-            context: true
-          }
-        }, false)
-      }
-    }
-  },
-  props: {
-    clients: (t, val, key, stamp) => {
-      if (!t.clients) {
-        const clients = getType(t, key)
-        t.clients = create(val, stamp, clients, t, key)
-      } else {
-        set(t.clients, val, stamp)
-      }
-    }
-  },
-  inject: [ server, client, context ]
+  types: { hub: 'self' },
+  inject: [ clients, server, client, context ]
 }, false)
 
 hub.types._ks = void 0

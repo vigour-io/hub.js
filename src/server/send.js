@@ -1,5 +1,5 @@
 import bs from 'stamp'
-import { get, getKeys, getType, getVal } from 'brisky-struct'
+import { get, getRefVal, getKeys, getType, getVal } from 'brisky-struct'
 import { cache, isCached } from './cache'
 import { sendLarge } from '../size'
 
@@ -82,10 +82,11 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
     return
   }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
-  const val = isRemoved ? null : getVal(struct)
+  struct._rc = struct._c
+  const val = isRemoved ? null : getRefVal(struct)
 
   if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
-    // val === null -- double chck if this is nessecary
+    // val === null -- double check if this is necessary
     const path = struct.path()
     const len = path.length
     let s = t[0]
@@ -129,7 +130,7 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
     }
   } else if (val && typeof val === 'object' && val.inherits) {
     if (val.__tmp__ !== true) {
-    // can send a bit too much data when val: true and overlapping keys
+      // can send a bit too much data when val: true and overlapping keys
       val.__tmp__ = true
       serialize(client, t, subs, val, level, false)
       delete val.__tmp__
@@ -143,6 +144,19 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
   }
 }
 
+const getOrigin = (t, key, noContext) => {
+  if (t) {
+    let result = get(t, key, noContext)
+    if (result !== void 0 && result !== null) {
+      result._rc = result._rc || t._rc
+      if (t._rc) {
+        t._rc = null
+      }
+      return result
+    }
+  }
+}
+
 const deepSerialize = (keys, client, t, subs, struct, level) => {
   var type
   if ((type = get(struct, 'type')) && type.compute() !== 'hub') {
@@ -150,7 +164,7 @@ const deepSerialize = (keys, client, t, subs, struct, level) => {
   }
   if (keys) {
     for (let i = 0, len = keys.length; i < len; i++) {
-      let prop = get(struct, keys[i])
+      let prop = getOrigin(struct, keys[i])
       if (prop && prop.isHub) serialize(client, t, subs, prop, level)
     }
   }

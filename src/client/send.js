@@ -103,7 +103,6 @@ const meta = hub => {
 
 const send = (val, stamp, struct) => {
   // also check for removal
-
   if (
     // (
     //   typeof val === 'object' && val &&
@@ -173,9 +172,6 @@ const inProgress = (hub, tick) => {
 }
 
 const out = t => {
-  // if (typeof window !== 'undefined') {
-  //   console.log('SEND', JSON.stringify(t.inProgress, false, 2))
-  // }
   if (!t.socket.send) {
     t.set({ connected: false })
   } else {
