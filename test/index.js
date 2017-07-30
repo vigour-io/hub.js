@@ -1,4 +1,5 @@
 require('./eventbus')
+require('./connect')
 require('./switch')
 require('./context')
 require('./data-size')
