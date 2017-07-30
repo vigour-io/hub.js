@@ -3,7 +3,6 @@ const hub = require('../../')
 const test = require('tape')
 // const bs = require('stamp')
 test('emit custom events', { timeout: 2e3 }, t => {
-
   const server = hub({
     _uid_: 'server',
     port: 6060
@@ -32,7 +31,7 @@ test('emit custom events', { timeout: 2e3 }, t => {
 
   server.on('error', err => server.broadcast('error', err))
 
-  client.on('error', err => {
+  client.on('error', e => {
     t.pass('receives error')
     client.broadcast('bla', {
       bla: 'emits to all clients'
