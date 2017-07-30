@@ -30,11 +30,6 @@ const hub = create({
   }
 })
 
-// for logging
-// hub.set({
-//   _uid_: uid()
-// })
-
 hub.props.types.struct = hub.create({
   props: { default: types.struct.props.default.bind() }
 }, false)
