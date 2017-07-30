@@ -1,5 +1,5 @@
 import bs from 'stamp'
-import { get, getRefVal, getKeys, getType, getVal, uid } from 'brisky-struct'
+import { get, getRefVal, getKeys, getType, getVal } from 'brisky-struct'
 import { cache, isCached } from './cache'
 import { sendLarge } from '../size'
 
@@ -76,9 +76,7 @@ const send = (hub, client, struct, type, subs, tree) => {
   }
 }
 
-console.log('yo log it')
 const serialize = (client, t, subs, struct, level, isRemoved) => {
-
   if (!struct) {
     console.log('NO STRUCT FISHY IN SERVER SERIALIZE --- BUG')
     return

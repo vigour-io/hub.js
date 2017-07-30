@@ -8,8 +8,7 @@ import {
   struct,
   emitterProperty,
   puid,
-  getKeys,
-  emit
+  getKeys
 } from 'brisky-struct'
 import serialize from '../subscription/serialize'
 import hash from 'string-hash'
