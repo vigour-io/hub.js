@@ -30,7 +30,6 @@ const next = isNode
 const connect = (hub, url, reconnect) => {
   // use outside function non anon since its slower (according to uws)
   const socket = new WebSocket(url)
-  console.log('connect:', url)
   const client = hub.client || createClient(hub, {}, false)
   // var inProgress, queue
   hub.set({ client }, false)
@@ -56,7 +55,6 @@ const connect = (hub, url, reconnect) => {
   socket.onerror = isNode ? close : () => socket.close()
 
   socket.onopen = () => {
-    console.log('go and connect go', url)
     hub.socket = socket
     if (hub.emitters && hub.emitters.incoming) {
       enableIncomingListener(socket, hub)
@@ -80,7 +78,6 @@ const connect = (hub, url, reconnect) => {
       })
     } else {
       data = JSON.parse(data)
-      console.log('go and connect receive msg', url, data)
       receive(hub, data[0], data[1])
     }
   }

@@ -1,5 +1,5 @@
 import bs from 'stamp'
-import { get, getOrigin, getRefVal, getKeys, getType, getVal } from 'brisky-struct'
+import { get, getRefVal, getKeys, getType, getVal, uid } from 'brisky-struct'
 import { cache, isCached } from './cache'
 import { sendLarge } from '../size'
 
@@ -76,7 +76,9 @@ const send = (hub, client, struct, type, subs, tree) => {
   }
 }
 
+console.log('yo log it')
 const serialize = (client, t, subs, struct, level, isRemoved) => {
+
   if (!struct) {
     console.log('NO STRUCT FISHY IN SERVER SERIALIZE --- BUG')
     return
@@ -129,18 +131,31 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
       }
     }
   } else if (val && typeof val === 'object' && val.inherits) {
-    if (val.__tmp1__ !== true) {
+    if (val.__tmp__ !== true) {
       // can send a bit too much data when val: true and overlapping keys
-      val.__tmp1__ = true
+      val.__tmp__ = true
       serialize(client, t, subs, val, level, false)
-      delete val.__tmp1__
+      delete val.__tmp__
     }
   }
 
-  if (subs.val === true && !isRemoved && !struct.__tmp2__) {
-    struct.__tmp2__ = true
+  if (subs.val === true && !isRemoved && !struct.__tmp__) {
+    struct.__tmp__ = true
     deepSerialize(getKeys(struct), client, t, subs, struct, level)
-    delete struct.__tmp2__
+    delete struct.__tmp__
+  }
+}
+
+const getOrigin = (t, key, noContext) => {
+  if (t) {
+    let result = get(t, key, noContext)
+    if (result !== void 0 && result !== null) {
+      result._rc = result._rc || t._rc
+      if (t._rc) {
+        t._rc = null
+      }
+      return result
+    }
   }
 }
 

@@ -18,11 +18,8 @@ export default (hub, socket, data) => {
   const meta = data[1]
   var client = socket.client
 
-  console.log('INCOMING ON', hub.root().port)
-
   if (meta) {
     if (client) {
-
       if ('context' in meta && client.context != meta.context) { // eslint-disable-line
         // this is a context switch
         create(hub, socket, meta, payload, client, true)
