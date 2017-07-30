@@ -41,10 +41,8 @@ export default (hub, socket, data) => {
                   if (id === '*') {
                     // handle to all / broadcast to all
                   } else {
-                    console.log('---->', id)
                     if (hub.clients[id]) {
                       for (let type in meta.emit.broadcast[id]) {
-                        console.log('go send', id)
                         hub.clients[id].emit(type, meta.emit.broadcast[id][type], stamp)
                       }
                     }

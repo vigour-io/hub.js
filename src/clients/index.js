@@ -3,11 +3,11 @@ import uid from '../client/uid'
 
 const emitClientUpstream = (t, type, val) => {
   if (t.root().client) {
-    console.log('emit: use root.client (upstream)', type)
     if (!t.root().socket) {
       console.log('emit: 💗 wait until connected')
     } else {
-      const bc = { [t.key]: val }
+      const bc = { [t.key]: {} }
+      bc[t.key][type] = val
       t.root().socket.send(JSON.stringify([null, {
         emit: {
           broadcast: bc
@@ -60,9 +60,6 @@ export default {
               }
               if (!dontSend) {
                 if (this.socket) {
-                  // console.log('????', this, type)
-                  // console.log('emit:: has own socket', this.key)
-                  // use more unified system -- export progress
                   this.socket.send(JSON.stringify([null, {
                     emit: { [type]: sendval }
                   }]))
@@ -94,10 +91,13 @@ export default {
     broadcast (type, val, stamp) {
       const h = this
       if (h.clients) {
+        // send all
         h.clients.forEach(client => {
           if (client !== h.client) {
-            console.log(h.client && h.client.key, client.key, type)
+            // console.log(h.client && h.client.key, client.key, type)
+            // if client socket
             client.emit(type, val, stamp)
+            // else send a broadcast all signal
           }
         })
       }

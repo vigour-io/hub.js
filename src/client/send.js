@@ -114,7 +114,6 @@ const send = (val, stamp, struct) => {
       }
     }))
   ) {
-    console.log('BLOCK BLOCK')
     return
   }
   let hub

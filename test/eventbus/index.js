@@ -3,6 +3,7 @@ const hub = require('../../')
 const test = require('tape')
 // const bs = require('stamp')
 test('emit custom events', { timeout: 2e3 }, t => {
+
   const server = hub({
     _uid_: 'server',
     port: 6060
@@ -21,44 +22,34 @@ test('emit custom events', { timeout: 2e3 }, t => {
   })
 
   client2.on('whisper', (val) => {
-    console.log('whisper! on client2 ', val)
+    t.pass('receives whisper on client2')
+    server.emit('error', new Error('wrong!'))
   })
 
   client.subscribe({
     clients: { $any: true }
   })
 
-  client2.on('bla', (val) => {
-    console.log('?????')
-    t.pass('broadcast from client on client1')
-  })
-
-  /*
-  server.on('bla', (val) => {
-    t.pass('broadcast from client on server')
-  })
-  */
-
-  var receiverError = false
-  client.on('error', err => {
-    receiverError = true
-    t.pass('receives error')
-  })
-
-  // server can also listen to specific events but that comes later
   server.on('error', err => server.broadcast('error', err))
 
-  client.clients.on(() => {
-    client.clients.client2.emit('whisper', {
-      psst: true
-    })
-    server.emit('error', new Error('wrong!'))
-
-    // this does not work yet...
-
-    // just send on all
+  client.on('error', err => {
+    t.pass('receives error')
     client.broadcast('bla', {
       bla: 'emits to all clients'
+    })
+  })
+
+  client2.on('bla', (val) => {
+    t.pass('broadcast from client on client1')
+    client.set(null)
+    client2.set(null)
+    server.set(null)
+    t.end()
+  })
+
+  client.clients.once().then(() => {
+    client.clients.client2.emit('whisper', {
+      psst: true
     })
   })
 })
