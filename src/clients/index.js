@@ -1,5 +1,4 @@
-import { set, create, struct, getType, emit } from 'brisky-struct'
-import uid from '../client/uid'
+import { set, create, getType, emit } from 'brisky-struct'
 
 const emitClientUpstream = (t, type, val) => {
   if (t.root().client) {

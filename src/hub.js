@@ -1,9 +1,8 @@
-import { set, create, struct, getType, emit } from 'brisky-struct'
+import { create, struct } from 'brisky-struct'
 import * as client from './client'
 import context from './context'
 import server from './server'
 import clients from './clients'
-import uid from './client/uid'
 
 const types = struct.props.types
 
@@ -30,11 +29,6 @@ const hub = create({
     client: true
   }
 })
-
-// for logging
-// hub.set({
-//   _uid_: uid()
-// })
 
 hub.props.types.struct = hub.create({
   props: { default: types.struct.props.default.bind() }
