@@ -4,7 +4,7 @@ import uid from '../client/uid'
 const emitClientUpstream = (t, type, val) => {
   if (t.root().client) {
     if (!t.root().socket) {
-      console.log('emit: 💗 wait until connected')
+      console.log('emit: 💗 wait until connected', t.root())
     } else {
       const bc = { [t.key]: {} }
       bc[t.key][type] = val

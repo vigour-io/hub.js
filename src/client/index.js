@@ -30,6 +30,7 @@ const next = isNode
 const connect = (hub, url, reconnect) => {
   // use outside function non anon since its slower (according to uws)
   const socket = new WebSocket(url)
+  console.log('connect:', url)
   const client = hub.client || createClient(hub, {}, false)
   // var inProgress, queue
   hub.set({ client }, false)
@@ -55,6 +56,7 @@ const connect = (hub, url, reconnect) => {
   socket.onerror = isNode ? close : () => socket.close()
 
   socket.onopen = () => {
+    console.log('go and connect go', url)
     hub.socket = socket
     if (hub.emitters && hub.emitters.incoming) {
       enableIncomingListener(socket, hub)
@@ -78,6 +80,7 @@ const connect = (hub, url, reconnect) => {
       })
     } else {
       data = JSON.parse(data)
+      console.log('go and connect receive msg', url, data)
       receive(hub, data[0], data[1])
     }
   }
@@ -219,7 +222,7 @@ const url = (hub, val, key, stamp) => {
   if (val === void 0) {
     throw Error('setting hub.url to "undefined", are you missing an environment variable?\n' + JSON.stringify(process.env, false, 2))
   }
-  // if (!val) val = null// -- dont know if this is good but you want to be able to set a url on for example false...
+  if (!val) val = null// -- dont know if this is good but you want to be able to set a url on for example false...
   if ((!hub.url && val) || ((hub.url && hub.url.compute()) !== val)) {
     removeSocket(hub)
     if (!val) {

@@ -18,6 +18,8 @@ export default (hub, socket, data) => {
   const meta = data[1]
   var client = socket.client
 
+  console.log('INCOMING ON', hub.root().port)
+
   if (meta) {
     if (client) {
 

@@ -16,6 +16,7 @@ const createServer = (hub, port) => {
   console.log(`💫 hub listening on ${port} 💫`)
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
+    console.log('connection!!!!', hub.root().port)
 
     // reuse this parse for client creation
     var isHeartbeat = ua(socket.useragent).platform === 'ios' || forceHeartbeat
