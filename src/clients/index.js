@@ -45,7 +45,7 @@ export default {
                   stack: val.stack,
                   from:
                     val.from ||
-                    this.root().client && this.root().client.key ||
+                    (this.root().client && this.root().client.key) ||
                     this.root()._uid_ ||
                     'server'
                 }
