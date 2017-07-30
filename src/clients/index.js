@@ -3,17 +3,14 @@ import uid from '../client/uid'
 
 const emitClientUpstream = (t, type, val) => {
   if (t.root().client) {
-    console.log('emit: use root.client (upstream)')
+    console.log('emit: use root.client (upstream)', type)
     if (!t.root().socket) {
       console.log('emit: 💗 wait until connected')
     } else {
+      const bc = { [t.key]: val }
       t.root().socket.send(JSON.stringify([null, {
         emit: {
-          broadcast: {
-            [t.key]: {
-              [type]: val
-            }
-          }
+          broadcast: bc
         }
       }]))
     }
@@ -41,7 +38,7 @@ export default {
             emit (type, val, stamp, dontSend) {
               let sendval = val
               if (val instanceof Error) {
-                console.log('ok lets pack it')
+                // this can become very nice
                 sendval = {
                   _$isError: true,
                   message: val.message,
@@ -63,13 +60,13 @@ export default {
               }
               if (!dontSend) {
                 if (this.socket) {
-                  console.log('emit:: has own socket', this.key)
+                  // console.log('????', this, type)
+                  // console.log('emit:: has own socket', this.key)
                   // use more unified system -- export progress
                   this.socket.send(JSON.stringify([null, {
                     emit: { [type]: sendval }
                   }]))
                 } else {
-                  console.log('emit:: does not have own socket', this.key)
                   emitClientUpstream(this, type, sendval)
                 }
               }
@@ -95,18 +92,15 @@ export default {
   },
   define: {
     broadcast (type, val, stamp) {
-      console.log('hub', this._uid_, 'broadcast to all clients within context')
       const h = this
       if (h.clients) {
         h.clients.forEach(client => {
-          if (client !== h) {
-            console.log('emit to client', type)
+          if (client !== h.client) {
+            console.log(h.client && h.client.key, client.key, type)
             client.emit(type, val, stamp)
           }
         })
       }
-      // if on master broadcasts to all clients in context - same
-      // only within context
     }
   }
 }

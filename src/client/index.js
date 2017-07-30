@@ -17,6 +17,8 @@ import createClient from './create'
 import { receiveLarge } from '../size'
 import hub from '../hub'
 
+// client maybe a confusing name
+
 const isNode = typeof window === 'undefined'
 
 const heartbeatTimeout = 3e3
@@ -159,7 +161,6 @@ const receive = (hub, data, info) => {
           // need to choose
           // serialize struct if possible
           if (hub.client) {
-            // emit(hub.client, info.emit[event], stamp)
             hub.client.emit(event, info.emit[event], stamp, true)
           }
         }

@@ -28,30 +28,37 @@ test('emit custom events', { timeout: 2e3 }, t => {
     clients: { $any: true }
   })
 
+  client2.on('bla', (val) => {
+    console.log('?????')
+    t.pass('broadcast from client on client1')
+  })
+
+  /*
+  server.on('bla', (val) => {
+    t.pass('broadcast from client on server')
+  })
+  */
+
+  var receiverError = false
   client.on('error', err => {
-    console.log('ERROR on client', err.message)
+    receiverError = true
+    t.pass('receives error')
   })
 
   // server can also listen to specific events but that comes later
-
-  server.broadcast('whisper', {
-    serverWhispers: true
-  })
-
   server.on('error', err => server.broadcast('error', err))
 
   client.clients.on(() => {
-    console.log('clients...', client.clients)
     client.clients.client2.emit('whisper', {
       psst: true
     })
     server.emit('error', new Error('wrong!'))
-    // client.clients.server.emit('error', {
-    //   psst: true
-    // })
-  })
 
-  client.broadcast('whisper', {
-    bla: 'emits to all clients'
+    // this does not work yet...
+
+    // just send on all
+    client.broadcast('bla', {
+      bla: 'emits to all clients'
+    })
   })
 })
