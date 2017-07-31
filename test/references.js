@@ -36,25 +36,35 @@ test('circular references', t => {
       itemList: {
         items: {
           b: {
-            val: ['@', 'root', 'b']
+            val: ['@', 'root', 'b'],
+            extra: 1
           },
           c: {
-            val: ['@', 'root', 'c']
-          }
+            val: ['@', 'root', 'c'],
+            extra: 2
+          },
+          e: ['@', 'root', 'a', 'itemList', 'items', 'c']
         }
       }
     },
     b: {
       val: 'valB',
-      siblings: ['@', 'root', 'a', 'itemList'],
+      siblings: {
+        val: ['@', 'root', 'a', 'itemList'],
+        explain: 'siblingsOfB'
+      },
       other: {
         val: ['@', 'parent', 'otherData']
       },
-      otherData: 'someText'
+      otherData: 'someText',
+      f: ['@', 'root', 'c']
     },
     c: {
       val: 'valC',
-      siblings: ['@', 'root', 'a', 'itemList']
+      siblings: {
+        val: ['@', 'root', 'a', 'itemList', 'items'],
+        explain: 'siblingsOfC'
+      }
     }
   })
 
@@ -75,7 +85,7 @@ test('circular references', t => {
   client.subscribe({
     a: {
       itemList: {
-        $any: {
+        items: {
           val: true
         }
       }
@@ -89,12 +99,14 @@ test('circular references', t => {
       hybrid.set(null)
       scraper.set(null)
       t.end()
+    }).catch(e => {
+      console.error(e)
     })
   }, 100)
 })
 
 test('reference field merge', { timeout: 1e3 }, t => {
-  t.plan(9)
+  t.plan(10)
 
   const server = hub({
     _uid_: 'server',
@@ -243,12 +255,10 @@ test('reference field merge', { timeout: 1e3 }, t => {
         client.get(['list', 'i3', 'items', 'sub', 'tf', 'compute']), 'tv',
         'i3 sub type field is correct'
       )
-      // we need to fix this eventually
-      // __tmp__ check in serialize kills this
-      // t.equals(
-      //   client.get(['list', 'i3', 'pf', 'compute']), false,
-      //   'i3 props field override is correct'
-      // )
+      t.equals(
+        client.get(['list', 'i3', 'pf', 'compute']), false,
+        'i3 props field override is correct'
+      )
       t.equals(
         client.get(['list', 'i4', 'f1', 'compute']), true,
         'i4 master field override is correct'

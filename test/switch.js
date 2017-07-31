@@ -2,7 +2,7 @@ const hub = require('../')
 const test = require('tape')
 
 test('switch', { timeout: 1e3 }, t => {
-  t.plan(12)
+  t.plan(13)
 
   const server = hub({
     _uid_: 'server',
