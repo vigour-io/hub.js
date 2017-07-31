@@ -23,8 +23,8 @@ const cache = (client, struct, stamp) => {
 }
 
 const isCached = (client, struct, stamp) => client.cache &&
-(getRoot(struct).contextKey ? client.cache.branch[puid(struct)] === stamp
-  : client.cache.master[puid(struct)] === stamp)
+  (getRoot(struct).contextKey ? client.cache.branch[puid(struct)] === stamp
+    : client.cache.master[puid(struct)] === stamp)
 
 const reuseCache = (client) => {
   if (!client.cache) return void 0
