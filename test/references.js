@@ -105,7 +105,7 @@ test('circular references', t => {
   }, 100)
 })
 
-test('reference field merge', { timeout: 1e3 }, t => {
+test('reference field merge', { timeout: 2e3 }, t => {
   t.plan(10)
 
   const server = hub({
