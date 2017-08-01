@@ -144,6 +144,7 @@ const receive = (hub, data, info) => {
       sendSubscriptions(hub.socket, info.requestSubs, hub)
     }
     if (info.connect) {
+      console.log('CONNECT')
       hub.set({ connected: true }, bs.create())
       meta(hub)
       if (info.heartbeat) heartbeat(hub)
@@ -349,15 +350,12 @@ const define = {
         if (forceUpstream) {
           parsed.__force__ = true
         }
-        // why not keep it stringified? -- saves lots of speed
         const key = hash(JSON.stringify(parsed))
         if (!this.upstreamSubscriptions) {
           this.upstreamSubscriptions = {}
           this.upstreamSubscriptions[key] = parsed
-          if (this.url) meta(this)
         } else if (!this.upstreamSubscriptions[key]) {
           this.upstreamSubscriptions[key] = parsed
-          if (this.url) meta(this)
         }
       }
     }

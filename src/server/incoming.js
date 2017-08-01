@@ -13,6 +13,11 @@ const isEmpty = obj => {
   return true
 }
 
+console.log('wtf wtf')
+
+global.subscnt = 0
+global.cnt2 = 0
+
 export default (hub, socket, data) => {
   const payload = data[0]
   const meta = data[1]
@@ -136,12 +141,19 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
 
 const parsed = {}
 
+setInterval(() => {
+  console.log('update?', global.subscnt, global.cnt2)
+}, 5e3)
+
 const incomingSubscriptions = (hub, client, meta, id) => {
   if (!client) {
     return // silent gaurd
   }
 
-  const update = (t, type, subs, tree) => send(hub, client, t, type, subs, tree)
+  const update = (t, type, subs, tree) => {
+    global.cnt2++
+    send(hub, client, t, type, subs, tree)
+  }
 
   if (!client.upstreamSubscriptions) client.upstreamSubscriptions = {}
 

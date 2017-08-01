@@ -86,6 +86,8 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
   const val = isRemoved ? null : getRefVal(struct)
 
   if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
+    global.subscnt++
+
     // val === null -- double check if this is necessary
     const path = struct.path()
     const len = path.length
