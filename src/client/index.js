@@ -350,12 +350,15 @@ const define = {
         if (forceUpstream) {
           parsed.__force__ = true
         }
+        // why not keep it stringified? -- saves lots of speed
         const key = hash(JSON.stringify(parsed))
         if (!this.upstreamSubscriptions) {
           this.upstreamSubscriptions = {}
           this.upstreamSubscriptions[key] = parsed
+          if (this.url) meta(this, true)
         } else if (!this.upstreamSubscriptions[key]) {
           this.upstreamSubscriptions[key] = parsed
+          if (this.url) meta(this, true)
         }
       }
     }
