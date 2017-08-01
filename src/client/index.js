@@ -144,6 +144,7 @@ const receive = (hub, data, info) => {
       sendSubscriptions(hub.socket, info.requestSubs, hub)
     }
     if (info.connect) {
+      console.log('CONNECT')
       hub.set({ connected: true }, bs.create())
       meta(hub)
       if (info.heartbeat) heartbeat(hub)
@@ -354,10 +355,10 @@ const define = {
         if (!this.upstreamSubscriptions) {
           this.upstreamSubscriptions = {}
           this.upstreamSubscriptions[key] = parsed
-          if (this.url) meta(this)
+          if (this.url) meta(this, true)
         } else if (!this.upstreamSubscriptions[key]) {
           this.upstreamSubscriptions[key] = parsed
-          if (this.url) meta(this)
+          if (this.url) meta(this, true)
         }
       }
     }

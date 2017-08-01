@@ -44,32 +44,34 @@ const serialize = (hub, t, struct, val, level) => {
   }
 }
 
-const meta = hub => {
+const meta = (hub, subsOnly) => {
   if (!hub.receiveOnly) {
     const store = inProgress(hub, bs.inProgress ? bs.on : next)
-
-    let keys = hub.client.keys()
-    if (keys) {
-      let i = keys.length
-      while (i--) {
-        hub.client.forEach((val, key) => {
-          if (
-            key !== 'device' &&
-            key !== 'ua' &&
-            key !== 'platform' &&
-            key !== 'browser' &&
-            key !== 'version' &&
-            key !== 'prefix' &&
-            key !== 'webview'
-          ) {
-            serialize(hub, store, val, void 0, hub.urlIndex)
-          }
-        })
+    if (!subsOnly) {
+      let keys = hub.client.keys()
+      if (keys) {
+        let i = keys.length
+        while (i--) {
+          hub.client.forEach((val, key) => {
+            if (
+              key !== 'device' &&
+              key !== 'ua' &&
+              key !== 'platform' &&
+              key !== 'browser' &&
+              key !== 'version' &&
+              key !== 'prefix' &&
+              key !== 'webview'
+            ) {
+              serialize(hub, store, val, void 0, hub.urlIndex)
+            }
+          })
+        }
       }
     }
 
     if (!store[1]) store[1] = {}
-    if (hub.context) {
+
+    if (hub.context && !subsOnly) {
       if (hub.context.keys().length > 0) {
         store[1].context = hub.context.compute() ? hub.context.serialize() : false
       } else {
@@ -175,6 +177,7 @@ const out = t => {
   if (!t.socket.send) {
     t.set({ connected: false })
   } else {
+    console.log('--->', JSON.stringify(t.inProgress))
     t.socket.send(JSON.stringify(t.inProgress))
   }
   t.inProgress = false
