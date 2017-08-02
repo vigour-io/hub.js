@@ -105,7 +105,7 @@ test('circular references', t => {
 })
 
 test('reference field merge', { timeout: 2e3 }, t => {
-  t.plan(9)
+  t.plan(10)
 
   const server = hub({
     _uid_: 'server',
@@ -254,12 +254,10 @@ test('reference field merge', { timeout: 2e3 }, t => {
         client.get(['list', 'i3', 'items', 'sub', 'tf', 'compute']), 'tv',
         'i3 sub type field is correct'
       )
-      // we need to fix this eventually
-      // something with cache
-      // t.equals(
-      //   client.get(['list', 'i3', 'pf', 'compute']), false,
-      //   'i3 props field override is correct'
-      // )
+      t.equals(
+        client.get(['list', 'i3', 'pf', 'compute']), false,
+        'i3 props field override is correct'
+      )
       t.equals(
         client.get(['list', 'i4', 'f1', 'compute']), true,
         'i4 master field override is correct'
