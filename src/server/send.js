@@ -81,7 +81,7 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
     return
   }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
-  struct._rc = struct._c
+  struct._rc = struct._rc || struct._c
   const val = isRemoved ? null : getRefVal(struct)
 
   if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
@@ -116,7 +116,7 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
       if (struct.key === 'type') {
         if (val === 'hub') return
         serialize(client, t, subs, getType(struct, val), level)
-        // allways need a stamp!
+        // always need a stamp!
       }
 
       if (typeof val === 'object' && val !== null && val.inherits) {
@@ -127,32 +127,17 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
         s.val = val
       }
     }
-  } else if (val && typeof val === 'object' && val.inherits) {
-    if (val.__tmp__ !== true) {
-      // can send a bit too much data when val: true and overlapping keys
-      val.__tmp__ = true
-      serialize(client, t, subs, val, level, false)
-      delete val.__tmp__
-    }
+  } else if (val && typeof val === 'object' && val.inherits && !val.__tmp__) {
+    // can send a bit too much data when val: true and overlapping keys
+    val.__tmp__ = true
+    serialize(client, t, subs, val, level, false)
+    delete val.__tmp__
   }
 
   if (subs.val === true && !isRemoved && !struct.__tmp__) {
     struct.__tmp__ = true
     deepSerialize(getKeys(struct), client, t, subs, struct, level)
     delete struct.__tmp__
-  }
-}
-
-const getOrigin = (t, key, noContext) => {
-  if (t) {
-    let result = get(t, key, noContext)
-    if (result !== void 0 && result !== null) {
-      result._rc = result._rc || t._rc
-      if (t._rc) {
-        t._rc = null
-      }
-      return result
-    }
   }
 }
 
@@ -163,8 +148,12 @@ const deepSerialize = (keys, client, t, subs, struct, level) => {
   }
   if (keys) {
     for (let i = 0, len = keys.length; i < len; i++) {
-      let prop = getOrigin(struct, keys[i])
-      if (prop && prop.isHub) serialize(client, t, subs, prop, level)
+      let prop = get(struct, keys[i])
+      if (prop && prop.isHub) {
+        prop._rc = struct._rc || prop._c
+        struct.rc = null
+        serialize(client, t, subs, prop, level)
+      }
     }
   }
   if (struct._removed) {

@@ -36,25 +36,34 @@ test('circular references', t => {
       itemList: {
         items: {
           b: {
-            val: ['@', 'root', 'b']
+            val: ['@', 'root', 'b'],
+            extra: 1
           },
           c: {
-            val: ['@', 'root', 'c']
+            val: ['@', 'root', 'c'],
+            extra: 2
           }
         }
       }
     },
     b: {
       val: 'valB',
-      siblings: ['@', 'root', 'a', 'itemList'],
+      siblings: {
+        val: ['@', 'root', 'a', 'itemList'],
+        explain: 'siblingsOfB'
+      },
       other: {
         val: ['@', 'parent', 'otherData']
       },
-      otherData: 'someText'
+      otherData: 'someText',
+      f: ['@', 'root', 'c']
     },
     c: {
       val: 'valC',
-      siblings: ['@', 'root', 'a', 'itemList']
+      siblings: {
+        val: ['@', 'root', 'a', 'itemList', 'items'],
+        explain: 'siblingsOfC'
+      }
     }
   })
 
@@ -75,7 +84,7 @@ test('circular references', t => {
   client.subscribe({
     a: {
       itemList: {
-        $any: {
+        items: {
           val: true
         }
       }
@@ -89,11 +98,13 @@ test('circular references', t => {
       hybrid.set(null)
       scraper.set(null)
       t.end()
+    }).catch(e => {
+      console.error(e)
     })
   }, 100)
 })
 
-test('reference field merge', { timeout: 1e3 }, t => {
+test('reference field merge', { timeout: 2e3 }, t => {
   t.plan(9)
 
   const server = hub({
@@ -244,7 +255,7 @@ test('reference field merge', { timeout: 1e3 }, t => {
         'i3 sub type field is correct'
       )
       // we need to fix this eventually
-      // __tmp__ check in serialize kills this
+      // something with cache
       // t.equals(
       //   client.get(['list', 'i3', 'pf', 'compute']), false,
       //   'i3 props field override is correct'
