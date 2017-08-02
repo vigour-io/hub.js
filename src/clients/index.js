@@ -93,10 +93,7 @@ export default {
         // send all
         h.clients.forEach(client => {
           if (client !== h.client) {
-            // console.log(h.client && h.client.key, client.key, type)
-            // if client socket
             client.emit(type, val, stamp)
-            // else send a broadcast all signal
           }
         })
       }

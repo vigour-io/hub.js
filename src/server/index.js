@@ -19,7 +19,6 @@ const createServer = (hub, port) => {
     // reuse this parse for client creation
     var isHeartbeat = ua(socket.useragent).platform === 'ios' || forceHeartbeat
     if (isHeartbeat) {
-      console.log('use heartbeat for events 💔')
       socket.send(JSON.stringify([void 0, {
         stamp: createStamp(),
         connect: true,

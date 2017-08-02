@@ -14,11 +14,9 @@ const cache = (client, struct, stamp) => {
   if (getRoot(struct).contextKey) {
     delete client.cache.master[uid]
     client.cache.branch[uid] = stamp
-    // console.log('branch cache', struct.path(), getRoot(struct).contextKey)
   } else {
     delete client.cache.branch[uid]
     client.cache.master[uid] = stamp
-    // console.log('master cache', struct.path())
   }
 }
 

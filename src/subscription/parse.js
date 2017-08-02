@@ -62,7 +62,6 @@ const parse = (obj, state, key, client) => {
         obj[i] = dummy
       }
     }
-    // can go to client as well...
     if (!block && i !== '__force__') {
       if (i === 'clients' && result.clients) {
         merge(result[i], obj[i])
@@ -73,9 +72,6 @@ const parse = (obj, state, key, client) => {
       }
     }
   }
-
-  // console.log('-------')
-  // console.log(JSON.stringify(result, false, 2))
 
   return result
 }

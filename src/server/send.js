@@ -36,7 +36,6 @@ const progress = (client) => {
               }
             }
           }
-          // console.log('SERVER SEND: %j', p)
           const raw = JSON.stringify(client.inProgress)
           if (!sendLarge(raw, client)) {
             if (client.blobInProgress) {
@@ -78,7 +77,7 @@ const send = (hub, client, struct, type, subs, tree) => {
 
 const serialize = (client, t, subs, struct, level, isRemoved) => {
   if (!struct) {
-    console.log('NO STRUCT FISHY IN SERVER SERIALIZE --- BUG')
+    // console.log('NO STRUCT FISHY IN SERVER SERIALIZE --- BUG')
     return
   }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
@@ -86,8 +85,6 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
   const val = isRemoved ? null : getRefVal(struct)
 
   if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
-    global.subscnt++
-
     // val === null -- double check if this is necessary
     const path = struct.path()
     const len = path.length
@@ -131,11 +128,11 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
       }
     }
   } else if (val && typeof val === 'object' && val.inherits) {
-    if (val.__tmp__ !== true) {
+    if (val.__tmp2__ !== true) {
       // can send a bit too much data when val: true and overlapping keys
-      val.__tmp__ = true
+      val.__tmp2__ = true
       serialize(client, t, subs, val, level, false)
-      delete val.__tmp__
+      delete val.__tmp2__
     }
   }
 

@@ -13,11 +13,6 @@ const isEmpty = obj => {
   return true
 }
 
-console.log('wtf wtf')
-
-global.subscnt = 0
-global.cnt2 = 0
-
 export default (hub, socket, data) => {
   const payload = data[0]
   const meta = data[1]
@@ -122,7 +117,6 @@ const clientSet = (client, meta, socket, t, payload, contextSwitched) => {
 }
 
 const create = (hub, socket, meta, payload, client, contextSwitched) => {
-  // if hub.clients.props proxy [id] || default
   const t = meta.context ? hub.getContext(meta.context, socket, client) : hub
   if (!t.inherits && t.then) {
     t.then((t) => {
@@ -141,17 +135,12 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
 
 const parsed = {}
 
-setInterval(() => {
-  console.log('update?', global.subscnt, global.cnt2)
-}, 5e3)
-
 const incomingSubscriptions = (hub, client, meta, id) => {
   if (!client) {
     return // silent gaurd
   }
 
   const update = (t, type, subs, tree) => {
-    global.cnt2++
     send(hub, client, t, type, subs, tree)
   }
 
