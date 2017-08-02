@@ -127,11 +127,11 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
         s.val = val
       }
     }
-  } else if (val && typeof val === 'object' && val.inherits && !val.__tmp2__) {
+  } else if (val && typeof val === 'object' && val.inherits && !val.__tmp__) {
     // can send a bit too much data when val: true and overlapping keys
-    val.__tmp2__ = true
+    val.__tmp__ = true
     serialize(client, t, subs, val, level, false)
-    delete val.__tmp2__
+    delete val.__tmp__
   }
 
   if (subs.val === true && !isRemoved && !struct.__tmp__) {
