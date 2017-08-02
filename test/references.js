@@ -42,8 +42,7 @@ test('circular references', t => {
           c: {
             val: ['@', 'root', 'c'],
             extra: 2
-          },
-          e: ['@', 'root', 'a', 'itemList', 'items', 'c']
+          }
         }
       }
     },
