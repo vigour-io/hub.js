@@ -100,12 +100,10 @@ const removePaths = (struct, list, stamp, data) => {
     const removeStamp = list[puid(struct)]
     if (removeStamp && removeStamp >= struct.stamp && (!data || data.val === void 0)) {
       if ((keys && keep) || ownListeners(struct)) {
-        // console.log('soft removing', struct.path())
         delete struct.val
         struct.emit('data', null, stamp)
         struct.stamp = 0
       } else {
-        // console.log('hard removing', struct.path())
         struct.set(null, stamp, void 0, true)
         return true
       }
@@ -113,7 +111,6 @@ const removePaths = (struct, list, stamp, data) => {
       struct.stamp = 0
     }
   } else if (!keep && !ownListeners(struct)) {
-    // console.log('hard removing', struct.path())
     struct.set(null, stamp, void 0, true)
     return true
   } else {
@@ -128,7 +125,6 @@ const heartbeat = hub => {
       clearTimeout(socket.heartbeat)
       socket.heartbeat = null
     }
-    // console.log('heartbeat ❤️')
     socket.send(JSON.stringify([void 0, { heartbeat: true }]))
     socket.heartbeat = setTimeout(() => heartbeat(hub), heartbeatTimeout)
   }
@@ -144,7 +140,6 @@ const receive = (hub, data, info) => {
       sendSubscriptions(hub.socket, info.requestSubs, hub)
     }
     if (info.connect) {
-      console.log('CONNECT')
       hub.set({ connected: true }, bs.create())
       meta(hub)
       if (info.heartbeat) heartbeat(hub)

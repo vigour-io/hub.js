@@ -177,7 +177,6 @@ const out = t => {
   if (!t.socket.send) {
     t.set({ connected: false })
   } else {
-    console.log('--->', JSON.stringify(t.inProgress))
     t.socket.send(JSON.stringify(t.inProgress))
   }
   t.inProgress = false

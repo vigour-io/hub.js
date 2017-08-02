@@ -10,7 +10,6 @@ const removeSubscriptions = (t, id) => {
 }
 
 const removeClient = client => {
-  // console.log('🌵 remove client--- 🌵', client)
   const id = client.key
   client.val = null
   if (client.socket) {
@@ -20,9 +19,6 @@ const removeClient = client => {
   const t = client.parent(2)
   removeSubscriptions(t, id)
   client.set(null)
-  // if (client.context && t.clients.keys().length === (t.url ? 1 : 0)) {
-  //   t.set(null, stamp)
-  // }
 }
 
 export { removeSubscriptions, removeClient }
