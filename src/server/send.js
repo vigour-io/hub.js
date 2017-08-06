@@ -75,29 +75,37 @@ const send = (hub, client, struct, type, subs, tree) => {
   }
 }
 
+const createStore = (t, struct, level) => {
+  const path = struct.path()
+  const len = path.length
+  var s = t[0]
+  for (let i = level; i < len; i++) {
+    let tt = s[path[i]]
+    if (!tt) {
+      s = s[path[i]] = {}
+    } else {
+      s = tt
+      if (s.val === null) return
+    }
+  }
+  return s
+}
+
 const serialize = (client, t, subs, struct, level, isRemoved) => {
+  // const tmp = struct.__tmp__ // get(struct, '__tmp__')
+
   if (!struct) {
     // console.log('NO STRUCT FISHY IN SERVER SERIALIZE --- BUG')
     return
   }
+  global.CNT++
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
   struct._rc = struct._rc || struct._c
   const val = isRemoved ? null : getRefVal(struct)
 
   if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
     // val === null -- double check if this is necessary
-    const path = struct.path()
-    const len = path.length
-    let s = t[0]
-    for (let i = level; i < len; i++) {
-      let tt = s[path[i]]
-      if (!tt) {
-        s = s[path[i]] = {}
-      } else {
-        s = tt
-        if (s.val === null) return
-      }
-    }
+    const s = createStore(t, struct, level)
 
     if (isRemoved) {
       cache(client, struct, stamp)
@@ -140,6 +148,8 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
     delete struct.__tmp__
   }
 }
+
+// 2 branched deep serialize
 
 const deepSerialize = (keys, client, t, subs, struct, level) => {
   var type
