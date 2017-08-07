@@ -5,6 +5,7 @@ import { create, struct } from 'brisky-struct'
 import on from './on'
 import { create as createStamp } from 'stamp'
 import ua from 'vigour-ua'
+import pkg from '../../package.json'
 
 const Server = uws.Server
 
@@ -13,7 +14,7 @@ const heartbeatTimeout = 8e3
 const createServer = (hub, port) => {
   const server = new Server({ port })
   const forceHeartbeat = hub._forceHeartbeat_ // for testing
-  console.log(`💫 hub listening on ${port} 💫`)
+  console.log(`💫 hub listening on ${port} version ${pkg.version}💫`)
   server.on('connection', socket => {
     socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
     // reuse this parse for client creation
