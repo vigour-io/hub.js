@@ -167,9 +167,6 @@ const receive = (hub, data, info) => {
 
   if (data) {
     next(() => {
-      if (typeof window !== 'undefined') {
-        console.log('INCOMING CLIENT', data)
-      }
       const stamp = bs.create()
       if (!hub.receiveOnly) {
         hub.receiveOnly = true
