@@ -11,13 +11,15 @@ const isEmpty = obj => {
 }
 
 const progress = (client) => {
+  // remove inprogress if upgrade
   if (!client.inProgress) {
+    if (global.DEBUG) console.log('create new payload for', client.root().contextKey)
     client.inProgress = [ {}, { stamp: bs.create() } ]
     if (client.contextSwitched) {
       client.inProgress[1].remove = client.contextSwitched
       delete client.contextSwitched
     }
-    bs.on(() => {
+    setTimeout(() => {
       if (client.val !== null) {
         const p = client.inProgress[0]
         if (client.inProgress[1].remove || !isEmpty(p)) {
@@ -41,13 +43,16 @@ const progress = (client) => {
             if (client.blobInProgress) {
               client.blobInProgress.push(raw)
             } else {
+              if (global.DEBUG) {
+                console.log('lets send some data out!!!!', client.root().contextKey, client.inProgress)
+              }
               client.socket.send(raw)
             }
           }
         }
         client.inProgress = false
       }
-    })
+    }, 10)
   }
   return client.inProgress
 }

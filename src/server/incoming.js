@@ -82,6 +82,9 @@ const addToCache = (client, hub, payload) => {
 }
 
 const setPayload = (hub, payload, client) => {
+  if (global.DEBUG) {
+    console.log('ok set some payload to set', hub.contextKey, payload)
+  }
   hub.set(payload, false)
   addToCache(client, hub, payload)
 }
