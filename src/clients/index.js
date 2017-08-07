@@ -1,4 +1,5 @@
 import { set, create, getType, emit } from 'brisky-struct'
+import { serializeError } from '../emit'
 
 const emitClientUpstream = (t, type, val) => {
   if (t.root().client) {
@@ -37,23 +38,13 @@ export default {
             emit (type, val, stamp, dontSend) {
               let sendval = val
               if (val instanceof Error) {
-                // this can become very nice
-                sendval = {
-                  _$isError: true,
-                  message: val.message,
-                  stack: val.stack,
-                  from:
-                    val.from ||
-                    (this.root().client && this.root().client.key) ||
-                    this.root()._uid_ ||
-                    'server'
-                }
+                sendval = serializeError(this, val)
               } else if (val && typeof val === 'object' && val._$isError) {
                 const msg = (val.from ? 'from "' + val.from + '": ' : '') +
                   val.message
-                const err = new Error()
+                const err = new Error(msg)
                 err.from = val.from
-                err.message = msg
+                err.type = val.err
                 err.stack = val.stack
                 val = err
               }
