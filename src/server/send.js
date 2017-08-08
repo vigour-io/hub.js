@@ -76,14 +76,15 @@ const send = (hub, client, struct, type, subs, tree) => {
   }
 }
 
-const serialize = (client, t, subs, struct, level, isRemoved) => {
+const serialize = (client, t, subs, struct, level, isRemoved, rc) => {
   if (!struct) {
     // console.log('NO STRUCT FISHY IN SERVER SERIALIZE --- BUG')
     return
   }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
-  struct._rc = struct._rc || struct
+  struct._rc = rc || struct
   const val = isRemoved ? null : getRefVal(struct)
+  struct._rc = null
 
   if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
     // val === null -- double check if this is necessary
@@ -137,32 +138,28 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
 
   if (subs.val === true && !isRemoved && !struct.__tmp__) {
     struct.__tmp__ = true
-    deepSerialize(getKeys(struct), client, t, subs, struct, level)
+    deepSerialize(getKeys(struct), client, t, subs, struct, level, rc)
     delete struct.__tmp__
   }
 }
 
-const deepSerialize = (keys, client, t, subs, struct, level) => {
+const deepSerialize = (keys, client, t, subs, struct, level, rc) => {
   var type
   if ((type = get(struct, 'type')) && type.compute() !== 'hub') {
-    serialize(client, t, subs, type, level)
+    serialize(client, t, subs, type, level, void 0, rc || type._c)
   }
   if (keys) {
     for (let i = 0, len = keys.length; i < len; i++) {
       let prop = get(struct, keys[i])
       if (prop && prop.isHub) {
-        prop._rc = struct._rc || prop._c
-        if (struct._rc) {
-          struct._rc = null
-        }
-        serialize(client, t, subs, prop, level)
+        serialize(client, t, subs, prop, level, void 0, rc || prop._c)
       }
     }
   }
   if (struct._removed) {
     for (let i = 0, len = struct._removed.length; i < len; i++) {
       let prop = struct._removed[i]
-      serialize(client, t, subs, prop, level, true)
+      serialize(client, t, subs, prop, level, true, rc || prop._rc)
     }
   }
 }
