@@ -117,14 +117,14 @@ const serialize = (client, t, subs, struct, level, isRemoved, rc) => {
       s.stamp = stamp
       if (struct.key === 'type') {
         if (val === 'hub') return
-        serialize(client, t, subs, getType(struct, val), level)
+        serialize(client, t, subs, getType(struct, val), level, false, rc)
         // always need a stamp!
       }
 
       if (typeof val === 'object' && val !== null && val.inherits) {
         s.val = val.path()
         s.val.unshift('@', 'root')
-        serialize(client, t, subs, val, level)
+        serialize(client, t, subs, val, level, false, rc)
       } else if (val !== void 0) {
         s.val = val
       }
@@ -132,7 +132,7 @@ const serialize = (client, t, subs, struct, level, isRemoved, rc) => {
   } else if (val && typeof val === 'object' && val.inherits && !val.__tmp__) {
     // can send a bit too much data when val: true and overlapping keys
     val.__tmp__ = true
-    serialize(client, t, subs, val, level, false)
+    serialize(client, t, subs, val, level, false, rc)
     delete val.__tmp__
   }
 
@@ -146,13 +146,13 @@ const serialize = (client, t, subs, struct, level, isRemoved, rc) => {
 const deepSerialize = (keys, client, t, subs, struct, level, rc) => {
   var type
   if ((type = get(struct, 'type')) && type.compute() !== 'hub') {
-    serialize(client, t, subs, type, level, void 0, rc || type._c)
+    serialize(client, t, subs, type, level, false, rc || type._c)
   }
   if (keys) {
     for (let i = 0, len = keys.length; i < len; i++) {
       let prop = get(struct, keys[i])
       if (prop && prop.isHub) {
-        serialize(client, t, subs, prop, level, void 0, rc || prop._c)
+        serialize(client, t, subs, prop, level, false, rc || prop._c)
       }
     }
   }
