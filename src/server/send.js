@@ -152,7 +152,9 @@ const deepSerialize = (keys, client, t, subs, struct, level) => {
       let prop = get(struct, keys[i])
       if (prop && prop.isHub) {
         prop._rc = struct._rc || prop._c
-        struct._rc = null
+        if (struct._rc) {
+          struct._rc = null
+        }
         serialize(client, t, subs, prop, level)
       }
     }
