@@ -159,7 +159,7 @@ const deepSerialize = (keys, client, t, subs, struct, level, rc) => {
   if (struct._removed) {
     for (let i = 0, len = struct._removed.length; i < len; i++) {
       let prop = struct._removed[i]
-      serialize(client, t, subs, prop, level, true, rc || prop._rc)
+      serialize(client, t, subs, prop, level, true, rc || prop._c)
     }
   }
 }
