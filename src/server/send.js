@@ -82,7 +82,7 @@ const serialize = (client, t, subs, struct, level, isRemoved) => {
     return
   }
   const stamp = get(struct, 'stamp') || 1 // remove the need for this default (feels wrong)
-  struct._rc = struct._rc || struct._c || struct
+  struct._rc = struct._rc || struct
   const val = isRemoved ? null : getRefVal(struct)
 
   if (val !== void 0 && stamp && !isCached(client, struct, stamp)) {
