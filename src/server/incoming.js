@@ -13,58 +13,6 @@ const isEmpty = obj => {
   return true
 }
 
-export default (hub, socket, data) => {
-  const payload = data[0]
-  const meta = data[1]
-  var client = socket.client
-
-  if (meta) {
-    if (client) {
-      if ('context' in meta && client.context != meta.context) { // eslint-disable-line
-        // this is a context switch
-        create(hub, socket, meta, payload, client, true)
-      } else {
-        if (meta.s) {
-          hub = client.parent(2)
-          if (payload) setPayload(hub, payload, client)
-          incomingSubscriptions(hub, client, meta, client.key)
-          bs.close()
-        }
-        if (meta.emit) {
-          const stamp = bs.create()
-          for (let key in meta.emit) {
-            hub = client.parent(2)
-            if (key === 'broadcast') {
-              if (hub.clients) {
-                for (let id in meta.emit.broadcast) {
-                  if (id === '*') {
-                    // handle to all / broadcast to all
-                  } else {
-                    if (hub.clients[id]) {
-                      for (let type in meta.emit.broadcast[id]) {
-                        hub.clients[id].emit(type, meta.emit.broadcast[id][type], stamp)
-                      }
-                    }
-                  }
-                }
-              }
-            } else {
-              // straight emit on server
-              // server.client (if its there)
-            }
-            bs.close()
-          }
-        }
-      }
-    } else {
-      create(hub, socket, meta, payload)
-    }
-  } else if (client) {
-    setPayload(client.parent(2), payload, client)
-    bs.close()
-  }
-}
-
 const addToCache = (client, hub, payload) => {
   if (typeof payload === 'object' && payload) {
     for (let key in payload) {
@@ -135,12 +83,24 @@ const create = (hub, socket, meta, payload, client, contextSwitched) => {
 
 const parsed = {}
 
+const sRoot = (t) => {
+  var p = t
+  while (p) {
+    t = p
+    p = p._c || p._p
+  }
+  return t
+}
+
 const incomingSubscriptions = (hub, client, meta, id) => {
   if (!client) {
     return // silent gaurd
   }
 
   const update = (t, type, subs, tree) => {
+    if (sRoot(t).contextKey !== hub.contextKey) {
+      console.log('ok wrong contextKey....', sRoot(t).contextKey, hub.contextKey)
+    }
     send(hub, client, t, type, subs, tree)
   }
 
@@ -176,3 +136,55 @@ const incomingSubscriptions = (hub, client, meta, id) => {
 // this can become super efficient ofc -- replace client in very smart way -- blueprint $CLIENT -- this is the client id
 // could even do something like -- update._uid_ use this as a key
 // export parsed so we can reset in tests
+
+export default (hub, socket, data) => {
+  const payload = data[0]
+  const meta = data[1]
+  var client = socket.client
+
+  if (meta) {
+    if (client) {
+      if ('context' in meta && client.context != meta.context) { // eslint-disable-line
+        // this is a context switch
+        create(hub, socket, meta, payload, client, true)
+      } else {
+        if (meta.s) {
+          hub = client.parent(2)
+          if (payload) setPayload(hub, payload, client)
+          incomingSubscriptions(hub, client, meta, client.key)
+          bs.close()
+        }
+        if (meta.emit) {
+          const stamp = bs.create()
+          for (let key in meta.emit) {
+            hub = client.parent(2)
+            if (key === 'broadcast') {
+              if (hub.clients) {
+                for (let id in meta.emit.broadcast) {
+                  if (id === '*') {
+                    // handle to all / broadcast to all
+                  } else {
+                    if (hub.clients[id]) {
+                      for (let type in meta.emit.broadcast[id]) {
+                        hub.clients[id].emit(type, meta.emit.broadcast[id][type], stamp)
+                      }
+                    }
+                  }
+                }
+              }
+            } else {
+              // straight emit on server
+              // server.client (if its there)
+            }
+            bs.close()
+          }
+        }
+      }
+    } else {
+      create(hub, socket, meta, payload)
+    }
+  } else if (client) {
+    setPayload(client.parent(2), payload, client)
+    bs.close()
+  }
+}
