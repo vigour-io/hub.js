@@ -2,15 +2,6 @@
 language: node_js
 node_js:
   - '8.1.0'
-dist: trusty
-addons:
-  apt:
-    sources:
-    - ondrej/pkg-nlnetlabs
-    packages:
-    - libuv1
-    - openssl
-    - zlib1g-dev
 script: npm run travis
 notifications:
   email: false

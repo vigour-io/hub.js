@@ -1,4 +1,4 @@
-import uws from 'uws'
+import ws from 'ws'
 import incoming from './incoming'
 import { removeClient, removeSubscriptions } from './remove'
 import { create, struct } from 'brisky-struct'
@@ -7,7 +7,7 @@ import { create as createStamp } from 'stamp'
 import ua from 'vigour-ua'
 import pkg from '../../package.json'
 
-const Server = uws.Server
+const Server = ws.Server
 
 const heartbeatTimeout = 8e3
 
@@ -67,7 +67,7 @@ const removeServer = hub => {
     closeConnections(instances[i])
   }
 
-  server.httpServer.close()
+  server.close()
   // remove all clients subscriptions
   hub._server_ = null
 }
