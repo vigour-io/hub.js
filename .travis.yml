@@ -6,7 +6,7 @@ dist: trusty
 addons:
   apt:
     sources:
-    - ubuntu/libuv1
+    - libuv1
     packages:
     - libuv1
     - openssl
