@@ -5,7 +5,10 @@ node_js:
 dist: trusty
 addons:
   apt:
+    sources:
+    - ondrej/pkg-nlnetlabs
     packages:
+    - libuv1
     - openssl
     - zlib1g-dev
 script: npm run travis
