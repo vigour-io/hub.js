@@ -4,9 +4,6 @@ node_js:
   - '8.1.0'
 dist: trusty
 script: npm run travis
-before_install:
-  - apt-get update
-  - apt-get install -y libuv1 openssl-dev zlib1g-dev
 notifications:
   email: false
 deploy:
