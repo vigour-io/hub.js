@@ -64,7 +64,7 @@ const connect = (hub, url, reconnect) => {
     data = data.data
     if (
       typeof data !== 'string' &&
-      (data instanceof ArrayBuffer ||
+      (data instanceof Buffer || data instanceof ArrayBuffer ||
         (!isNode &&
           ((('Blob' in global) && data instanceof Blob) || // eslint-disable-line
           (('WebkitBlob' in global) && data instanceof WebkitBlob)) // eslint-disable-line

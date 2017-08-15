@@ -1,6 +1,6 @@
-import WebSocket from 'uws'
-export default WebSocket
+// uws is still bad on linux as a client
+// import WebSocket from 'uws'
+// export default WebSocket
 
-// need to get this fixed on now!
-// import { w3cwebsocket } from 'websocket'
-// export default w3cwebsocket
+import WebSocket from 'ws'
+export default WebSocket
