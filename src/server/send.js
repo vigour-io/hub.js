@@ -42,7 +42,11 @@ const progress = (client) => {
             if (client.blobInProgress) {
               client.blobInProgress.push(raw)
             } else {
-              client.socket.send(raw)
+              try {
+                client.socket.send(raw)
+              } catch (e) {
+                console.error('sending when not connected')
+              }
             }
           }
         }
