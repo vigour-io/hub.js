@@ -191,7 +191,11 @@ const sendSubscriptions = (socket, subs, hub) => {
   }
   const payload = []
   payload[1] = { s: subs, m }
-  socket.send(JSON.stringify(payload))
+  if (!socket.send) {
+    hub.set({ connected: false })
+  } else {
+    socket.send(JSON.stringify(payload))
+  }
 }
 
 export { meta, send, sendSubscriptions }

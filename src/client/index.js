@@ -51,7 +51,7 @@ const connect = (hub, url, reconnect) => {
 
   socket.onclose = close
 
-  socket.onerror = isNode ? close : () => socket.close()
+  socket.onerror = socket.close
 
   socket.onopen = () => {
     hub.socket = socket
