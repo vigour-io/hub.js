@@ -1,7 +1,7 @@
 # .travis.yml
 language: node_js
 node_js:
-  - '8.1.0'
+  - '8.3.0'
 script: npm run travis
 notifications:
   email: false
