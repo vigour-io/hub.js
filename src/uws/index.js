@@ -24,10 +24,10 @@ const native = (() => {
     try {
       return process.binding('uws_builtin')
     } catch (e) {
-      console.log(`./uws_${process.platform}_${process.versions.modules}`)
       return require(`./uws_${process.platform}_${process.versions.modules}`)
     }
   } catch (e) {
+    console.error(e)
     const version = process.version.substring(1).split('.').map(function (n) {
       return parseInt(n)
     })
