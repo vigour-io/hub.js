@@ -28,17 +28,6 @@ const native = (() => {
     }
   } catch (e) {
     console.error(e)
-    const version = process.version.substring(1).split('.').map(function (n) {
-      return parseInt(n)
-    })
-    const lessThanSixFour = version[0] < 6 || (version[0] === 6 && version[1] < 4)
-
-    if (process.platform === 'win32' && lessThanSixFour) {
-      throw new Error('µWebSockets requires Node.js 6.4.0 or greater on Windows.')
-    } else {
-      throw new Error('Compilation of µWebSockets has failed and there is no pre-compiled binary ' +
-            'available for your system. Please install a supported C++11 compiler and reinstall the module \'uws\'.')
-    }
   }
 })()
 
