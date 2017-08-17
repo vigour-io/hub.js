@@ -51,7 +51,7 @@ const connect = (hub, url, reconnect) => {
 
   socket.onclose = close
 
-  socket.onerror = socket.close
+  socket.onerror = isNode ? close : socket.close.bind(socket)
 
   socket.onopen = () => {
     hub.socket = socket
@@ -64,7 +64,7 @@ const connect = (hub, url, reconnect) => {
     data = data.data
     if (
       typeof data !== 'string' &&
-      (data instanceof Buffer || data instanceof ArrayBuffer ||
+      (data instanceof ArrayBuffer ||
         (!isNode &&
           ((('Blob' in global) && data instanceof Blob) || // eslint-disable-line
           (('WebkitBlob' in global) && data instanceof WebkitBlob)) // eslint-disable-line

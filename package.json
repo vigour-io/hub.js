@@ -12,7 +12,7 @@
     "source-map-support": false
   },
   "scripts": {
-    "build": "builder-boy src/index.js dist/index.js -r -t node -t browser",
+    "build": "builder-boy src/index.js dist/index.js -r -t node -t browser && cp src/uws/*.node dist/",
     "watch": "builder-boy src/index.js dist/index.js -w -r -t node -t browser",
     "watch-browser": "builder-boy test/browser/index.js test/browser/dist/index.js -w",
     "dev": "nodemon --watch dist --watch test --watch node_modules --exec 'node test/index.js'",
@@ -47,7 +47,6 @@
     "brisky-struct": "^1.10.3",
     "stamp": "^4.0.2",
     "string-hash": "^1.1.3",
-    "ws": "3.1.0",
     "vigour-ua": "^3.1.3"
   },
   "nyc": {
