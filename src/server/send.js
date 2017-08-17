@@ -41,12 +41,8 @@ const progress = (client) => {
           if (!sendLarge(raw, client)) {
             if (client.blobInProgress) {
               client.blobInProgress.push(raw)
-            } else {
-              try {
-                client.socket.send(raw)
-              } catch (e) {
-                console.error('sending when not connected')
-              }
+            } else if (client.socket.OPEN) {
+              client.socket.send(raw)
             }
           }
         }

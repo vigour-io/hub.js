@@ -174,7 +174,7 @@ const inProgress = (hub, tick) => {
 }
 
 const out = t => {
-  if (!t.socket.send) {
+  if (t.socket.CLOSED) {
     t.set({ connected: false })
   } else {
     t.socket.send(JSON.stringify(t.inProgress))
@@ -191,7 +191,7 @@ const sendSubscriptions = (socket, subs, hub) => {
   }
   const payload = []
   payload[1] = { s: subs, m }
-  if (!socket.send) {
+  if (socket.CLOSED) {
     hub.set({ connected: false })
   } else {
     socket.send(JSON.stringify(payload))

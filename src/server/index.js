@@ -1,4 +1,4 @@
-import ws from 'ws'
+import uws from '../uws'
 import incoming from './incoming'
 import { removeClient, removeSubscriptions } from './remove'
 import { create, struct } from 'brisky-struct'
@@ -7,7 +7,7 @@ import { create as createStamp } from 'stamp'
 import ua from 'vigour-ua'
 import pkg from '../../package.json'
 
-const Server = ws.Server
+const Server = uws.Server
 
 const heartbeatTimeout = 8e3
 
@@ -15,8 +15,8 @@ const createServer = (hub, port) => {
   const server = new Server({ port })
   const forceHeartbeat = hub._forceHeartbeat_ // for testing
   console.log(`💫 hub listening on ${port} version ${pkg.version}💫`)
-  server.on('connection', (socket, req) => {
-    socket.useragent = req && req.headers['user-agent']
+  server.on('connection', socket => {
+    socket.useragent = socket.upgradeReq && socket.upgradeReq.headers['user-agent']
     // reuse this parse for client creation
     var isHeartbeat = ua(socket.useragent).platform === 'ios' || forceHeartbeat
     if (isHeartbeat) {
@@ -68,6 +68,7 @@ const removeServer = hub => {
   }
 
   server.close()
+  server.httpServer.close()
   // remove all clients subscriptions
   hub._server_ = null
 }
