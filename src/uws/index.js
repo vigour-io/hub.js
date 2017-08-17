@@ -24,6 +24,7 @@ const native = (() => {
     try {
       return process.binding('uws_builtin')
     } catch (e) {
+      console.log(`./uws_${process.platform}_${process.versions.modules}`)
       return require(`./uws_${process.platform}_${process.versions.modules}`)
     }
   } catch (e) {
@@ -534,7 +535,6 @@ class Server extends EventEmitter {
     }
 
     if (typeof cb === 'function') {
-            // compatibility hack, 15 seconds timeout
       setTimeout(cb, 20000)
     }
   }
